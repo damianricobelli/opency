@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/damianricobelli/opency/compare/opency-v0.2.0...opency-v0.3.0) (2026-11-20)
+
+
+### Features
+
+* **engine:** lint English copy as well as Spanish ([1f9720b](https://github.com/damianricobelli/opency/commit/1f9720b223f957d02be9ea2fa15c75d9ce64c6aa))
+* zero-setup start, compose from data, safe auto-repair and client handoff ([3323da1](https://github.com/damianricobelli/opency/commit/3323da1d0267a9cf60c5291546b3a6596fb56f6b))
+
 ## [0.2.0](https://github.com/damianricobelli/opency/compare/opency-v0.1.0...opency-v0.2.0) (2026-11-20)
 
 
