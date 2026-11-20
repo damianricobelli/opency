@@ -4,7 +4,7 @@
 //   npx opency init [folder] [--force] [--no-demo]
 //
 // Copies: AGENTS.md + references/ (the agent's instructions), templates/ (base and layouts),
-// brands/_demo (demo brand), .claude/agents/ (reviewer), .mcp.json and .env.example.
+// brands/_demo (demo brand), .claude/agents/ (reviewer) and .mcp.json.
 // Never overwrites existing files unless --force. The user's own brands/ are never touched.
 
 import { cp, mkdir, readFile, writeFile, readdir } from "node:fs/promises";
@@ -45,12 +45,6 @@ if (args.demo !== false && !args["no-demo"]) await copyTree(path.join(PKG, "bran
 else await mkdir(path.join(dest, "brands"), { recursive: true });
 
 await put(".mcp.json", JSON.stringify({ mcpServers: { opency: { command: "npx", args: ["-y", "opency", "mcp"] } } }, null, 2) + "\n");
-await put(".env.example", `# Unsplash is optional: Openverse works without any key.
-# Use your own Access Key (free): npx opency stock connect unsplash
-UNSPLASH_ACCESS_KEY=
-# Optional: path to Chrome if you do not use the Playwright browser.
-# CHROME_PATH=
-`);
 await put(".gitignore", "node_modules/\n.DS_Store\n.env\n**/render/.frames-*/\n**/.check.html\n");
 
 const brands = (await readdir(path.join(dest, "brands"), { withFileTypes: true }).catch(() => [])).filter((d) => d.isDirectory() && !d.name.startsWith("_")).map((d) => d.name);
