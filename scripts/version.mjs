@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Versions of a piece, without depending on git.
 //
-//   npx opentcy version <piece> save "what changed" [--by agente|persona]  saves a copy and bumps the version
-//   npx opentcy version <piece> list
-//   npx opentcy version <piece> restore <N>                                goes back to version N (as a new version)
-//   npx opentcy version <piece> diff [N]                                   which texts changed since version N (defaults to the latest)
+//   npx opency version <piece> save "what changed" [--by agente|persona]  saves a copy and bumps the version
+//   npx opency version <piece> list
+//   npx opency version <piece> restore <N>                                goes back to version N (as a new version)
+//   npx opency version <piece> diff [N]                                   which texts changed since version N (defaults to the latest)
 //
 // Each version stores piece.json and the slide-NN.html files in versions/vN/. Restoring overwrites nothing:
 // it saves the current state first. `diff` also shows edits made by hand.
@@ -18,7 +18,7 @@ import { parseArgs, readJSON, writeJSON, resolvePiece, today } from "./lib/proje
 const args = parseArgs(process.argv.slice(2));
 const [pieceArg, cmd = "list", param] = args._;
 const fail = (m) => { console.error(`✗ ${m}`); process.exit(1); };
-let dir; try { dir = await resolvePiece(pieceArg, args); } catch (e) { fail(`${e.message}\nUsage: npx opentcy version <piece> save "change" | list | restore N | diff [N]`); }
+let dir; try { dir = await resolvePiece(pieceArg, args); } catch (e) { fail(`${e.message}\nUsage: npx opency version <piece> save "change" | list | restore N | diff [N]`); }
 const vdir = path.join(dir, "versions");
 const slideFiles = async (d) => (await readdir(d).catch(() => [])).filter((f) => /^slide-\d+\.html$/.test(f)).sort();
 

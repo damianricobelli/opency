@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// opentcy: one command for the workspace, the engine and the MCP server.
+// opency: one command for the workspace, the engine and the MCP server.
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -32,30 +32,30 @@ if (cmd === "mcp") {
 } else if (ENGINE[cmd]) {
   run(script(ENGINE[cmd]), rest);
 } else {
-  console.log(`opentcy · your agent as a content team
+  console.log(`opency · your agent as a content team
 
   Get started
-    opentcy init [folder]             create a workspace: agent instructions, templates and a demo brand
-    opentcy setup                     install the render browser and check the environment
-    opentcy doctor                    check browser, ffmpeg, stock keys and workspace
-    opentcy mcp                       MCP server (stdio) for Claude, Cursor, Codex and other clients
+    opency init [folder]             create a workspace: agent instructions, templates and a demo brand
+    opency setup                     install the render browser and check the environment
+    opency doctor                    check browser, ffmpeg, stock keys and workspace
+    opency mcp                       MCP server (stdio) for Claude, Cursor, Codex and other clients
 
   Brief and campaigns
-    opentcy brief questions [brand|campaign|piece]
-    opentcy campaign new|brief|plan|status|list
+    opency brief questions [brand|campaign|piece]
+    opency campaign new|brief|plan|status|list
 
   Brands and pieces
-    opentcy brand list|use|new|import <url>|check
-    opentcy new <slug> --layouts a,b,c [--campaign slug] [--format 4:5|1:1|9:16|16:9]
-    opentcy render <piece> [--pdf] [--scale 2]
-    opentcy dev <piece>               live preview with editable text
-    opentcy version <piece> save|list|diff|restore
-    opentcy motion <piece> --slides all [--audio track.mp3]
-    opentcy assets add|stock|stock-import|analyze|veto|list
-    opentcy stock status|connect unsplash|disconnect unsplash
-    opentcy feed  ·  opentcy results  ·  opentcy layouts
+    opency brand list|use|new|import <url>|check
+    opency new <slug> --layouts a,b,c [--campaign slug] [--format 4:5|1:1|9:16|16:9]
+    opency render <piece> [--pdf] [--scale 2]
+    opency dev <piece>               live preview with editable text
+    opency version <piece> save|list|diff|restore
+    opency motion <piece> --slides all [--audio track.mp3]
+    opency assets add|stock|stock-import|analyze|veto|list
+    opency stock status|connect unsplash|disconnect unsplash
+    opency feed  ·  opency results  ·  opency layouts
 
-  All of them accept --brand <slug>. The workspace is the folder with brands/ (or OPENTCY_HOME).
-  Docs: https://github.com/damianricobelli/opentcy`);
+  All of them accept --brand <slug>. The workspace is the folder with brands/ (or OPENCY_HOME).
+  Docs: https://github.com/damianricobelli/opency`);
   if (cmd && cmd !== "help" && cmd !== "--help" && cmd !== "-h") { console.error(`\n✗ Unknown command: ${cmd}`); process.exit(1); }
 }

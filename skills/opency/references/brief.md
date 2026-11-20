@@ -8,19 +8,19 @@ A good-looking piece that says what nobody asked for gets redone from scratch. T
 
 | Request | What you do |
 |---|---|
-| New brand | `brand` brief. If there is a website, read it first (`npx opentcy brand import <url>`) and ask only what you did not find. |
+| New brand | `brand` brief. If there is a website, read it first (`npx opency brand import <url>`) and ask only what you did not find. |
 | Campaign (several pieces, a launch, a date) | Full `campaign` brief. No design until the required answers are in. |
 | Single piece with a clear request ("carousel about X for Thursday") | Do not ask: decide, and say what you assumed. |
 | Ambiguous single piece ("make something for Instagram") | `piece` brief: one or two questions, no more. |
 | Tweak to an existing piece | Never. Make the change. |
 
-`npx opentcy brief questions [brand|campaign|piece]` lists the questions, which ones are required (●) and where each one can be deduced from.
+`npx opency brief questions [brand|campaign|piece]` lists the questions, which ones are required (●) and where each one can be deduced from.
 
 ## How to ask
 
 1. **Deduce first.** Before the first question, read the request, `brand.json`, `brand-kit.md`, `decisions.md` and, if it exists, `import/report.json`. What is already answered is not asked: confirm it in one line ("I'm assuming we're talking to small-business owners, as usual").
 2. **In short rounds.** 2 to 4 questions per turn. Never the whole form at once.
-3. **Use whatever question tool you have.** With the opentcy MCP, `brief_interview` shows the user a form if the client supports it. In Claude Code, `AskUserQuestion`. If there is none, ask in the chat with concrete options to choose from.
+3. **Use whatever question tool you have.** With the opency MCP, `brief_interview` shows the user a form if the client supports it. In Claude Code, `AskUserQuestion`. If there is none, ask in the chat with concrete options to choose from.
 4. **In the user's words.** "What do you want someone to feel when they see it?", not "What is the desired communication tone?".
 5. **Offer options, accept something else.** The options are there to get things moving, not to box the user in.
 6. **If the user doesn't know, propose.** "I don't know how many pieces" is answered with a concrete plan they can say yes or no to.
@@ -51,11 +51,11 @@ Each piece in the plan proves the thesis from a different angle. If an angle doe
 ## Saving the campaign
 
 ```bash
-npx opentcy campaign new <slug> --name "Name" --set message="…" --set objective="…"
-npx opentcy campaign brief <slug> --set cta="…"          # fill in or correct
-npx opentcy campaign plan <slug> --file plan.json        # the approved plan
-npx opentcy campaign status <slug>                       # what is missing and how it is going
-npx opentcy new <piece> --campaign <slug> --layouts …    # each piece gets linked
+npx opency campaign new <slug> --name "Name" --set message="…" --set objective="…"
+npx opency campaign brief <slug> --set cta="…"          # fill in or correct
+npx opency campaign plan <slug> --file plan.json        # the approved plan
+npx opency campaign status <slug>                       # what is missing and how it is going
+npx opency new <piece> --campaign <slug> --layouts …    # each piece gets linked
 ```
 
 The brief is stored in `brands/<brand>/campaigns/<slug>/brief.json` and, in readable form, in `brief.md`.
@@ -65,10 +65,10 @@ The brief is stored in `brands/<brand>/campaigns/<slug>/brief.json` and, in read
 - Open with the piece that explains the why; close with the one that asks for the action.
 - No more than one selling piece in every three.
 - Each channel gets a piece designed for that channel or a recomposed adaptation, never the same file stretched.
-- Cross-check the dates against `calendar.md` and `npx opentcy feed`.
+- Cross-check the dates against `calendar.md` and `npx opency feed`.
 
 ## During the campaign
 
-- Before each piece: `npx opentcy campaign status <slug>`.
+- Before each piece: `npx opency campaign status <slug>`.
 - All the pieces share a material (texture, photo treatment) and a distinctive gesture that makes them recognizable as a series.
 - If a brief answer changes midway, update it with `campaign brief` and tell the user which finished pieces are affected.

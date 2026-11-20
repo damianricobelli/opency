@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Render + quality control for a piece.
 //
-// Usage: npx opentcy render pieces/<id> [--scale 2] [--only 3] [--pdf] [--strict]
+// Usage: npx opency render pieces/<id> [--scale 2] [--only 3] [--pdf] [--strict]
 //
 // Writes to pieces/<id>/render/:
 //   slide-NN.png        sRGB PNG at the format size (× scale)
@@ -26,7 +26,7 @@ import { lintCopy } from "./lib/copy-lint.mjs";
 const args = parseArgs(process.argv.slice(2));
 let pieceDir;
 try { pieceDir = await resolvePiece(args._[0], args); }
-catch (e) { console.error(`✗ ${e.message}\nUsage: npx opentcy render <piece id | path> [--brand slug] [--scale 2] [--only N] [--pdf] [--strict]`); process.exit(1); }
+catch (e) { console.error(`✗ ${e.message}\nUsage: npx opency render <piece id | path> [--brand slug] [--scale 2] [--only N] [--pdf] [--strict]`); process.exit(1); }
 const scale = Number(args.scale ?? 1);
 if (![1, 2, 3, 4].includes(scale)) { console.error("--scale must be 1, 2, 3 or 4"); process.exit(1); }
 
@@ -177,7 +177,7 @@ function inspect({ spec, assets }) {
   for (const img of document.querySelectorAll("img")) {
     const q = img.getBoundingClientRect();
     const src = img.getAttribute("src") || "";
-    if (/^https?:/i.test(src)) add("external_image", img, "external image: download it into assets/ and register it (npx opentcy assets add)", "error");
+    if (/^https?:/i.test(src)) add("external_image", img, "external image: download it into assets/ and register it (npx opency assets add)", "error");
     if (!img.complete || !img.naturalWidth) { add("missing_asset", img, `failed to load ${src}`, "error"); continue; }
     const fit = getComputedStyle(img).objectFit;
     const nw = img.naturalWidth, nh = img.naturalHeight;

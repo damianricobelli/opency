@@ -12,7 +12,7 @@
 import { lookup } from "node:dns/promises";
 import net from "node:net";
 
-const UA = "opentcy (+https://github.com/damianricobelli/opentcy)";
+const UA = "opency (+https://github.com/damianricobelli/opency)";
 const MAX_BYTES = 25 * 1024 * 1024;
 
 // ---------- Safe download ----------

@@ -1,5 +1,5 @@
 // Exercises the MCP server with a real client against a temporary workspace.
-// Tests that hit the network (Openverse) only run with OPENTCY_TEST_NETWORK=1.
+// Tests that hit the network (Openverse) only run with OPENCY_TEST_NETWORK=1.
 import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -12,7 +12,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { ElicitRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 
 const PKG = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const NET = process.env.OPENTCY_TEST_NETWORK === "1";
+const NET = process.env.OPENCY_TEST_NETWORK === "1";
 let ws, client, forms = [];
 
 const call = async (name, args = {}) => {
@@ -21,17 +21,17 @@ const call = async (name, args = {}) => {
 };
 
 before(async () => {
-  ws = await mkdtemp(path.join(os.tmpdir(), "opentcy-test-"));
-  const init = spawnSync(process.execPath, [path.join(PKG, "bin/opentcy.mjs"), "init", ws], { encoding: "utf8" });
+  ws = await mkdtemp(path.join(os.tmpdir(), "opency-test-"));
+  const init = spawnSync(process.execPath, [path.join(PKG, "bin/opency.mjs"), "init", ws], { encoding: "utf8" });
   assert.equal(init.status, 0, init.stderr);
-  client = new Client({ name: "opentcy-test", version: "0" }, { capabilities: { elicitation: {} } });
+  client = new Client({ name: "opency-test", version: "0" }, { capabilities: { elicitation: {} } });
   // The "user": answers the brief form.
   client.setRequestHandler(ElicitRequestSchema, async (req) => {
     forms.push(req.params);
     const answers = { message: "Cold coffee can be specialty coffee too", objective: "Sales of something specific", audience: "downtown office workers", channels: "Instagram feed", dates: "December", cta: "Order in the app", visuals: "Stock photos" };
     return { action: "accept", content: Object.fromEntries(Object.keys(req.params.requestedSchema.properties).filter((k) => answers[k]).map((k) => [k, answers[k]])) };
   });
-  await client.connect(new StdioClientTransport({ command: process.execPath, args: [path.join(PKG, "mcp/server.mjs")], cwd: ws, env: { ...process.env, OPENTCY_HOME: ws } }));
+  await client.connect(new StdioClientTransport({ command: process.execPath, args: [path.join(PKG, "mcp/server.mjs")], cwd: ws, env: { ...process.env, OPENCY_HOME: ws } }));
 });
 after(async () => { await client?.close(); await rm(ws, { recursive: true, force: true }); });
 
@@ -40,7 +40,7 @@ test("exposes tools, resources and prompts", async () => {
   const names = tools.map((t) => t.name);
   for (const n of ["workspace_status", "skill_guide", "brief_interview", "campaign_create", "stock_search", "stock_import", "asset_analyze", "piece_create", "piece_write", "piece_render", "feed_check"]) assert.ok(names.includes(n), `missing ${n}`);
   assert.ok(tools.every((t) => t.description && t.inputSchema), "every tool has a description and a schema");
-  assert.ok((await client.listResources()).resources.some((r) => r.uri === "opentcy://guide/core"));
+  assert.ok((await client.listResources()).resources.some((r) => r.uri === "opency://guide/core"));
   assert.deepEqual((await client.listPrompts()).prompts.map((p) => p.name).sort(), ["load-brand", "new-campaign", "weekly-plan"]);
 });
 
@@ -105,7 +105,7 @@ test("stock: no bundled keys, Openverse always on, Unsplash via the user's own k
   const before = JSON.parse((await call("stock_status")).text);
   assert.deepEqual(before.map((p) => p.id).sort(), ["openverse", "unsplash"]);
   assert.equal(before.find((p) => p.id === "openverse").connected, true);
-  const run = (argv, env = {}) => spawnSync(process.execPath, [path.join(PKG, "bin/opentcy.mjs"), "stock", ...argv], { cwd: ws, encoding: "utf8", env: { ...process.env, UNSPLASH_ACCESS_KEY: "", OPENTCY_HOME: ws, ...env } });
+  const run = (argv, env = {}) => spawnSync(process.execPath, [path.join(PKG, "bin/opency.mjs"), "stock", ...argv], { cwd: ws, encoding: "utf8", env: { ...process.env, UNSPLASH_ACCESS_KEY: "", OPENCY_HOME: ws, ...env } });
   assert.match(run(["connect", "unsplash"]).stderr, /own terminal|--key/, "without a TTY it never reads a key from the agent");
   assert.notEqual(run(["connect", "unsplash", "--key", "short"]).status, 0);
   const { writeFile } = await import("node:fs/promises");
@@ -122,7 +122,7 @@ test("asset_add rejects internal addresses", async () => {
   assert.match(r.text, /[Pp]rivate or internal/);
 });
 
-test("live stock: search, import and analyze (Openverse)", { skip: !NET && "set OPENTCY_TEST_NETWORK=1" }, async () => {
+test("live stock: search, import and analyze (Openverse)", { skip: !NET && "set OPENCY_TEST_NETWORK=1" }, async () => {
   const s = await call("stock_search", { query: "cold brew coffee glass", orientation: "portrait", n: 4, brand: "cafe" });
   assert.ok(!s.isError, s.text);
   const data = JSON.parse(s.content[0].text);

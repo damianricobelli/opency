@@ -1,6 +1,6 @@
-# opentcy · web
+# opency · web
 
-The opentcy landing page. TanStack Start, shadcn/ui (Base UI, `base-maia` style), Tailwind v4, Paraglide and a React Three Fiber scene in the hero.
+The opency landing page. TanStack Start, shadcn/ui (Base UI, `base-maia` style), Tailwind v4, Paraglide and a React Three Fiber scene in the hero.
 
 English is the base language and lives at `/`; Spanish is a translation under `/es`.
 

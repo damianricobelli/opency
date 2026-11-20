@@ -4,12 +4,12 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-// PKG = where opentcy is installed (scripts, stock templates, skill).
+// PKG = where opency is installed (scripts, stock templates, skill).
 // ROOT = the user's workspace: the folder that holds brands/ and templates/.
-//   Resolved from OPENTCY_HOME, or by walking up from the current directory until brands/ is found.
+//   Resolved from OPENCY_HOME, or by walking up from the current directory until brands/ is found.
 export const PKG = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 function findWorkspace() {
-  if (process.env.OPENTCY_HOME) return path.resolve(process.env.OPENTCY_HOME);
+  if (process.env.OPENCY_HOME) return path.resolve(process.env.OPENCY_HOME);
   let dir = process.cwd();
   for (;;) {
     if (existsSync(path.join(dir, "brands"))) return dir;
@@ -77,7 +77,7 @@ export async function resolveBrand(args = {}) {
   let slug = typeof args.brand === "string" ? args.brand : process.env.BRAND;
   if (!slug && existsSync(path.join(BRANDS, ".active"))) slug = readFileSync(path.join(BRANDS, ".active"), "utf8").trim();
   if (!slug) { const all = await listBrands(); if (all.length === 1) slug = all[0]; }
-  if (!slug) throw new Error("No brand selected. Use --brand <slug> or `npx opentcy brand use <slug>`. Brands: " + ((await listBrands()).join(", ") || "(none: npx opentcy brand new <slug>)"));
+  if (!slug) throw new Error("No brand selected. Use --brand <slug> or `npx opency brand use <slug>`. Brands: " + ((await listBrands()).join(", ") || "(none: npx opency brand new <slug>)"));
   if (!existsSync(path.join(BRANDS, slug))) throw new Error(`brands/${slug} does not exist. Brands: ${(await listBrands({ includeDemo: true })).join(", ")}`);
   return slug;
 }
@@ -129,11 +129,11 @@ export async function saveAssets(slug, assets) {
 export async function launchBrowser() {
   let chromium;
   try { ({ chromium } = await import("playwright")); }
-  catch { throw new Error("Playwright is missing. Run: npx opentcy setup"); }
+  catch { throw new Error("Playwright is missing. Run: npx opency setup"); }
   if (process.env.CHROME_PATH) return chromium.launch({ executablePath: process.env.CHROME_PATH });
   try { return await chromium.launch(); }
   catch {
     try { return await chromium.launch({ channel: "chrome" }); }
-    catch { throw new Error("No browser found: run `npx opentcy setup`, install Google Chrome or set CHROME_PATH."); }
+    catch { throw new Error("No browser found: run `npx opency setup`, install Google Chrome or set CHROME_PATH."); }
   }
 }

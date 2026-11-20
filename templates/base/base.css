@@ -167,7 +167,7 @@ img { display: block; max-width: none; }
 [data-bleed] { pointer-events: none; }
 .tbd { background: #FFE600; color: #000; padding: 0 .15em; }  /* fact to confirm: visible on purpose */
 
-/* ---------- Motion (for npx opentcy motion; the still image shows the final state) ----------
+/* ---------- Motion (for npx opency motion; the still image shows the final state) ----------
    <main class="canvas" data-motion> animates a staggered entrance of the content and a slow push-in on the photo. */
 @keyframes m-rise { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: none; } }
 @keyframes m-push { from { transform: scale(1.1); } to { transform: scale(1); } }

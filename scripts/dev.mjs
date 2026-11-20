@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Local preview with text editing.
 //
-//   npx opentcy dev <piece> [--port 4321] [--brand slug]
+//   npx opency dev <piece> [--port 4321] [--brand slug]
 //
 // Opens http://localhost:4321 with every slide of the piece, scaled down. It reloads itself whenever a file
 // changes (including the ones the agent edits). Double-click a text to edit it; Enter or clicking outside saves,
@@ -16,7 +16,7 @@ import path from "node:path";
 import { ROOT, FORMATS, parseArgs, readJSON, writeJSON, resolvePiece, today } from "./lib/project.mjs";
 
 const args = parseArgs(process.argv.slice(2));
-let pieceDir; try { pieceDir = await resolvePiece(args._[0], args); } catch (e) { console.error(`✗ ${e.message}\nUsage: npx opentcy dev <piece> [--port 4321]`); process.exit(1); }
+let pieceDir; try { pieceDir = await resolvePiece(args._[0], args); } catch (e) { console.error(`✗ ${e.message}\nUsage: npx opency dev <piece> [--port 4321]`); process.exit(1); }
 const port = Number(args.port ?? 4321);
 const rel = path.relative(ROOT, pieceDir).split(path.sep).join("/");
 const MIME = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript", ".mjs": "text/javascript", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".woff2": "font/woff2", ".woff": "font/woff", ".mp4": "video/mp4", ".pdf": "application/pdf", ".txt": "text/plain; charset=utf-8", ".md": "text/plain; charset=utf-8" };

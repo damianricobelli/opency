@@ -6,7 +6,7 @@ import { currentSiteOrigin } from "@/lib/site-origin";
 /** The product in plain Markdown, for agents that read a site before using it. */
 function llmsText(): string {
   const origin = currentSiteOrigin();
-  return `# opentcy
+  return `# opency
 
 > Open source (MIT) skill and MCP server that turn an agent (Claude Code, Claude Desktop, Cursor, Codex or any MCP client) into a content team: art director, designer and copywriter. It runs locally; brands and pieces are files on the user's machine (HTML/CSS per slide, rendered with Chrome).
 

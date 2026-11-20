@@ -1,5 +1,5 @@
 {
-  "name": "opentcy",
+  "name": "opency",
   "version": "0.1.0",
   "description": "Open-source skill and MCP server that turns your agent into an agency content team: interactive briefs, brand kits, campaigns, stock photos and pixel-level quality checks.",
   "type": "module",
@@ -7,9 +7,9 @@
   "author": "Damián Ricobelli",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/damianricobelli/opentcy.git"
+    "url": "git+https://github.com/damianricobelli/opency.git"
   },
-  "homepage": "https://github.com/damianricobelli/opentcy#readme",
+  "homepage": "https://github.com/damianricobelli/opency#readme",
   "keywords": [
     "mcp",
     "agent-skill",
@@ -23,7 +23,7 @@
     "openverse"
   ],
   "bin": {
-    "opentcy": "bin/opentcy.mjs"
+    "opency": "bin/opency.mjs"
   },
   "files": [
     "bin",
@@ -43,7 +43,7 @@
   "scripts": {
     "test": "node --test scripts/test/*.test.mjs",
     "mcp": "node mcp/server.mjs",
-    "layouts": "node bin/opentcy.mjs layouts"
+    "layouts": "node bin/opency.mjs layouts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.20.0",

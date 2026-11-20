@@ -22,7 +22,7 @@ export function Wordmark() {
       >
         <span className="absolute right-[3px] bottom-[3px] size-1.5 rounded-full bg-brand" />
       </span>
-      opentcy
+      opency
     </span>
   );
 }

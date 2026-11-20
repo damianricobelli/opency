@@ -1,5 +1,5 @@
 {
   "mcpServers": {
-    "opentcy": { "command": "node", "args": ["mcp/server.mjs"] }
+    "opency": { "command": "node", "args": ["mcp/server.mjs"] }
   }
 }

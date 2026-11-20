@@ -1,5 +1,5 @@
 // The brief: the questions a good account manager asks before anyone opens a file.
-// Single source for the CLI (`opentcy brief`), the MCP server (elicitation) and references/brief.md.
+// Single source for the CLI (`opency brief`), the MCP server (elicitation) and references/brief.md.
 // The questions are written in English; the agent asks them in the user's language.
 //
 // Each question has:

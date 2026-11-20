@@ -1,11 +1,11 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset=".github/assets/hero-dark.webp">
-    <img src=".github/assets/hero-light.webp" alt="opentcy: your agency's content team, inside your agent" width="100%">
+    <img src=".github/assets/hero-light.webp" alt="opency: your agency's content team, inside your agent" width="100%">
   </picture>
 </p>
 
-<h1 align="center">opentcy</h1>
+<h1 align="center">opency</h1>
 
 <p align="center">
   <strong>Your agency's content team, inside your agent.</strong><br>
@@ -36,11 +36,11 @@ It asks what you want to say before it designs. It builds the campaign with your
 Everything runs on your machine and everything is a file you own: HTML/CSS per slide, PNG/JPG/PDF/MP4 ready to upload. No account, no download limits, no SaaS.
 
 <p align="center">
-  <img src=".github/assets/example-carousel.webp" alt="A five-slide carousel produced by opentcy: cover, statement, steps, comparison and closer" width="100%">
-  <br><sub>A carousel straight out of <code>npx opentcy render</code>: five slides, one material, zero errors.</sub>
+  <img src=".github/assets/example-carousel.webp" alt="A five-slide carousel produced by opency: cover, statement, steps, comparison and closer" width="100%">
+  <br><sub>A carousel straight out of <code>npx opency render</code>: five slides, one material, zero errors.</sub>
 </p>
 
-## Why opentcy
+## Why opency
 
 | | |
 |---|---|
@@ -56,23 +56,23 @@ Requires Node 18.17+ and Chrome (or the bundled Chromium). For video, ffmpeg.
 **1. The skill** — the instructions the agent follows:
 
 ```bash
-npx skills add damianricobelli/opentcy
+npx skills add damianricobelli/opency
 ```
 
 **2. The workspace** — where your brands and pieces live:
 
 ```bash
-npx opentcy init my-agency
+npx opency init my-agency
 ```
 
 ```bash
-npx opentcy setup
+npx opency setup
 ```
 
 **3. The MCP server** — optional in Claude Code and Cursor, which can already run the commands; required in clients without a terminal, such as Claude Desktop:
 
 ```bash
-claude mcp add opentcy -- npx -y opentcy mcp
+claude mcp add opency -- npx -y opency mcp
 ```
 
 <details>
@@ -81,10 +81,10 @@ claude mcp add opentcy -- npx -y opentcy mcp
 ```json
 {
   "mcpServers": {
-    "opentcy": {
+    "opency": {
       "command": "npx",
-      "args": ["-y", "opentcy", "mcp"],
-      "env": { "OPENTCY_HOME": "/path/to/my-agency" }
+      "args": ["-y", "opency", "mcp"],
+      "env": { "OPENCY_HOME": "/path/to/my-agency" }
     }
   }
 }
@@ -96,8 +96,8 @@ claude mcp add opentcy -- npx -y opentcy mcp
 <summary>As a Claude Code plugin (skill + MCP server + reviewer subagent in one step)</summary>
 
 ```
-/plugin marketplace add damianricobelli/opentcy
-/plugin install opentcy@opentcy
+/plugin marketplace add damianricobelli/opency
+/plugin install opency@opency
 ```
 
 </details>
@@ -143,7 +143,7 @@ The one question it never skips: **what do you want to get across?** The answer 
 
 ### 2. It learns your brand
 
-`npx opentcy brand import mysite.com` reads colors by surface, ink colors, typefaces, logo and copy from a website. The agent proposes 7 color roles, 3 font families, a voice made of hard rules and a list of verified facts, and writes them only when you say yes. Several brands can live in one workspace.
+`npx opency brand import mysite.com` reads colors by surface, ink colors, typefaces, logo and copy from a website. The agent proposes 7 color roles, 3 font families, a voice made of hard rules and a list of verified facts, and writes them only when you say yes. Several brands can live in one workspace.
 
 ### 3. It plans, then builds
 
@@ -164,10 +164,10 @@ Your own photos come first. Then stock: one search queries the available provide
 | [Openverse](https://openverse.org) | None needed | Only CC0, public domain and CC BY (attribution is recorded) |
 | [Unsplash](https://unsplash.com/developers) | Your own Access Key (free) | Unsplash License |
 
-Openverse works out of the box. Unsplash is optional and uses **your own** account — opentcy ships no keys:
+Openverse works out of the box. Unsplash is optional and uses **your own** account — opency ships no keys:
 
 ```bash
-npx opentcy stock connect unsplash
+npx opency stock connect unsplash
 ```
 
 It walks you through creating a free app in your Unsplash account, asks for the Access Key with hidden input, checks it and saves it to the workspace's git-ignored `.env`. Requests count against your own quota (50 per hour on a demo app).
@@ -185,7 +185,7 @@ Every piece is rendered with Chrome and checked pixel by pixel. Nothing is deliv
 
 ### 6. You decide
 
-opentcy never publishes on its own. It leaves everything ready in `render/`, and you approve, adjust or veto.
+opency never publishes on its own. It leaves everything ready in `render/`, and you approve, adjust or veto.
 
 ## What the render checks
 
@@ -263,7 +263,7 @@ my-agency/
 | Pieces | `layouts_list` · `piece_create` · `piece_list` · `piece_read` · `piece_write` · `piece_render` · `piece_view` · `piece_version` · `piece_motion` |
 | Feed and results | `feed_check` · `results_add` · `results_summary` |
 
-Also: the skill's instructions as resources (`opentcy://guide/…`) and three prompts (`new-campaign`, `load-brand`, `weekly-plan`).
+Also: the skill's instructions as resources (`opency://guide/…`) and three prompts (`new-campaign`, `load-brand`, `weekly-plan`).
 
 - **Tools return images, not just text.** The agent sees the contact sheet and the stock previews before it decides.
 - **One implementation.** Every tool runs the same script as the CLI, so MCP and terminal never drift apart.
@@ -273,26 +273,26 @@ Also: the skill's instructions as resources (`opentcy://guide/…`) and three pr
 
 | Command | What it does |
 |---|---|
-| `npx opentcy init [folder]` | Creates a workspace |
-| `npx opentcy setup` · `doctor` | Installs the render browser · checks the environment |
-| `npx opentcy mcp` | MCP server (stdio) |
-| `npx opentcy brief questions [brand\|campaign\|piece]` | The questions of each brief |
-| `npx opentcy campaign new / brief / plan / status / list` | Campaigns |
-| `npx opentcy brand list / use / new / import <url> / check` | Brands |
-| `npx opentcy new <slug> --layouts cover-type,steps,closer` | New piece (`--campaign`, `--from`, `--format`) |
-| `npx opentcy render <piece>` | PNG, JPG, contact sheet, captions and report (`--pdf`, `--scale 2`) |
-| `npx opentcy dev <piece>` | Live preview with editable text |
-| `npx opentcy version <piece> save / list / diff / restore` | Versions, without relying on git |
-| `npx opentcy motion <piece> --slides all --audio track.mp3` | MP4 video |
-| `npx opentcy assets add / stock / stock-import / analyze / veto / list` | Images |
-| `npx opentcy stock status / connect unsplash / disconnect unsplash` | Stock providers |
-| `npx opentcy feed` · `results` | Feed rhythm · what performed best |
+| `npx opency init [folder]` | Creates a workspace |
+| `npx opency setup` · `doctor` | Installs the render browser · checks the environment |
+| `npx opency mcp` | MCP server (stdio) |
+| `npx opency brief questions [brand\|campaign\|piece]` | The questions of each brief |
+| `npx opency campaign new / brief / plan / status / list` | Campaigns |
+| `npx opency brand list / use / new / import <url> / check` | Brands |
+| `npx opency new <slug> --layouts cover-type,steps,closer` | New piece (`--campaign`, `--from`, `--format`) |
+| `npx opency render <piece>` | PNG, JPG, contact sheet, captions and report (`--pdf`, `--scale 2`) |
+| `npx opency dev <piece>` | Live preview with editable text |
+| `npx opency version <piece> save / list / diff / restore` | Versions, without relying on git |
+| `npx opency motion <piece> --slides all --audio track.mp3` | MP4 video |
+| `npx opency assets add / stock / stock-import / analyze / veto / list` | Images |
+| `npx opency stock status / connect unsplash / disconnect unsplash` | Stock providers |
+| `npx opency feed` · `results` | Feed rhythm · what performed best |
 
-All of them accept `--brand <slug>`. The workspace is the folder that contains `brands/`, or the one `OPENTCY_HOME` points to.
+All of them accept `--brand <slug>`. The workspace is the folder that contains `brands/`, or the one `OPENCY_HOME` points to.
 
 ## Known limits
 
-- **Publishing:** opentcy does not publish to social networks. It leaves everything ready in `render/`, or uses the publishing MCP you connect (Buffer, Metricool, Postiz…), with your confirmation on every send.
+- **Publishing:** opency does not publish to social networks. It leaves everything ready in `render/`, or uses the publishing MCP you connect (Buffer, Metricool, Postiz…), with your confirmation on every send.
 - **Image generation:** no model is included. It works with your photos, stock providers and typography.
 - **Unsplash:** implemented against its API, but the automated tests only cover Openverse (no key required).
 - **Photos with people:** the face-crop check depends on the agent marking the regions correctly.
@@ -302,18 +302,18 @@ All of them accept `--brand <slug>`. The workspace is the folder that contains `
 ## Development
 
 ```bash
-git clone https://github.com/damianricobelli/opentcy
-cd opentcy
-npm install
-npm test                          # engine + MCP server
-OPENTCY_TEST_NETWORK=1 npm test   # adds the live stock test
+git clone https://github.com/damianricobelli/opency
+cd opency
+pnpm install
+pnpm test                          # engine + MCP server
+OPENCY_TEST_NETWORK=1 pnpm test   # adds the live stock test
 ```
 
 | Path | What it is |
 |---|---|
 | `scripts/` | The engine: each file is a command |
 | `mcp/server.mjs` | The MCP server |
-| `skills/opentcy/` | `SKILL.md` and its references: what the agent reads |
+| `skills/opency/` | `SKILL.md` and its references: what the agent reads |
 | `templates/` | `base.css` and the layouts |
 | `web/` | The landing page (TanStack Start) |
 

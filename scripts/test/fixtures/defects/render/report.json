@@ -2,7 +2,7 @@
   "piece": "defects",
   "format": "4:5",
   "scale": 1,
-  "renderedAt": "2026-11-20T17:37:08.006Z",
+  "renderedAt": "2026-11-20T17:49:55.912Z",
   "slides": [
     {
       "n": 1,
@@ -87,7 +87,7 @@
         {
           "code": "external_image",
           "where": "img",
-          "msg": "external image: download it into assets/ and register it (npx opentcy assets add)",
+          "msg": "external image: download it into assets/ and register it (npx opency assets add)",
           "severity": "error"
         },
         {

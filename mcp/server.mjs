@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-// opentcy MCP server (stdio).
+// opency MCP server (stdio).
 //
-//   npx opentcy mcp          ·   claude mcp add opentcy -- npx -y opentcy mcp
+//   npx opency mcp          ·   claude mcp add opency -- npx -y opency mcp
 //
 // Exposes the engine (brands, brief, campaigns, stock, pieces, render, feed) as tools, the skill's
 // instructions as resources and three starter prompts. Every tool runs the same script as the CLI,
 // so MCP and terminal never drift apart.
 //
-// Nothing here publishes to social networks: opentcy leaves files ready and the user decides.
+// Nothing here publishes to social networks: opency leaves files ready and the user decides.
 
 import { spawn } from "node:child_process";
 import { readFile, writeFile, readdir, mkdir, cp, mkdtemp, rm } from "node:fs/promises";
@@ -23,7 +23,7 @@ import { BRIEFS, briefKinds, nextQuestions, missingAnswers, elicitationSchema } 
 import { fetchBuffer, availableProviders, missingKeys } from "../scripts/lib/stock.mjs";
 
 const VERSION = JSON.parse(await readFile(path.join(PKG, "package.json"), "utf8")).version;
-const REFS = path.join(PKG, "skills/opentcy/references");
+const REFS = path.join(PKG, "skills/opency/references");
 
 // ---------- helpers ----------
 const Slug = z.string().regex(/^[a-z0-9_][a-z0-9_-]{0,63}$/, "lowercase letters, numbers and hyphens");
@@ -35,7 +35,7 @@ const clean = (s) => String(s).replace(/^-+/, "").trim(); // free text is never 
 /** Runs an engine script against the current workspace. Never goes through a shell. */
 function engine(script, argv, { timeout = 180000 } = {}) {
   return new Promise((resolve) => {
-    const child = spawn(process.execPath, [path.join(PKG, "scripts", script), ...argv.map(String)], { cwd: ROOT, env: { ...process.env, OPENTCY_HOME: ROOT }, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(process.execPath, [path.join(PKG, "scripts", script), ...argv.map(String)], { cwd: ROOT, env: { ...process.env, OPENCY_HOME: ROOT }, stdio: ["ignore", "pipe", "pipe"] });
     let out = "", err = "";
     const timer = setTimeout(() => child.kill("SIGKILL"), timeout);
     child.stdout.on("data", (d) => (out += d));
@@ -68,12 +68,12 @@ const pieceDir = async (brand, id) => {
   return dir;
 };
 const guard = (fn) => async (a, extra) => { try { return await fn(a ?? {}, extra); } catch (e) { return bad(e.message); } };
-const NEEDS_WS = "This directory is not an opentcy workspace yet. Call workspace_init (it creates brands/, templates/ and the instructions).";
+const NEEDS_WS = "This directory is not an opency workspace yet. Call workspace_init (it creates brands/, templates/ and the instructions).";
 
-const server = new McpServer({ name: "opentcy", version: VERSION }, {
-  instructions: `opentcy turns the agent into the content team of one or more brands: account manager, art director, designer and copywriter.
+const server = new McpServer({ name: "opency", version: VERSION }, {
+  instructions: `opency turns the agent into the content team of one or more brands: account manager, art director, designer and copywriter.
 Order of work: 1) workspace_status. 2) skill_guide (read "core" in full before the first piece). 3) If the brand is not loaded: brief_interview kind=brand and the "onboarding" guide. 4) Before designing a campaign or an ambiguous piece: brief_interview. Nothing gets designed without knowing what it should get across. 5) campaign_plan → piece_create → piece_write → piece_render (look at the contact sheet it returns) → cold review → delivery.
-Rules: never make up figures, prices, clients or testimonials; only registered (stock_import / asset_add) and analyzed (asset_analyze) images; get an explicit yes before brand_write on a loaded brand, before deleting, and before sharing anything outside the project. Answer and ask in the user's language; write copy in the brand's language. opentcy does not publish to social networks: it delivers files.`,
+Rules: never make up figures, prices, clients or testimonials; only registered (stock_import / asset_add) and analyzed (asset_analyze) images; get an explicit yes before brand_write on a loaded brand, before deleting, and before sharing anything outside the project. Answer and ask in the user's language; write copy in the brand's language. opency does not publish to social networks: it delivers files.`,
 });
 
 const tool = (name, title, description, inputSchema, handler, annotations = {}) =>
@@ -102,7 +102,7 @@ tool("doctor", "Check the environment", "Checks render browser, ffmpeg, stock ke
 
 const TOPICS = { core: null, brief: "brief.md", onboarding: "onboarding.md", planning: "planning.md", copy: "copy.md", "art-direction": "art-direction.md", assets: "assets.md", quality: "quality.md", review: "review.md", operations: "operations.md", publishing: "publishing.md", learning: "learning.md", layouts: null };
 tool("skill_guide", "Skill instructions", 'Returns the working instructions. "core" is the core (read all of it at the start); the rest is read when the topic comes up: brief, onboarding, planning, copy, art-direction, assets, quality, review, operations, publishing, learning, layouts.', { topic: z.enum(Object.keys(TOPICS)).default("core") }, async ({ topic }) => {
-  if (topic === "core") return ok((await readFile(path.join(PKG, "skills/opentcy/SKILL.md"), "utf8")).replace(/^---[\s\S]*?---\s*/, ""));
+  if (topic === "core") return ok((await readFile(path.join(PKG, "skills/opency/SKILL.md"), "utf8")).replace(/^---[\s\S]*?---\s*/, ""));
   if (topic === "layouts") return ok(await readFile(path.join(PKG, "templates/layouts/README.md"), "utf8"));
   return ok(await readFile(path.join(REFS, TOPICS[topic]), "utf8"));
 }, RO);
@@ -176,7 +176,7 @@ Pass in "known" everything you already know from the request, the brand or the w
   }
   let saved = null;
   if (kind === "campaign" && campaign && Object.keys(answers).length) {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), "opentcy-"));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), "opency-"));
     try { await writeFile(path.join(tmp, "a.json"), JSON.stringify(answers)); const r = await engine("campaign.mjs", ["brief", campaign, "--answers", path.join(tmp, "a.json"), "--json", ...withBrand(brand)]); if (!r.ok) return result(r); saved = campaign; }
     finally { await rm(tmp, { recursive: true, force: true }); }
   }
@@ -192,19 +192,19 @@ Pass in "known" everything you already know from the request, the brand or the w
 
 // ============================================================ Campaigns
 tool("campaign_create", "Create a campaign", "Creates the campaign and saves what is already known of the brief. A campaign is one message carried across several pieces.", { slug: Slug, name: z.string().min(1).max(80), answers: z.record(z.string(), z.union([z.string(), z.array(z.string())])).optional(), brand: Brand }, async ({ slug, name, answers, brand }) => {
-  const tmp = await mkdtemp(path.join(os.tmpdir(), "opentcy-"));
+  const tmp = await mkdtemp(path.join(os.tmpdir(), "opency-"));
   try { await writeFile(path.join(tmp, "a.json"), JSON.stringify(answers ?? {})); return result(await engine("campaign.mjs", ["new", slug, "--name", clean(name), "--answers", path.join(tmp, "a.json"), "--json", ...withBrand(brand)])); }
   finally { await rm(tmp, { recursive: true, force: true }); }
 });
 
 tool("campaign_brief", "Save brief answers", `Saves or corrects answers of a campaign brief and returns what is missing. Keys: ${BRIEFS.campaign.questions.map((q) => q.id).join(", ")}.`, { campaign: Slug, answers: z.record(z.string(), z.union([z.string(), z.array(z.string())])), brand: Brand }, async ({ campaign, answers, brand }) => {
-  const tmp = await mkdtemp(path.join(os.tmpdir(), "opentcy-"));
+  const tmp = await mkdtemp(path.join(os.tmpdir(), "opency-"));
   try { await writeFile(path.join(tmp, "a.json"), JSON.stringify(answers)); return result(await engine("campaign.mjs", ["brief", campaign, "--answers", path.join(tmp, "a.json"), "--json", ...withBrand(brand)])); }
   finally { await rm(tmp, { recursive: true, force: true }); }
 });
 
 tool("campaign_plan", "Save the piece plan", "Saves the plan the user approved: each piece proves the message from a different angle. Show the plan in text and wait for the yes before saving it.", { campaign: Slug, brand: Brand, pieces: z.array(z.object({ slug: z.string().min(1), angle: z.string().min(1).describe("The angle in one sentence."), intent: z.string().optional().describe("give an opinion, teach, show the product, case / proof, sell, news / event, community"), format: Format.optional(), channel: z.string().optional(), date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), layouts: z.string().optional().describe("Comma-separated layouts.") })).min(1).max(40) }, async ({ campaign, brand, pieces }) => {
-  const tmp = await mkdtemp(path.join(os.tmpdir(), "opentcy-"));
+  const tmp = await mkdtemp(path.join(os.tmpdir(), "opency-"));
   try { await writeFile(path.join(tmp, "p.json"), JSON.stringify(pieces)); return result(await engine("campaign.mjs", ["plan", campaign, "--file", path.join(tmp, "p.json"), "--json", ...withBrand(brand)])); }
   finally { await rm(tmp, { recursive: true, force: true }); }
 });
@@ -225,7 +225,7 @@ tool("stock_search", "Search stock photos", `Searches free photos on Openverse a
   return ok(...parts);
 }, { readOnlyHint: true, openWorldHint: true });
 
-tool("stock_status", "Stock providers", "Which stock providers are available. Openverse always works. Unsplash is optional and uses the user's OWN free Access Key: if it is not connected and would help, tell the user to run `npx opentcy stock connect unsplash` in their terminal. Never ask them to paste the key in the chat.", {}, async () => result(await engine("stock.mjs", ["status", "--json"])), RO);
+tool("stock_status", "Stock providers", "Which stock providers are available. Openverse always works. Unsplash is optional and uses the user's OWN free Access Key: if it is not connected and would help, tell the user to run `npx opency stock connect unsplash` in their terminal. Never ask them to paste the key in the chat.", {}, async () => result(await engine("stock.mjs", ["status", "--json"])), RO);
 
 tool("stock_import", "Import a stock photo", "Downloads the chosen photo at full resolution, normalizes it (sRGB, no metadata), records author and license in assets.json and returns the image so you can analyze it. Then call asset_analyze.", { ref: z.string().regex(/^(unsplash|openverse):[A-Za-z0-9_-]{1,64}$/), description: z.string().min(3).max(200).describe("What the photo shows: the agent uses it to pick the photo later."), id: Slug.optional(), brand: Brand }, async ({ ref, description, id, brand }) => {
   const slug = await activeBrand(brand);
@@ -369,13 +369,13 @@ tool("results_summary", "What worked", "Ranking of published pieces and averages
 
 // ============================================================ Resources and prompts
 for (const [topic, file] of Object.entries(TOPICS)) {
-  const src = topic === "core" ? path.join(PKG, "skills/opentcy/SKILL.md") : topic === "layouts" ? path.join(PKG, "templates/layouts/README.md") : path.join(REFS, file);
-  server.registerResource(`guide-${topic}`, `opentcy://guide/${topic}`, { title: `opentcy · ${topic}`, description: `Skill instructions: ${topic}`, mimeType: "text/markdown" }, async (uri) => ({ contents: [{ uri: uri.href, mimeType: "text/markdown", text: await readFile(src, "utf8") }] }));
+  const src = topic === "core" ? path.join(PKG, "skills/opency/SKILL.md") : topic === "layouts" ? path.join(PKG, "templates/layouts/README.md") : path.join(REFS, file);
+  server.registerResource(`guide-${topic}`, `opency://guide/${topic}`, { title: `opency · ${topic}`, description: `Skill instructions: ${topic}`, mimeType: "text/markdown" }, async (uri) => ({ contents: [{ uri: uri.href, mimeType: "text/markdown", text: await readFile(src, "utf8") }] }));
 }
 
 const prompt = (name, title, description, argsSchema, build) => server.registerPrompt(name, { title, description, argsSchema }, (a) => ({ messages: [{ role: "user", content: { type: "text", text: build(a) } }] }));
-prompt("new-campaign", "New campaign", "Interactive brief, plan and pieces for a campaign.", { topic: z.string().describe("What the campaign is about, in your own words."), brand: z.string().optional() }, ({ topic, brand }) => `I want a campaign${brand ? ` for ${brand}` : ""}: ${topic}\n\nUse opentcy. Start with workspace_status, skill_guide("core") and skill_guide("brief"). Before designing, run the brief with me using brief_interview (pass in "known" what I already said here): I need you to understand what I want to get across. Then propose the piece plan in text and wait for my yes.`);
-prompt("load-brand", "Load a brand", "Onboard a brand from its website.", { website: z.string().describe("URL of the website or profile.") }, ({ website }) => `Load a new brand from ${website} with opentcy. Read skill_guide("onboarding"), create it, import the website with brand_import_site, and propose in text the palette with its roles, the typefaces, the voice and the verified facts. Ask me only what you cannot infer (brief_interview kind="brand"). Do not write the brand until I say yes.`);
-prompt("weekly-plan", "Weekly plan", "3 to 5 ideas for the week, cross-checked with the calendar and the results.", { brand: z.string().optional() }, ({ brand }) => `Propose this week's content plan${brand ? ` for ${brand}` : ""} with opentcy. Read skill_guide("planning"), the brand with brand_get, feed_check and results_summary. 3 to 5 ideas: intent, one-sentence angle, format, suggested date and open questions. Do not design anything until I choose.`);
+prompt("new-campaign", "New campaign", "Interactive brief, plan and pieces for a campaign.", { topic: z.string().describe("What the campaign is about, in your own words."), brand: z.string().optional() }, ({ topic, brand }) => `I want a campaign${brand ? ` for ${brand}` : ""}: ${topic}\n\nUse opency. Start with workspace_status, skill_guide("core") and skill_guide("brief"). Before designing, run the brief with me using brief_interview (pass in "known" what I already said here): I need you to understand what I want to get across. Then propose the piece plan in text and wait for my yes.`);
+prompt("load-brand", "Load a brand", "Onboard a brand from its website.", { website: z.string().describe("URL of the website or profile.") }, ({ website }) => `Load a new brand from ${website} with opency. Read skill_guide("onboarding"), create it, import the website with brand_import_site, and propose in text the palette with its roles, the typefaces, the voice and the verified facts. Ask me only what you cannot infer (brief_interview kind="brand"). Do not write the brand until I say yes.`);
+prompt("weekly-plan", "Weekly plan", "3 to 5 ideas for the week, cross-checked with the calendar and the results.", { brand: z.string().optional() }, ({ brand }) => `Propose this week's content plan${brand ? ` for ${brand}` : ""} with opency. Read skill_guide("planning"), the brand with brand_get, feed_check and results_summary. 3 to 5 ideas: intent, one-sentence angle, format, suggested date and open questions. Do not design anything until I choose.`);
 
 await server.connect(new StdioServerTransport());

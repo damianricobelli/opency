@@ -1,6 +1,6 @@
 {
-  "name": "opentcy",
-  "short_name": "opentcy",
+  "name": "opency",
+  "short_name": "opency",
   "description": "Open source skill and MCP server that turn your agent into a content team.",
   "id": "/",
   "start_url": "/",

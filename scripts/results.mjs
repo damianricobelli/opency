@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Results of published pieces: record them and see what works.
 //
-//   npx opentcy results add <piece> --reach 4200 --saves 96 --shares 31 --likes 240 --comments 12 [--follows 8] [--network instagram] [--url …]
-//   npx opentcy results                                  ranking and averages by intent, mode and cover layout
+//   npx opency results add <piece> --reach 4200 --saves 96 --shares 31 --likes 240 --comments 12 [--follows 8] [--network instagram] [--url …]
+//   npx opency results                                  ranking and averages by intent, mode and cover layout
 //
 // The numbers come from the user (or a connected official tool). The agent does not estimate or make them up.
 // Save rate = saves / reach: the most useful signal for content that teaches.
@@ -43,7 +43,7 @@ for (const d of await readdir(pdir, { withFileTypes: true }).catch(() => [])) {
       intent: piece.direction?.intent || "—", mode: report?.summary?.mode ?? piece.direction?.dominantMode ?? "—", cover: piece.slides?.[0]?.layout ?? "—", slides: piece.slides?.length ?? 0, hook: piece.hook });
   }
 }
-if (!rows.length) { console.log(`${slug}: no results recorded yet. Use: npx opentcy results add <piece> --reach … --saves …`); process.exit(0); }
+if (!rows.length) { console.log(`${slug}: no results recorded yet. Use: npx opency results add <piece> --reach … --saves …`); process.exit(0); }
 const pct = (x) => (x * 100).toFixed(1).padStart(5) + " %";
 rows.sort((a, b) => b.saveRate - a.saveRate);
 console.log(`${slug}: ${rows.length} measured piece(s), by save rate\n`);

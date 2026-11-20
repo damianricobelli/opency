@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // Stock providers: see what is connected and connect your own Unsplash account.
 //
-//   npx opentcy stock status [--json]            which providers are available
-//   npx opentcy stock connect unsplash           asks for YOUR Unsplash Access Key (hidden input), checks it and saves it
-//   npx opentcy stock connect unsplash --key …   same, without the prompt (for scripts)
-//   npx opentcy stock disconnect unsplash        removes the saved key
+//   npx opency stock status [--json]            which providers are available
+//   npx opency stock connect unsplash           asks for YOUR Unsplash Access Key (hidden input), checks it and saves it
+//   npx opency stock connect unsplash --key …   same, without the prompt (for scripts)
+//   npx opency stock disconnect unsplash        removes the saved key
 //
-// opentcy ships no API keys. Openverse needs none. Unsplash is optional: each user creates a free
+// opency ships no API keys. Openverse needs none. Unsplash is optional: each user creates a free
 // app in their own Unsplash account and uses its Access Key, so requests count against their own
 // quota (50/hour on a demo app). The key is stored in the workspace's .env, which is git-ignored,
 // and never leaves your machine except in requests to api.unsplash.com.
@@ -71,7 +71,7 @@ if (cmd === "connect") {
   await setEnv(p.keyName, "");
   console.log(`✓ ${p.label} disconnected (key removed from .env).`);
 } else if (cmd === "status" || !cmd) {
-  const rows = Object.entries(PROVIDERS).map(([id, p]) => ({ id, label: p.label, connected: !!p.key(), needsKey: !!p.keyName, license: p.license, connect: p.keyName && !p.key() ? `npx opentcy stock connect ${id}` : null }));
+  const rows = Object.entries(PROVIDERS).map(([id, p]) => ({ id, label: p.label, connected: !!p.key(), needsKey: !!p.keyName, license: p.license, connect: p.keyName && !p.key() ? `npx opency stock connect ${id}` : null }));
   if (args.json) console.log(JSON.stringify(rows, null, 2));
   else for (const r of rows) console.log(`${r.connected ? "✓" : "·"} ${r.label.padEnd(10)} ${r.connected ? (r.needsKey ? "connected with your key" : "works without a key") : `not connected → ${r.connect}`}`);
 } else {

@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 // Asset library with quality control.
 //
-//   npx opentcy assets add <file|url> --kind photo|logo|texture|stock --desc "…" [--id x] [--credit "…"] [--license "…"]
-//   npx opentcy assets stock "<search query in English>" [--provider auto|unsplash|openverse] [--orientation portrait|landscape|square] [--n 12] [--page 2] [--json]
-//   npx opentcy assets stock-import <unsplash|openverse>:<id> --desc "…"
-//   npx opentcy assets analyze <id> [--focal 0.5,0.35] [--protect "face:0.42,0.18,0.16,0.2"]… [--crop-safe 0,0.1,1,0.8] [--done]
-//   npx opentcy assets veto <id> [--reason "…"]   ·   npx opentcy assets unveto <id>
-//   npx opentcy assets info <id>   ·   npx opentcy assets list [--kind photo]
+//   npx opency assets add <file|url> --kind photo|logo|texture|stock --desc "…" [--id x] [--credit "…"] [--license "…"]
+//   npx opency assets stock "<search query in English>" [--provider auto|unsplash|openverse] [--orientation portrait|landscape|square] [--n 12] [--page 2] [--json]
+//   npx opency assets stock-import <unsplash|openverse>:<id> --desc "…"
+//   npx opency assets analyze <id> [--focal 0.5,0.35] [--protect "face:0.42,0.18,0.16,0.2"]… [--crop-safe 0,0.1,1,0.8] [--done]
+//   npx opency assets veto <id> [--reason "…"]   ·   npx opency assets unveto <id>
+//   npx opency assets info <id>   ·   npx opency assets list [--kind photo]
 //   All commands: --brand <slug> (defaults to the active brand).
 //
 // On import: fixes EXIF orientation, converts to sRGB, strips metadata (including GPS location),
 // keeps the original resolution and computes: size, brightness, dominant colors and the largest format
 // it covers without upscaling (full-bleed 4:5 at 1080 and at 2K).
-// Stock: Openverse works without a key. Unsplash is added when the user connects their own key: npx opentcy stock connect unsplash.
+// Stock: Openverse works without a key. Unsplash is added when the user connects their own key: npx opency stock connect unsplash.
 // "auto" queries every available library in parallel and interleaves the results.
 
 import { mkdir, writeFile, readFile, copyFile, access } from "node:fs/promises";
@@ -107,7 +107,7 @@ async function register({ buf, kind, desc, id, credit, license, source }) {
   console.log(`✓ ${entry.id} → brands/${BRAND}/assets/${entry.file}`);
   if (quality.width) console.log(`  ${quality.width}×${quality.height} · ${quality.tone} · palette ${quality.palette.join(" ")} · 4:5 full-bleed: ${quality.coverage["4:5"]}`);
   for (const w of warnQuality(entry)) console.log(`  ⚠ ${w}`);
-  if (kind === "photo" || kind === "stock") console.log(`  → Look at the image and complete the analysis: npx opentcy assets analyze ${entry.id} --focal x,y --protect "face:x,y,w,h" --done`);
+  if (kind === "photo" || kind === "stock") console.log(`  → Look at the image and complete the analysis: npx opency assets analyze ${entry.id} --focal x,y --protect "face:x,y,w,h" --done`);
   return entry;
 }
 
@@ -132,7 +132,7 @@ try {
     else { await access(path.resolve(target)); buf = await readFile(path.resolve(target)); }
     await register({ buf, kind, desc: args.desc, id: args.id, credit: args.credit, license: args.license, source: /^https?:/.test(target) ? target : undefined });
   } else if (cmd === "stock") {
-    if (!target) throw new Error('Missing search query: npx opentcy assets stock "runner track morning"');
+    if (!target) throw new Error('Missing search query: npx opency assets stock "runner track morning"');
     const { results, providers, errors } = await searchStock(target, { provider: args.provider ?? "auto", orientation: args.orientation, n: Number(args.n ?? 12), page: Number(args.page ?? 1) });
     const res = results.map((r) => ({ ...r, coverage: coverage(r.w, r.h) }));
     if (args.json) { console.log(JSON.stringify({ query: target, providers, errors, missingKeys: missingKeys(), results: res }, null, 2)); }
@@ -142,7 +142,7 @@ try {
       for (const r of res) console.log(`${r.ref.padEnd(46)} ${String(r.w).padStart(5)}×${String(r.h).padEnd(5)} ${r.coverage["4:5"].padEnd(5)} ${r.license} · ${r.by} — ${r.alt ?? ""}\n${"".padEnd(4)}${r.preview}`);
       if (!res.length) console.log("(no results: try another search, in English and more specific)");
       for (const k of missingKeys()) console.log(`  · To add ${k.provider}: set ${k.env} (free at ${k.signup})`);
-      console.log("\nLook at the previews, pick one and import it: npx opentcy assets stock-import <ref> --desc \"…\"");
+      console.log("\nLook at the previews, pick one and import it: npx opency assets stock-import <ref> --desc \"…\"");
     }
   } else if (cmd === "stock-import") {
     await stockImport(target);

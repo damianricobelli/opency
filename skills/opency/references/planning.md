@@ -21,7 +21,7 @@ In every carousel:
 
 ## Feed and weekly plan
 
-`npx opentcy feed` checks, across the dated pieces:
+`npx opency feed` checks, across the dated pieces:
 - **Rhythm:** never 3 pieces in a row with a flat background, nor 3 with a photo, nor 3 in the same category.
 - **Hooks:** no hook is repeated, identical or nearly identical, within 30 days.
 - **Photos:** cover photos are never repeated and none comes back within 21 days.
@@ -34,4 +34,4 @@ In every carousel:
 - Avoid what has already been published.
 - Each idea carries intent, angle in one sentence, format, category, suggested date and the open questions (missing data, photos needed).
 - They are saved in `brands/<brand>/calendar.md` as ideas until the user chooses.
-- If there are results on file (`npx opentcy results`), use them: repeat the best-performing structure with a new topic.
+- If there are results on file (`npx opency results`), use them: repeat the best-performing structure with a new topic.

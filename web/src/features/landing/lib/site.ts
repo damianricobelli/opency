@@ -1,12 +1,12 @@
 export const INSTALL_COMMANDS = {
-  skill: "npx skills add damianricobelli/opentcy",
-  workspace: "npx opentcy init",
-  mcp: "claude mcp add opentcy -- npx -y opentcy mcp",
+  skill: "npx skills add damianricobelli/opency",
+  workspace: "npx opency init",
+  mcp: "claude mcp add opency -- npx -y opency mcp",
   mcpConfig: `{
   "mcpServers": {
-    "opentcy": {
+    "opency": {
       "command": "npx",
-      "args": ["-y", "opentcy", "mcp"]
+      "args": ["-y", "opency", "mcp"]
     }
   }
 }`,

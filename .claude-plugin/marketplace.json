@@ -1,12 +1,12 @@
 {
-  "name": "opentcy",
+  "name": "opency",
   "owner": {
     "name": "Damián Ricobelli",
     "url": "https://github.com/damianricobelli"
   },
   "plugins": [
     {
-      "name": "opentcy",
+      "name": "opency",
       "source": "./",
       "description": "Skill + MCP server: interactive briefs, brand kits, campaigns, stock photos (Openverse, Unsplash) and pixel-level quality checks.",
       "category": "marketing"

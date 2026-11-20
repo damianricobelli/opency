@@ -1,13 +1,13 @@
 {
-  "name": "opentcy",
+  "name": "opency",
   "version": "0.1.0",
   "description": "Turn your agent into an agency content team: interactive briefs, brand kits, campaigns, stock photos and pixel-level quality checks.",
   "author": {
     "name": "Damián Ricobelli",
     "url": "https://github.com/damianricobelli"
   },
-  "homepage": "https://github.com/damianricobelli/opentcy",
-  "repository": "https://github.com/damianricobelli/opentcy",
+  "homepage": "https://github.com/damianricobelli/opency",
+  "repository": "https://github.com/damianricobelli/opency",
   "license": "MIT",
   "keywords": [
     "marketing",
@@ -17,11 +17,11 @@
     "mcp"
   ],
   "mcpServers": {
-    "opentcy": {
+    "opency": {
       "command": "npx",
       "args": [
         "-y",
-        "opentcy",
+        "opency",
         "mcp"
       ]
     }
