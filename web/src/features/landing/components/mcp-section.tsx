@@ -9,11 +9,16 @@ const GROUPS = [
   },
   {
     label: m.mcp_group_brief,
-    tools: ["brief_questions", "brief_interview", "brief_save"],
+    tools: ["brief_questions", "brief_interview"],
   },
   {
     label: m.mcp_group_campaign,
-    tools: ["campaign_create", "campaign_status"],
+    tools: [
+      "campaign_create",
+      "campaign_brief",
+      "campaign_plan",
+      "campaign_status",
+    ],
   },
   {
     label: m.mcp_group_images,

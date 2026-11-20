@@ -54,7 +54,7 @@ export function SiteHeader() {
           <Button
             variant="outline"
             size="sm"
-            className="max-sm:size-9 max-sm:px-0"
+            className="max-sm:size-9 max-sm:px-0!"
             nativeButton={false}
             render={<a href={GITHUB_URL} target="_blank" rel="noreferrer" />}
           >

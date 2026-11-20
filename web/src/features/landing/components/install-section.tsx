@@ -1,4 +1,10 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsIndicator,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { m } from "@/paraglide/messages";
 import { INSTALL_COMMANDS } from "../lib/site";
 import { CodeBlock } from "./code-block";
@@ -27,6 +33,7 @@ export function InstallSection() {
               <TabsTrigger value="mcp" className="px-4">
                 {m.install_tab_mcp()}
               </TabsTrigger>
+              <TabsIndicator />
             </TabsList>
             <TabsContent value="skill" className="space-y-3">
               <CodeBlock.Root code={INSTALL_COMMANDS.skill}>
