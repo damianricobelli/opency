@@ -8,5 +8,7 @@
   // Client files; the Vite plugin points this at the build output.
   "assets": {},
   "preview_urls": true,
+  // Pull request branches are deployed as previews (`wrangler preview`), which requires this block.
+  "previews": {},
   "observability": { "enabled": true }
 }
