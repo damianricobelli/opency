@@ -7,3 +7,6 @@ dist
 .output
 .pnpm-store
 /project.inlang/cache/
+
+.wrangler
+.dev.vars

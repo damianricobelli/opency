@@ -13,7 +13,9 @@
     "check": "biome check",
     "typecheck": "tsr generate && tsc --pretty false",
     "icons": "node scripts/generate-icons.mjs",
-    "hero-slides": "node scripts/generate-hero-slides.mjs"
+    "hero-slides": "node scripts/generate-hero-slides.mjs",
+    "deploy": "vite build && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -34,6 +36,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
+    "@cloudflare/vite-plugin": "^1.70.1",
     "@inlang/paraglide-js": "^3.2.2",
     "@tanstack/router-cli": "^1.168.0",
     "@tanstack/virtual-file-routes": "^1.162.0",
@@ -42,7 +45,8 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
     "typescript": "7.0.2",
-    "vite": "^8.3.8"
+    "vite": "^8.3.8",
+    "wrangler": "^4.165.0"
   },
   "packageManager": "pnpm@12.6.0"
 }

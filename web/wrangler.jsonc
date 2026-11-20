@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "opency",
+  "compatibility_date": "2026-07-14",
+  "compatibility_flags": ["nodejs_compat"],
+  // The server entry: Paraglide's locale middleware, then TanStack Start.
+  "main": "src/server.ts",
+  // Client files; the Vite plugin points this at the build output.
+  "assets": {},
+  "preview_urls": true,
+  "observability": { "enabled": true }
+}

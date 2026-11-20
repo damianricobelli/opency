@@ -34,4 +34,5 @@ No domain is hardcoded. Without `VITE_SITE_URL`, every absolute URL uses the ori
 
 - New copy goes in both files under `src/i18n/messages/`, English first.
 - Routes live in `src/features/<feature>/routes` (virtual routes in `src/routes.ts`).
+- Deploys to Cloudflare Workers: `@cloudflare/vite-plugin` plus `wrangler.jsonc`, so the server runs in workerd in dev and in production. `pnpm deploy` builds and deploys; with Workers Builds set the root directory to `web`, the build command to `pnpm build` and the deploy command to `npx wrangler deploy`.
 - The hero shows the demo carousel's real renders (`public/hero/`, refreshed with `pnpm hero-slides`) and animates with CSS only (`.hero-stage` in `styles.css`): no WebGL, nothing to lazy-load, and a static version under `prefers-reduced-motion`.
