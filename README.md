@@ -15,7 +15,7 @@
 
 <p align="center">
   <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-111111"></a>
-  <img alt="Node 18.17+" src="https://img.shields.io/badge/node-%E2%89%A518.17-111111">
+  <img alt="Node 20.9+" src="https://img.shields.io/badge/node-%E2%89%A520.9-111111">
   <img alt="MCP server" src="https://img.shields.io/badge/MCP-server-e8502a">
   <img alt="Agent skill" src="https://img.shields.io/badge/agent-skill-e8502a">
   <img alt="Local first" src="https://img.shields.io/badge/local--first-no%20account-111111">
@@ -51,7 +51,7 @@ Everything runs on your machine and everything is a file you own: HTML/CSS per s
 
 ## Install
 
-Requires Node 18.17+ and Chrome (or the bundled Chromium). For video, ffmpeg.
+Requires Node 20.9+ and Chrome (or the bundled Chromium). For video, ffmpeg.
 
 **1. The skill** — the instructions the agent follows:
 

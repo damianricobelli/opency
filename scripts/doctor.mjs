@@ -10,7 +10,7 @@ const checks = [];
 const add = (name, ok, detail, fix) => checks.push({ name, ok, detail, ...(ok ? {} : { fix }) });
 
 const [maj, min] = process.versions.node.split(".").map(Number);
-add("node", maj > 18 || (maj === 18 && min >= 17), process.versions.node, "Install Node 18.17 or later.");
+add("node", maj > 20 || (maj === 20 && min >= 9), process.versions.node, "Install Node 20.9 or later.");
 
 try { const b = await launchBrowser(); const v = b.version(); await b.close(); add("browser", true, `Chromium ${v}`); }
 catch (e) { add("browser", false, e.message, "Run npx opency setup, install Google Chrome or set CHROME_PATH."); }

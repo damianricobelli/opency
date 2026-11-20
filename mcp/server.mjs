@@ -124,7 +124,7 @@ tool("brand_create", "Create a brand", "Creates brands/<slug>/ with neutral toke
 
 tool("brand_use", "Set the active brand", "Sets the brand the other tools work with when none is given.", { brand: Slug }, async ({ brand }) => result(await engine("brand.mjs", ["use", brand])));
 
-tool("brand_import_site", "Read a website", "Opens the brand's website and extracts colors by surface, ink colors, typefaces, logo, headings, CTAs and social links. It does not write the brand: it leaves a report so you can propose and the user can approve. Returns a screenshot of the home page.", { url: z.string().url(), brand: Brand }, async ({ url, brand }) => {
+tool("brand_import_site", "Read a website", "Opens the brand's website and extracts colors by surface, ink colors, typefaces, logo, headings, CTAs and social links. It does not write the brand: it leaves a report so you can propose and the user can approve. Returns a screenshot of the home page.", { url: z.url(), brand: Brand }, async ({ url, brand }) => {
   const slug = await activeBrand(brand);
   if (!/^https?:\/\//.test(url)) return bad("Only http(s) URLs.");
   const r = await engine("brand.mjs", ["import", url, "--brand", slug], { timeout: 120000 });
@@ -360,7 +360,7 @@ tool("feed_check", "Check the feed", "Checks the feed's rhythm (backgrounds, cat
 }, RO);
 
 const Metric = z.number().min(0).optional();
-tool("results_add", "Record results", "Saves the numbers of a published piece. The user provides them: never estimate.", { piece: PieceId, network: z.string().default("instagram"), reach: Metric, impressions: Metric, saves: Metric, shares: Metric, likes: Metric, comments: Metric, follows: Metric, clicks: Metric, url: z.string().url().optional(), brand: Brand }, async ({ piece, network, url, brand, ...metrics }) => {
+tool("results_add", "Record results", "Saves the numbers of a published piece. The user provides them: never estimate.", { piece: PieceId, network: z.string().default("instagram"), reach: Metric, impressions: Metric, saves: Metric, shares: Metric, likes: Metric, comments: Metric, follows: Metric, clicks: Metric, url: z.url().optional(), brand: Brand }, async ({ piece, network, url, brand, ...metrics }) => {
   const dir = await pieceDir(brand, piece);
   return result(await engine("results.mjs", ["add", dir, "--network", clean(network), ...Object.entries(metrics).filter(([, v]) => v !== undefined).flatMap(([k, v]) => [`--${k}`, v]), ...(url ? ["--url", url] : [])]));
 });
