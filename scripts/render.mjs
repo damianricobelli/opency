@@ -401,6 +401,7 @@ if (!args.only) {
     voiceSamples: brand.voiceSamples, address: brand.address,
     brandUsesEmoji: brand.usesEmoji, brandUsesDashes: brand.usesDashes, brandName: brand.name,
     verified: brand.verified, sources: piece.sources ?? [],
+    language: piece.language, brandLanguage: brand.language,
   });
   const missingAlt = (piece.slides ?? []).filter((s) => !s.alt).map((s) => s.n);
   if (missingAlt.length) report.copy.push({ code: "missing_alt_text", where: `slides ${missingAlt.join(",")}`, msg: "missing alt text (accessibility; Instagram and LinkedIn support it)", severity: "warn" });
