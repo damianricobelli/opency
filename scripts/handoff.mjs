@@ -22,6 +22,17 @@ const fail = (m) => { console.error(`✗ ${m}`); process.exit(1); };
 const out = (data, text) => console.log(args.json ? JSON.stringify(data, null, 2) : text);
 const STATUSES = ["idea", "draft", "review", "approved", "scheduled", "published"];
 const LIMITS = { instagram: 2200, linkedin: 3000, tiktok: 4000, x: 280 };
+// What a client reads is written in the language of the piece.
+const COPY = {
+  en: { forReview: "for review", slides: "Slides", slide: (n) => `${n} slide${n === 1 ? "" : "s"}`, captions: "Captions", characters: "characters", credits: "Photo credits", required: "attribution required",
+    footer: "Reply with your changes or your approval; nothing is published until you say so.", madeWith: "Made with opency", review: "review",
+    ready: "ready to publish", planned: "planned for", checklist: "Checklist", upload: "Upload the images in order", paste: (n) => `${n}: paste \`caption-${n}.txt\``, alt: "Paste the alt text of each slide from `alt-text.txt`",
+    pdf: "LinkedIn: upload `carousel.pdf` as a document post", credit: "Credit required", numbers: "After publishing, tell the agent the numbers so it can learn what works", before: "Before you publish", nothing: "Nothing in this folder was published. You decide when it goes out." },
+  es: { forReview: "para revisar", slides: "Slides", slide: (n) => `${n} slide${n === 1 ? "" : "s"}`, captions: "Captions", characters: "caracteres", credits: "Créditos de fotos", required: "atribución obligatoria",
+    footer: "Respondé con tus cambios o tu aprobación; nada se publica hasta que digas que sí.", madeWith: "Hecho con opency", review: "revisión",
+    ready: "lista para publicar", planned: "planificada para el", checklist: "Pasos", upload: "Subí las imágenes en orden", paste: (n) => `${n}: pegá \`caption-${n}.txt\``, alt: "Pegá el alt text de cada slide desde `alt-text.txt`",
+    pdf: "LinkedIn: subí `carousel.pdf` como publicación de documento", credit: "Crédito obligatorio", numbers: "Después de publicar, pasale los números al agente para que aprenda qué funciona", before: "Antes de publicar", nothing: "Nada de esta carpeta fue publicado. Vos decidís cuándo sale." },
+};
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 if (!["review", "status", "package"].includes(cmd)) {
@@ -35,6 +46,7 @@ const brand = await loadBrand(brandOf(dir));
 const rdir = path.join(dir, "render");
 const report = await readJSON(path.join(rdir, "report.json"), null);
 const rel = (p) => path.relative(ROOT, p);
+const T = COPY[String(piece.language ?? brand.language ?? "en").toLowerCase().split("-")[0]] ?? COPY.en;
 
 /** Rendered slides in order: the JPG when the slide has a photo, else the PNG. */
 async function renders() {
@@ -79,7 +91,7 @@ if (cmd === "review") {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>${esc(piece.title || piece.id)} · ${esc(brand.name)} · review</title>
+<title>${esc(piece.title || piece.id)} · ${esc(brand.name)} · ${T.review}</title>
 <style>
   :root { color-scheme: light dark; --bg: #f7f6f3; --fg: #171614; --muted: #6b6862; --line: #dcd9d2; --card: #fff; }
   @media (prefers-color-scheme: dark) { :root { --bg: #111110; --fg: #f1efea; --muted: #a09c94; --line: #2c2b28; --card: #1a1917; } }
@@ -103,18 +115,18 @@ if (cmd === "review") {
 <body>
 <main>
   <header>
-    <p class="meta">${esc(brand.name)} · for review</p>
+    <p class="meta">${esc(brand.name)} · ${T.forReview}</p>
     <h1>${esc(piece.title || piece.id)}</h1>
     <p>${esc(piece.direction?.thesis ?? "")}</p>
-    <p class="meta">${esc(piece.format)} · ${slides.length} slide${slides.length === 1 ? "" : "s"} · v${piece.version ?? 1} · ${esc(piece.plannedDate ?? "")}</p>
+    <p class="meta">${esc(piece.format)} · ${T.slide(slides.length)} · v${piece.version ?? 1} · ${esc(piece.plannedDate ?? "")}</p>
   </header>
-  <h2>Slides</h2>
+  <h2>${T.slides}</h2>
   <div class="slides">
 ${images.map((s) => `    <figure><img src="data:image/jpeg;base64,${s.data}" alt="${esc(s.alt)}" width="1080"><figcaption><b>${String(s.n).padStart(2, "0")}</b>${s.alt ? ` · ${esc(s.alt)}` : ""}</figcaption></figure>`).join("\n")}
   </div>
-  ${captions().length ? `<h2>Captions</h2>\n${captions().map(([n, t]) => `  <section class="caption"><div class="meta">${esc(n)} · ${t.length} characters</div><pre>${esc(t)}</pre></section>`).join("\n")}` : ""}
-  ${cr.length ? `<h2>Photo credits</h2>\n<ul>${cr.map((c) => `<li>${esc(c.credit)}${c.required ? " <b>(attribution required)</b>" : ""}</li>`).join("")}</ul>` : ""}
-  <footer>Made with opency · ${today()} · Reply with your changes or your approval; nothing is published until you say so.</footer>
+  ${captions().length ? `<h2>${T.captions}</h2>\n${captions().map(([n, t]) => `  <section class="caption"><div class="meta">${esc(n)} · ${t.length} ${T.characters}</div><pre>${esc(t)}</pre></section>`).join("\n")}` : ""}
+  ${cr.length ? `<h2>${T.credits}</h2>\n<ul>${cr.map((c) => `<li>${esc(c.credit)}${c.required ? ` <b>(${T.required})</b>` : ""}</li>`).join("")}</ul>` : ""}
+  <footer>${T.madeWith} · ${today()} · ${T.footer}</footer>
 </main>
 </body>
 </html>
@@ -141,14 +153,14 @@ ${images.map((s) => `    <figure><img src="data:image/jpeg;base64,${s.data}" alt
   for (const [network, t] of caps) if (LIMITS[network] && t.length > LIMITS[network]) warnings.push(`${network} caption is ${t.length} characters (limit ${LIMITS[network]})`);
   for (const c of cr.filter((x) => x.required)) if (!caps.some(([, t]) => t.includes(c.credit.split(" (")[0]))) warnings.push(`CC BY photo "${c.asset}": add its credit to the caption — ${c.credit}`);
   if (!alt) warnings.push("no alt text: Instagram and LinkedIn both accept it");
-  const md = [`# ${piece.title || piece.id} · ready to publish`, "", `${brand.name} · ${piece.format} · ${slides.length} slide(s) · v${piece.version ?? 1}${piece.plannedDate ? ` · planned for ${piece.plannedDate}` : ""}`, "",
-    "## Checklist", "", `- [ ] Upload the images in order: ${files.filter((f) => /^\d+\./.test(f)).join(", ")}`,
-    ...caps.map(([n]) => `- [ ] ${n}: paste \`caption-${n}.txt\``), alt ? "- [ ] Paste the alt text of each slide from `alt-text.txt`" : null,
-    files.includes("carousel.pdf") ? "- [ ] LinkedIn: upload `carousel.pdf` as a document post" : null,
-    ...cr.filter((c) => c.required).map((c) => `- [ ] Credit required: ${c.credit}`),
-    "- [ ] After publishing, tell the agent the numbers so it can learn what works", "",
-    warnings.length ? `## Before you publish\n\n${warnings.map((w) => `- ${w}`).join("\n")}\n` : null,
-    "Nothing in this folder was published. You decide when it goes out."].filter((l) => l !== null).join("\n");
+  const md = [`# ${piece.title || piece.id} · ${T.ready}`, "", `${brand.name} · ${piece.format} · ${T.slide(slides.length)} · v${piece.version ?? 1}${piece.plannedDate ? ` · ${T.planned} ${piece.plannedDate}` : ""}`, "",
+    `## ${T.checklist}`, "", `- [ ] ${T.upload}: ${files.filter((f) => /^\d+\./.test(f)).join(", ")}`,
+    ...caps.map(([n]) => `- [ ] ${T.paste(n)}`), alt ? `- [ ] ${T.alt}` : null,
+    files.includes("carousel.pdf") ? `- [ ] ${T.pdf}` : null,
+    ...cr.filter((c) => c.required).map((c) => `- [ ] ${T.credit}: ${c.credit}`),
+    `- [ ] ${T.numbers}`, "",
+    warnings.length ? `## ${T.before}\n\n${warnings.map((w) => `- ${w}`).join("\n")}\n` : null,
+    T.nothing].filter((l) => l !== null).join("\n");
   await writeFile(path.join(pdir, "PUBLISH.md"), md + "\n");
   out({ piece: piece.id, dir: rel(pdir), files: [...files, "PUBLISH.md"], warnings, status: piece.status }, `✓ ${rel(pdir)}/ — ${files.length + 1} file(s)\n  ${[...files, "PUBLISH.md"].join(", ")}${warnings.map((w) => `\n  ⚠ ${w}`).join("")}`);
 }

@@ -10,3 +10,6 @@ brands/*
 
 # Only the contact sheet of the layout renders is versioned.
 templates/layouts/render/slide-*
+
+# Per-workspace preferences written by the MCP server (the user's language).
+.opency.json

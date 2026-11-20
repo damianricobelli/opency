@@ -151,6 +151,20 @@ test("compose from data → repair → review → approve → package, without w
   assert.match(copy.text, /Translate every slot/);
 });
 
+test("the brief comes in the user's language, and it is remembered", async () => {
+  const es = JSON.parse((await call("brief_questions", { kind: "campaign", language: "es-AR" })).text);
+  assert.equal(es.language, "es");
+  assert.match(es.questions[0].ask, /¿Qué querés transmitir\?/);
+  assert.equal(es.questions[0].id, "message", "ids do not change with the language");
+  forms = [];
+  const r = JSON.parse((await call("brief_interview", { kind: "piece", rounds: 1 })).text);
+  assert.equal(r.language, "es", "no language given: the workspace remembers the last one");
+  assert.match(forms[0].message, /Brief de una pieza/);
+  assert.match(Object.values(forms[0].requestedSchema.properties)[0].title, /¿/);
+  const en = JSON.parse((await call("brief_questions", { kind: "campaign", language: "en" })).text);
+  assert.match(en.questions[0].ask, /What do you want to get across\?/);
+});
+
 test("the brand brief is saved with the brand", async () => {
   const r = JSON.parse((await call("brief_interview", { kind: "brand", brand: "cafe", rounds: 1, known: { name: "Test Coffee", what: "Specialty coffee for offices" } })).text);
   assert.equal(r.savedTo, "brands/cafe/brief.json");

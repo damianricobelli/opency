@@ -134,7 +134,7 @@ flowchart LR
   </picture>
 </p>
 
-Before a campaign or a new brand, the agent runs a brief a few questions at a time: what you want to get across, objective, audience, offer, tone, channels, dates, images. What it can infer from the brand or the website, it proposes instead of asking. Over MCP the questions arrive as a form (`brief_interview` uses MCP elicitation when the client supports it).
+Before a campaign or a new brand, the agent runs a brief a few questions at a time: what you want to get across, objective, audience, offer, tone, channels, dates, images. What it can infer from the brand or the website, it proposes instead of asking. Over MCP the questions arrive as a form (`brief_interview` uses MCP elicitation when the client supports it), in the language you are writing in: the brief ships in English and Spanish.
 
 The one question it never skips: **what do you want to get across?** The answer becomes the thesis every piece has to prove.
 

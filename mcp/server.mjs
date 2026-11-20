@@ -20,7 +20,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import sharp from "sharp";
 import { PKG, ROOT, BRANDS, hasWorkspace, ensureWorkspace, listBrands, loadBrand, brandDir, readJSON, readText, today } from "../scripts/lib/project.mjs";
-import { BRIEFS, briefKinds, nextQuestions, missingAnswers, elicitationSchema } from "../scripts/lib/brief.mjs";
+import { BRIEFS, briefKinds, briefIn, briefLanguage, briefLabels, briefLanguages, nextQuestions, missingAnswers, elicitationSchema } from "../scripts/lib/brief.mjs";
 import { fetchBuffer, availableProviders, missingKeys } from "../scripts/lib/stock.mjs";
 
 const VERSION = JSON.parse(await readFile(path.join(PKG, "package.json"), "utf8")).version;
@@ -96,6 +96,19 @@ async function renderBlocks(dir, { pdf = false, scale = 1 } = {}) {
 async function established(slug) {
   return (await readdir(path.join(brandDir(slug), "pieces"), { withFileTypes: true }).catch(() => [])).some((d) => d.isDirectory());
 }
+/**
+ * The language the user is being spoken to in. The agent passes it; it is remembered per workspace so
+ * later calls (and forms) keep using it. It is not the language of a brand's copy.
+ */
+const PREFS = path.join(ROOT, ".opency.json");
+async function userLanguage(given) {
+  const prefs = (await readJSON(PREFS, null)) ?? {};
+  if (!given) return briefLanguage(prefs.language ?? "en");
+  const lang = briefLanguage(given);
+  if (prefs.language !== lang) await writeFile(PREFS, JSON.stringify({ ...prefs, language: lang }, null, 2) + "\n").catch(() => {});
+  return lang;
+}
+const Language = z.string().regex(/^[a-z]{2}(-[A-Za-z]{2})?$/).optional().describe(`The language you are speaking with the user in (e.g. "es", "en"). Pass it on the first call: questions and forms are shown in it, and it is remembered. Available: ${briefLanguages.join(", ")}; others fall back to English, in which case translate the questions yourself.`);
 const NEEDS_WS = "This directory is not an opency workspace yet. Call workspace_init (it creates brands/, templates/ and the instructions).";
 
 const server = new McpServer({ name: "opency", version: VERSION }, {
@@ -108,7 +121,7 @@ The path, in order:
 5. piece_compose: send the slides as DATA (layout + text per slot); it builds the HTML, renders and returns the contact sheet. layouts_list shows every layout's slots and budgets.
 6. Read the report and LOOK at the contact sheet. piece_repair applies the safe fixes; piece_edit changes texts or photos. piece_write (raw HTML) is the escape hatch for when no layout fits.
 7. piece_handoff: "review" makes a page the user can open or forward, "approve" records their yes, "package" leaves the files ready to upload.
-Rules: never make up figures, prices, clients or testimonials; only registered (stock_import / asset_add) and analyzed (asset_analyze) images; get an explicit yes before brand_write on a loaded brand, before approving, before deleting, and before sharing anything outside the project. Answer and ask in the user's language; write copy in the brand's language. opency does not publish to social networks: it delivers files.`,
+Rules: never make up figures, prices, clients or testimonials; only registered (stock_import / asset_add) and analyzed (asset_analyze) images; get an explicit yes before brand_write on a loaded brand, before approving, before deleting, and before sharing anything outside the project. Answer and ask in the user's language, and pass it as "language" to brief_interview and brief_questions so questions and forms come in it; write copy in the brand's language. opency does not publish to social networks: it delivers files.`,
 });
 
 const tool = (name, title, description, inputSchema, handler, annotations = {}) =>
@@ -219,7 +232,7 @@ tool("brand_write", "Write a brand file", "Writes one of the brand's files. Alwa
 }, { destructiveHint: true });
 
 // ============================================================ Brief
-tool("brief_questions", "Brief questions", "The questions that must be answered before designing, by kind: brand (loading a brand), campaign, or piece (a single piece). Each one says whether it is required and where it can be inferred from so you do not have to ask. They are written in English: ask them in the user's language.", { kind: z.enum(briefKinds).default("campaign") }, async ({ kind }) => ok({ kind, ...BRIEFS[kind] }), RO);
+tool("brief_questions", "Brief questions", "The questions that must be answered before designing, by kind: brand (loading a brand), campaign, or piece (a single piece). Each one says whether it is required and where it can be inferred from so you do not have to ask. Pass the user's language to get them in it.", { kind: z.enum(briefKinds).default("campaign"), language: Language }, async ({ kind, language }) => { const lang = await userLanguage(language); return ok({ kind, language: lang, ...briefIn(kind, lang) }); }, RO);
 
 tool("brief_interview", "Interview the user", `Runs the brief with the user. If the client supports it, it shows a form in short batches; otherwise it returns the next questions for you to ask in the chat (2 to 4 at a time, in the user's language, with your question tool if you have one).
 Pass in "known" everything you already know from the request, the brand or the website: it is not asked again. With "campaign" the answers are saved to that campaign.`, {
@@ -227,15 +240,18 @@ Pass in "known" everything you already know from the request, the brand or the w
   known: z.record(z.string(), z.union([z.string(), z.array(z.string())])).optional().describe("Answers already known, keyed by question id."),
   campaign: Slug.optional().describe("Campaign to save into (kind=campaign only). It must exist: campaign_create."),
   brand: Brand,
+  language: Language,
   rounds: z.number().int().min(1).max(5).default(3),
-}, async ({ kind, known = {}, campaign, brand, rounds }) => {
+}, async ({ kind, known = {}, campaign, brand, language, rounds }) => {
+  const lang = await userLanguage(language);
+  const copy = briefIn(kind, lang);
   const answers = { ...known };
   let asked = false, stopped = null;
   if (server.server.getClientCapabilities()?.elicitation) {
     for (let i = 0; i < rounds; i++) {
-      const qs = nextQuestions(kind, answers, 4);
+      const qs = nextQuestions(kind, answers, 4, lang);
       if (!qs.length || (i > 0 && !qs.some((q) => q.required))) break;
-      const res = await server.server.elicitInput({ message: i === 0 ? `${BRIEFS[kind].title}. ${BRIEFS[kind].intro}` : "A few more and I will get started:", requestedSchema: elicitationSchema(qs) }).catch(() => null);
+      const res = await server.server.elicitInput({ message: i === 0 ? `${copy.title}. ${copy.intro}` : briefLabels(lang).more, requestedSchema: elicitationSchema(qs, lang) }).catch(() => null);
       if (!res) break; // the client declared the capability but did not answer: continue in the chat
       asked = true;
       if (res.action !== "accept") { stopped = res.action; break; }
@@ -247,17 +263,17 @@ Pass in "known" everything you already know from the request, the brand or the w
     const slug = await activeBrand(brand).catch(() => null);
     // Only known keys are stored; a brand that does not exist yet keeps its answers in this result.
     const known = Object.fromEntries(Object.entries(answers).filter(([k]) => BRIEFS.brand.questions.some((q) => q.id === k)));
-    if (slug && !slug.startsWith("_") && Object.keys(known).length) { const r = await withJSON(known, (file) => engine("campaign.mjs", ["brand-brief", "--answers", file, "--json", "--brand", slug])); if (r.ok) saved = `brands/${slug}/brief.json`; }
+    if (slug && !slug.startsWith("_") && Object.keys(known).length) { const r = await withJSON(known, (file) => engine("campaign.mjs", ["brand-brief", "--answers", file, "--json", "--lang", lang, "--brand", slug])); if (r.ok) saved = `brands/${slug}/brief.json`; }
   }
   if (kind === "campaign" && campaign && Object.keys(answers).length) {
     const tmp = await mkdtemp(path.join(os.tmpdir(), "opency-"));
-    try { await writeFile(path.join(tmp, "a.json"), JSON.stringify(answers)); const r = await engine("campaign.mjs", ["brief", campaign, "--answers", path.join(tmp, "a.json"), "--json", ...withBrand(brand)]); if (!r.ok) return result(r); saved = campaign; }
+    try { await writeFile(path.join(tmp, "a.json"), JSON.stringify(answers)); const r = await engine("campaign.mjs", ["brief", campaign, "--answers", path.join(tmp, "a.json"), "--json", "--lang", lang, ...withBrand(brand)]); if (!r.ok) return result(r); saved = campaign; }
     finally { await rm(tmp, { recursive: true, force: true }); }
   }
-  const missing = missingAnswers(kind, answers).map((q) => ({ id: q.id, ask: q.ask, options: q.options, why: q.why }));
-  const optional = nextQuestions(kind, answers, 20).filter((q) => !q.required).map((q) => ({ id: q.id, ask: q.ask, options: q.options }));
+  const missing = missingAnswers(kind, answers, lang).map((q) => ({ id: q.id, ask: q.ask, options: q.options, why: q.why }));
+  const optional = nextQuestions(kind, answers, 20, lang).filter((q) => !q.required).map((q) => ({ id: q.id, ask: q.ask, options: q.options }));
   return ok({
-    kind, mode: asked ? "form" : "chat", answers, savedTo: saved, readyToDesign: !missing.length,
+    kind, language: lang, mode: asked ? "form" : "chat", answers, savedTo: saved, readyToDesign: !missing.length,
     ...(stopped ? { note: `The user ${stopped === "decline" ? "declined" : "closed"} the form: continue in the chat, without pushing everything at once.` } : {}),
     missingRequired: missing, stillOpen: optional.slice(0, 6),
     next: missing.length ? `Ask the user ${asked ? "what is still missing" : "these questions"} in the chat, 2 to 4 at a time, in their language and their words. Whatever you can infer from the brand or the website, propose it instead of asking. Then ${kind === "campaign" ? "save with campaign_brief" : "continue"}.` : kind === "campaign" ? "Brief complete. Play the message back to the user in one sentence and propose the piece plan (campaign_plan)." : kind === "brand" ? "Use this to propose palette, typefaces, voice and verified facts; write with brand_write once the user says yes." : "Set the direction (thesis, mode, signature move) and create the piece.",

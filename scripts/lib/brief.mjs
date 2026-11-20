@@ -67,27 +67,103 @@ export const BRIEFS = {
   },
 };
 
+/**
+ * The same briefs in other languages, keyed by question id. English above is the source; a language that
+ * is missing a string falls back to it. Ids, types and `required` never change with the language.
+ */
+const TRANSLATIONS = {
+  es: {
+    labels: { missing: "_Falta (obligatoria)._", empty: "_Sin respuesta._", more: "Unas más y arranco:", options: "Opciones (podés combinar o escribir otra)" },
+    brand: {
+      title: "Cargar una marca",
+      intro: "Con esto alcanza para que las piezas se vean y suenen como la marca. Si hay web, la leo primero y solo pregunto lo que no encuentre.",
+      questions: {
+        name: { ask: "¿Cómo se llama la marca?" },
+        url: { ask: "¿Tiene web o perfil de Instagram? Pasame el link y leo colores, tipografías, logo y textos.", why: "Así no te pregunto lo que ya está publicado." },
+        what: { ask: "¿Qué hace y para quién? En una o dos frases, como se lo contarías a un amigo.", infer: "web: título, descripción y titulares" },
+        goal: { ask: "¿Para qué quiere estar en redes?", options: ["Que la conozcan", "Generar consultas o ventas", "Fidelizar a quienes ya compran", "Posicionarse como referente", "Reclutar"] },
+        audience: { ask: "¿A quién le habla? Pensá en una persona concreta: qué hace, qué le preocupa, qué ya probó." },
+        offer: { ask: "¿Qué vende exactamente y cómo se compra o contrata?", infer: "web: CTAs y secciones de producto" },
+        feeling: { ask: "¿Qué querés que sienta alguien al ver un post de la marca?", options: ["Confianza", "Cercanía", "Ambición", "Calma", "Urgencia", "Curiosidad", "Humor", "Lujo", "Rigor técnico"], why: "Decide el modo dominante (foto o tipografía), la densidad y la textura." },
+        voice: { ask: "¿Cómo habla? ¿Formal o informal? ¿Usa emoji? Si tenés 3 a 5 textos reales (posts, mails, la web), pegalos tal cual.", infer: "web: textos; Instagram: captions" },
+        never: { ask: "¿Qué no diría ni haría nunca la marca? Palabras, temas, estilos visuales." },
+        pillars: { ask: "¿De qué 3 a 5 temas habla siempre?", infer: "web: secciones y servicios" },
+        references: { ask: "¿Hay cuentas o piezas que te gusten o que no soportes? Decime qué de cada una.", why: "Informan estructura y ritmo. Nunca se copian." },
+        assets: { ask: "¿Tenés el logo en SVG, las tipografías (.woff2) y fotos propias? ¿Puedo usar fotos de banco?" },
+        facts: { ask: "¿Qué datos puedo afirmar? Precios, resultados, clientes, testimonios. Cada uno con su fuente; lo que no esté acá no lo escribo.", why: "El control de calidad bloquea toda cifra sin fuente." },
+        frequency: { ask: "¿Cuántas piezas por semana y en qué redes?" },
+        country: { ask: "¿En qué país está la audiencia?", infer: "web: idioma y dominio", why: "Para el calendario comercial." },
+      },
+    },
+    campaign: {
+      title: "Brief de campaña",
+      intro: "Una campaña es un mensaje sostenido en varias piezas. Antes de diseñar necesito saber qué tiene que quedar en la cabeza de quien la vea.",
+      questions: {
+        message: { ask: "¿Qué querés transmitir? Si alguien se acuerda de una sola cosa de la campaña, ¿cuál tiene que ser?", why: "Es la tesis: cada pieza la prueba desde un ángulo distinto." },
+        objective: { ask: "¿Qué tiene que pasar para que digas que funcionó?", options: ["Que más gente conozca la marca", "Consultas o leads", "Ventas de algo puntual", "Guardados y compartidos (enseñar)", "Asistentes a un evento", "Lanzar algo nuevo"] },
+        audience: { ask: "¿A quién le hablamos esta vez? ¿La audiencia de siempre o un grupo puntual?", infer: "brand-kit.md → audiencia" },
+        offer: { ask: "¿Hay una oferta, un producto o una fecha concreta? Precio, condiciones, hasta cuándo.", why: "Solo se afirma lo que confirmes acá o figure en los datos verificados." },
+        proof: { ask: "¿Con qué lo probamos? Datos, casos, testimonios con permiso, demostración del producto.", why: "Una campaña sin prueba se queda en adjetivos." },
+        feeling: { ask: "¿Qué tono tiene que tener? ¿El de siempre o esta vez cambia algo?", options: ["El de siempre", "Más urgente", "Más cálido", "Más técnico", "Más festivo", "Más sobrio"], infer: "brand-kit.md → voz" },
+        channels: { ask: "¿Dónde va a salir?", options: ["Instagram feed", "Instagram stories", "LinkedIn", "TikTok", "X", "YouTube", "Anuncios pagos"] },
+        pieces: { ask: "¿Cuántas piezas y de qué tipo? Si no sabés, te propongo un plan.", infer: "objetivo y duración → plan propuesto" },
+        dates: { ask: "¿Desde cuándo y hasta cuándo? ¿Hay una fecha que no se puede mover?" },
+        cta: { ask: "¿Qué querés que haga la persona después de verla? Una sola acción." },
+        visuals: { ask: "¿Con qué imágenes contamos?", options: ["Fotos propias (te las paso)", "Fotos de banco", "Solo tipografía y color", "Mezcla: decidí vos"] },
+        mustInclude: { ask: "¿Algo que tenga que aparecer sí o sí? Hashtag, legal, logo de un socio, una frase." },
+        avoid: { ask: "¿Algo que no quieras ver ni leer?" },
+        approver: { ask: "¿Quién aprueba y cuándo necesitás ver la primera versión?" },
+      },
+    },
+    piece: {
+      title: "Brief de una pieza",
+      intro: "Para una pieza suelta alcanza con poco. Si el pedido ya lo dice, no lo pregunto.",
+      questions: {
+        message: { ask: "¿Qué querés transmitir con esta pieza? Una idea." },
+        intent: { ask: "¿Qué tiene que lograr?", options: ["Opinar", "Enseñar", "Mostrar el producto", "Caso / prueba", "Vender", "Novedad / evento", "Comunidad"], why: "Elige la receta: cantidad de slides, modo y estructura." },
+        format: { ask: "¿Qué formato?", options: ["Carrusel 4:5", "Post 4:5", "Post 1:1", "Story 9:16", "Horizontal 16:9"], infer: "red de destino" },
+        facts: { ask: "¿Qué datos concretos tiene que llevar? Cifras, precios, fechas, nombres.", why: "No invento ninguno." },
+        visuals: { ask: "¿Hay una foto que deba usar o lo resuelvo con tipografía o banco?" },
+        date: { ask: "¿Para cuándo?" },
+      },
+    },
+  },
+};
+const LABELS = { missing: "_Missing (required)._", empty: "_No answer._", more: "A few more and I will get started:", options: "Options (combine them or write your own)" };
+
+export const briefLanguages = ["en", ...Object.keys(TRANSLATIONS)];
+/** "es-AR" → "es"; anything without a translation → "en". */
+export const briefLanguage = (lang) => { const base = String(lang ?? "").toLowerCase().split("-")[0]; return briefLanguages.includes(base) ? base : "en"; };
+export const briefLabels = (lang) => ({ ...LABELS, ...(TRANSLATIONS[briefLanguage(lang)]?.labels ?? {}) });
+
+/** The brief of a kind in a language: same ids and rules, the user's words. */
+export function briefIn(kind, lang) {
+  const base = BRIEFS[kind], tr = TRANSLATIONS[briefLanguage(lang)]?.[kind];
+  if (!tr) return base;
+  return { title: tr.title ?? base.title, intro: tr.intro ?? base.intro, questions: base.questions.map((q) => ({ ...q, ...(tr.questions?.[q.id] ?? {}) })) };
+}
+
 export const briefKinds = Object.keys(BRIEFS);
 
 /** What is still missing before design can start. */
-export function missingAnswers(kind, answers = {}) {
-  return BRIEFS[kind].questions.filter((q) => q.required && isEmpty(answers[q.id]));
+export function missingAnswers(kind, answers = {}, lang) {
+  return briefIn(kind, lang).questions.filter((q) => q.required && isEmpty(answers[q.id]));
 }
 const isEmpty = (v) => v === undefined || v === null || (typeof v === "string" && !v.trim()) || (Array.isArray(v) && !v.length);
 
 /** Questions without an answer yet, in order: required ones first. */
-export function nextQuestions(kind, answers = {}, limit = 4) {
-  const open = BRIEFS[kind].questions.filter((q) => isEmpty(answers[q.id]));
+export function nextQuestions(kind, answers = {}, limit = 4, lang) {
+  const open = briefIn(kind, lang).questions.filter((q) => isEmpty(answers[q.id]));
   return [...open.filter((q) => q.required), ...open.filter((q) => !q.required)].slice(0, limit);
 }
 
 /** Flat schema for MCP elicitation (primitives only: string, enum, boolean, number). */
-export function elicitationSchema(questions) {
-  const properties = {}, required = [];
+export function elicitationSchema(questions, lang) {
+  const properties = {}, required = [], labels = briefLabels(lang);
   for (const q of questions) {
     const base = { title: q.ask.slice(0, 120), description: q.why ?? undefined };
     if (q.type === "choice") properties[q.id] = { ...base, type: "string", enum: q.options };
-    else if (q.type === "multi") properties[q.id] = { ...base, type: "string", description: `${q.why ? q.why + " " : ""}Options (combine them or write your own): ${q.options.join(" · ")}` };
+    else if (q.type === "multi") properties[q.id] = { ...base, type: "string", description: `${q.why ? q.why + " " : ""}${labels.options}: ${q.options.join(" · ")}` };
     else if (q.type === "boolean") properties[q.id] = { ...base, type: "boolean" };
     else if (q.type === "number") properties[q.id] = { ...base, type: "number" };
     else properties[q.id] = { ...base, type: "string" };
@@ -96,12 +172,12 @@ export function elicitationSchema(questions) {
   return { type: "object", properties, required };
 }
 
-export function renderMarkdown(kind, answers = {}) {
-  const b = BRIEFS[kind];
+export function renderMarkdown(kind, answers = {}, lang) {
+  const b = briefIn(kind, lang), labels = briefLabels(lang);
   const lines = [`# ${b.title}`, ""];
   for (const q of b.questions) {
     const a = answers[q.id];
-    lines.push(`**${q.ask}**`, isEmpty(a) ? (q.required ? "_Missing (required)._" : "_No answer._") : Array.isArray(a) ? a.join(", ") : String(a), "");
+    lines.push(`**${q.ask}**`, isEmpty(a) ? (q.required ? labels.missing : labels.empty) : Array.isArray(a) ? a.join(", ") : String(a), "");
   }
   return lines.join("\n");
 }

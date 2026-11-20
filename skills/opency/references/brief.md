@@ -18,6 +18,8 @@ A good-looking piece that says what nobody asked for gets redone from scratch. T
 
 ## How to ask
 
+Ask in the language the user writes in. With the MCP, pass `language` to `brief_interview` (CLI: `npx @opency/cli brief questions campaign --lang es`): the form and the questions come in that language, and the workspace remembers it.
+
 1. **Deduce first.** Before the first question, read the request, `brand.json`, `brand-kit.md`, `decisions.md` and, if it exists, `import/report.json`. What is already answered is not asked: confirm it in one line ("I'm assuming we're talking to small-business owners, as usual").
 2. **In short rounds.** 2 to 4 questions per turn. Never the whole form at once.
 3. **Use whatever question tool you have.** With the opency MCP, `brief_interview` shows the user a form if the client supports it. In Claude Code, `AskUserQuestion`. If there is none, ask in the chat with concrete options to choose from.

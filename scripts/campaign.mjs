@@ -8,7 +8,7 @@
 //   npx @opency/cli campaign list
 //   npx @opency/cli campaign brand-brief [--set key="value"]… [--answers file.json]    the brand's own brief (brands/<brand>/brief.json)
 //   npx @opency/cli brief questions [brand|campaign|piece] [--json]                        the questions of each brief
-//   All of them: --brand <slug>   ·   --json for structured output.
+//   All of them: --brand <slug>   ·   --json for structured output   ·   --lang es|en: the language the questions are asked in.
 //
 // The campaign lives in brands/<brand>/campaigns/<slug>/brief.json. Pieces are linked with
 // `npx @opency/cli new <piece> --campaign <slug>` (stored in piece.json → campaign).
@@ -18,11 +18,13 @@ import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { parseArgs, readJSON, writeJSON, resolveBrand, brandDir, slugify, today, FORMATS } from "./lib/project.mjs";
-import { BRIEFS, briefKinds, missingAnswers, nextQuestions, renderMarkdown } from "./lib/brief.mjs";
+import { BRIEFS, briefKinds, briefIn, briefLanguage, missingAnswers, nextQuestions, renderMarkdown } from "./lib/brief.mjs";
 
 const argv = process.argv.slice(2);
 const args = parseArgs(argv);
 const fail = (m) => { console.error(`✗ ${m}`); process.exit(1); };
+// The language the questions are asked in (the user's), not the language of the brand's copy.
+const LANG = typeof args.lang === "string" ? briefLanguage(args.lang) : null;
 const out = (data, text) => console.log(args.json ? JSON.stringify(data, null, 2) : text);
 
 // --set can repeat: parseArgs keeps only the last one, so all of them are read by hand.
@@ -37,8 +39,8 @@ async function collectAnswers() {
 // ---- brief questions (no brand needed) ----
 if (args._[0] === "questions" || (args._[0] === "brief" && args._[1] === "questions")) {
   const kind = args._.find((x) => briefKinds.includes(x)) ?? "campaign";
-  const b = BRIEFS[kind];
-  out({ kind, ...b }, [`# ${b.title}`, b.intro, "", ...b.questions.map((q, i) => `${String(i + 1).padStart(2)}. ${q.required ? "●" : "○"} ${q.ask}${q.options ? `\n     options: ${q.options.join(" · ")}` : ""}${q.infer ? `\n     can be inferred from: ${q.infer}` : ""}`), "", "● required   ○ optional"].join("\n"));
+  const b = briefIn(kind, LANG);
+  out({ kind, ...b }, [`# ${b.title}`, b.intro, "", ...b.questions.map((q, i) => `${String(i + 1).padStart(2)}. ${q.required ? "●" : "○"} ${q.ask}${q.options ? `\n     ${LANG === "es" ? "opciones" : "options"}: ${q.options.join(" · ")}` : ""}${q.infer ? `\n     ${LANG === "es" ? "se puede deducir de" : "can be inferred from"}: ${q.infer}` : ""}`), "", LANG === "es" ? "● obligatoria   ○ opcional" : "● required   ○ optional"].join("\n"));
   process.exit(0);
 }
 
@@ -52,15 +54,17 @@ if (cmd === "brand-brief") {
   const add = await collectAnswers();
   const unknown = Object.keys(add).filter((k) => !BRIEFS.brand.questions.some((q) => q.id === k));
   if (unknown.length) fail(`Unknown key(s): ${unknown.join(", ")}. Valid: ${BRIEFS.brand.questions.map((q) => q.id).join(", ")}`);
-  if (Object.keys(add).length) {
+  if (LANG) current.language = LANG;
+  const lang = current.language ?? "en";
+  if (Object.keys(add).length || LANG) {
     Object.assign(current.answers, add);
     current.updatedAt = today();
     await writeJSON(file, current);
-    await writeFile(path.join(brandDir(b), "brief.md"), renderMarkdown("brand", current.answers) + "\n");
+    await writeFile(path.join(brandDir(b), "brief.md"), renderMarkdown("brand", current.answers, lang) + "\n");
   }
-  const missing = missingAnswers("brand", current.answers).map((q) => ({ id: q.id, ask: q.ask }));
-  out({ brand: b, answers: current.answers, missing, readyToPropose: !missing.length, nextQuestions: nextQuestions("brand", current.answers) },
-    `${renderMarkdown("brand", current.answers)}\n${missing.length ? `Missing: ${missing.map((m) => m.id).join(", ")}` : "✓ Enough to propose palette, typefaces and voice."}`);
+  const missing = missingAnswers("brand", current.answers, lang).map((q) => ({ id: q.id, ask: q.ask }));
+  out({ brand: b, language: lang, answers: current.answers, missing, readyToPropose: !missing.length, nextQuestions: nextQuestions("brand", current.answers, 4, lang) },
+    `${renderMarkdown("brand", current.answers, lang)}\n${missing.length ? `Missing: ${missing.map((m) => m.id).join(", ")}` : "✓ Enough to propose palette, typefaces and voice."}`);
   process.exit(0);
 }
 
@@ -71,7 +75,7 @@ const load = async (slug) => (await readJSON(file(slug), null)) ?? fail(`Campaig
 async function save(c) {
   c.updatedAt = today();
   await writeJSON(file(c.slug), c);
-  await writeFile(path.join(CDIR, c.slug, "brief.md"), renderMarkdown("campaign", c.answers).replace("# Campaign brief", `# ${c.name} · brief`) + "\n");
+  await writeFile(path.join(CDIR, c.slug, "brief.md"), renderMarkdown("campaign", c.answers, c.language).replace(/^# .*/, `# ${c.name} · brief`) + "\n");
 }
 
 async function piecesOf(slug) {
@@ -89,7 +93,7 @@ async function piecesOf(slug) {
 
 async function status(slug) {
   const c = await load(slug);
-  const missing = missingAnswers("campaign", c.answers).map((q) => ({ id: q.id, ask: q.ask }));
+  const missing = missingAnswers("campaign", c.answers, c.language).map((q) => ({ id: q.id, ask: q.ask }));
   const pieces = await piecesOf(slug);
   const made = new Set(pieces.map((p) => p.id.replace(/^\d{4}-\d{2}-\d{2}-/, "")));
   const pending = (c.plan ?? []).filter((p) => !made.has(slugify(p.slug)));
@@ -104,7 +108,7 @@ try {
     const slug = slugify(target);
     if (existsSync(file(slug))) fail(`Campaign "${slug}" already exists. To change answers: npx @opency/cli campaign brief ${slug} --set key="value"`);
     await mkdir(path.join(CDIR, slug), { recursive: true });
-    const c = { slug, name: typeof args.name === "string" ? args.name : target, brand, createdAt: today(), status: "brief", answers: await collectAnswers(), plan: [] };
+    const c = { slug, name: typeof args.name === "string" ? args.name : target, brand, createdAt: today(), status: "brief", language: LANG ?? "en", answers: await collectAnswers(), plan: [] };
     await save(c);
     const s = await status(slug);
     out(s, `✓ brands/${brand}/campaigns/${slug}/brief.json\n${s.missing.length ? `  ${s.missing.length} required answer(s) missing:\n${s.missing.map((m) => `   · ${m.id}: ${m.ask}`).join("\n")}` : "  Brief complete."}\n  → ${s.next}`);
@@ -113,10 +117,11 @@ try {
     const add = await collectAnswers();
     const unknown = Object.keys(add).filter((k) => !BRIEFS.campaign.questions.some((q) => q.id === k));
     if (unknown.length) fail(`Unknown key(s): ${unknown.join(", ")}. Valid: ${BRIEFS.campaign.questions.map((q) => q.id).join(", ")}`);
-    if (Object.keys(add).length) { Object.assign(c.answers, add); await save(c); }
+    if (LANG) c.language = LANG;
+    if (Object.keys(add).length || LANG) { Object.assign(c.answers, add); await save(c); }
     const s = await status(target);
-    const nq = nextQuestions("campaign", c.answers);
-    out({ ...s, nextQuestions: nq }, `${renderMarkdown("campaign", c.answers)}\n${s.readyToDesign ? "✓ Ready to design." : `Missing: ${s.missing.map((m) => m.id).join(", ")}`}\n→ ${s.next}`);
+    const nq = nextQuestions("campaign", c.answers, 4, c.language);
+    out({ ...s, nextQuestions: nq }, `${renderMarkdown("campaign", c.answers, c.language)}\n${s.readyToDesign ? "✓ Ready to design." : `Missing: ${s.missing.map((m) => m.id).join(", ")}`}\n→ ${s.next}`);
   } else if (cmd === "plan") {
     const c = await load(target);
     if (typeof args.file !== "string") fail("Usage: npx @opency/cli campaign plan <slug> --file plan.json   (a list of { slug, intent, format, channel, date, angle })");

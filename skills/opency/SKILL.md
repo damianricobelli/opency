@@ -21,7 +21,7 @@ This file is the core. The detail of each topic is in `references/` and is read 
 5. **Look before you claim.** You do not say something "looks good" without looking at the render. Passing checks is not aesthetic approval.
 6. **Do instead of explaining.** If a step fails twice, stop and say what you need.
 
-**Language.** Answer in the user's language. Ask the brief questions in the user's language, in their words (the question set is written in English: translate it). Write the copy in the brand's language (`brand.json → language`).
+**Language.** Answer in the user's language, without asking which one: use the language they wrote to you in. Pass it as `language` to `brief_interview` and `brief_questions` (CLI: `--lang es`) so the questions and the form arrive in it; it is remembered for the workspace. The brief ships in English and Spanish; for any other language, translate the questions yourself and ask them in the chat. Write the copy in the brand's language (`brand.json → language`). The review page and the delivery checklist follow the piece's language.
 
 ## First: the workspace
 
