@@ -1,99 +1,31 @@
-import {
-  Component,
-  type CSSProperties,
-  lazy,
-  type ReactNode,
-  Suspense,
-  useEffect,
-  useState,
-} from "react";
-import { useThemeMode } from "@/hooks/use-theme-mode";
+import { Check } from "lucide-react";
+import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
-import { useInView } from "../lib/use-in-view";
-
-// three.js stays out of the entry chunk: it loads when the browser is idle.
-const HeroScene = lazy(() => import("./hero-scene"));
-
-/** If WebGL or the chunk fails, the static slides simply stay. */
-class SceneBoundary extends Component<
-  { children: ReactNode },
-  { failed: boolean }
-> {
-  state = { failed: false };
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-  render() {
-    return this.state.failed ? null : this.props.children;
-  }
-}
-
-function supportsWebGL() {
-  try {
-    const canvas = document.createElement("canvas");
-    return Boolean(canvas.getContext("webgl2") ?? canvas.getContext("webgl"));
-  } catch {
-    return false;
-  }
-}
-
-const OFFSETS = [-2, -1, 0, 1, 2] as const;
+import { m } from "@/paraglide/messages";
+import { Reveal } from "./reveal";
 
 /**
- * The same fan, drawn with CSS: what the server sends, what reduced motion
- * keeps, and what stays if WebGL is missing.
+ * Real output: the five slides of the demo carousel, rendered by opency
+ * (`pnpm hero-slides` refreshes them). Each one carries the quality check the
+ * scan "passes" on it.
+ *
+ * `tilt` and `drop` shape a shallow arc; `at` is where the scan line meets the
+ * slide, as a fraction of the row (`atNarrow` when only the middle three show).
  */
-function StaticSlides({ className }: { className?: string }) {
-  return (
-    <div
-      aria-hidden
-      className={cn(
-        "absolute inset-0 grid place-items-center [--fan-step:44%] [perspective:1200px] sm:[--fan-step:66%]",
-        className,
-      )}
-    >
-      {OFFSETS.map((offset) => {
-        const distance = Math.abs(offset);
-        return (
-          <div
-            key={offset}
-            style={
-              {
-                "--offset": offset,
-                transform: `translateX(calc(var(--offset) * var(--fan-step))) translateZ(${-distance * 70}px) rotateY(${-offset * 15}deg)`,
-                zIndex: 3 - distance,
-              } as CSSProperties
-            }
-            className={cn(
-              // The shadow keeps paper slides apart from a paper page in the light theme.
-              "col-start-1 row-start-1 flex aspect-[4/5] h-[62%] flex-col justify-between rounded-[5%] border border-input p-[7%] shadow-[0_10px_28px_-14px_color-mix(in_oklch,var(--foreground)_40%,transparent)]",
-              offset === 0
-                ? "border-transparent bg-foreground text-background"
-                : "bg-card text-foreground",
-            )}
-          >
-            <span className="flex items-center gap-[6%]">
-              <span className="size-[5%] min-w-1.5 rounded-full bg-brand aspect-square" />
-              <span className="h-[3px] w-1/4 rounded-full bg-current opacity-35" />
-            </span>
-            <span className="grid gap-[9%]">
-              <span className="h-2 w-[85%] rounded-full bg-current sm:h-3" />
-              <span className="h-2 w-[65%] rounded-full bg-current sm:h-3" />
-              <span
-                className={cn(
-                  "h-2 w-2/5 rounded-full sm:h-3",
-                  offset === 0 ? "bg-brand" : "bg-current",
-                )}
-              />
-            </span>
-            <span className="h-[7%] w-[6%] min-w-1.5 rounded-[2px] bg-current opacity-90" />
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+const SLIDES = [
+  { n: 1, check: m.hero_check_1, tilt: -3, drop: 14, at: 0.1, atNarrow: 0 },
+  { n: 2, check: m.hero_check_2, tilt: -1.5, drop: 4, at: 0.3, atNarrow: 0.17 },
+  { n: 3, check: m.hero_check_3, tilt: 0, drop: 0, at: 0.5, atNarrow: 0.5 },
+  { n: 4, check: m.hero_check_4, tilt: 1.5, drop: 4, at: 0.7, atNarrow: 0.83 },
+  { n: 5, check: m.hero_check_5, tilt: 3, drop: 14, at: 0.9, atNarrow: 1 },
+] as const;
 
+/**
+ * The product in one picture: a finished carousel going through quality
+ * control. Slides settle into a row, a scan line crosses them, each check
+ * lands as the line passes, and the report closes with zero errors.
+ * All motion is CSS (`.hero-stage` in `styles.css`) and plays once in view.
+ */
 export function HeroStage({
   label,
   className,
@@ -101,60 +33,60 @@ export function HeroStage({
   label: string;
   className?: string;
 }) {
-  const [stage, inView] = useInView<HTMLDivElement>({ rootMargin: "80px" });
-  const [live, setLive] = useState(false);
-  const [ready, setReady] = useState(false);
-  // The slides are painted with the active theme's tokens.
-  const { resolvedTheme } = useThemeMode();
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (!supportsWebGL()) return;
-    // After hydration and whatever the browser still has queued.
-    if ("requestIdleCallback" in window) {
-      const id = window.requestIdleCallback(() => setLive(true), {
-        timeout: 1500,
-      });
-      return () => window.cancelIdleCallback(id);
-    }
-    const timer = setTimeout(() => setLive(true), 300);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <div
-      ref={stage}
+    <Reveal
       role="img"
       aria-label={label}
-      className={cn(
-        "relative h-52 w-full sm:h-[clamp(15rem,40vw,27rem)]",
-        className,
-      )}
+      className={cn("hero-stage flex flex-col items-center", className)}
     >
-      <StaticSlides
-        className={cn(
-          "transition-opacity duration-300 ease-out",
-          ready && "opacity-0",
-        )}
-      />
-      {live ? (
-        <div
-          className={cn(
-            "absolute inset-0 opacity-0 transition-opacity duration-500 ease-out",
-            ready && "opacity-100",
-          )}
-        >
-          <SceneBoundary>
-            <Suspense fallback={null}>
-              <HeroScene
-                running={inView}
-                scheme={resolvedTheme}
-                onReady={() => setReady(true)}
+      <div className="relative flex items-start justify-center gap-[3vw] sm:gap-4 lg:gap-5">
+        {SLIDES.map((slide, index) => (
+          <figure
+            key={slide.n}
+            style={
+              {
+                "--i": index,
+                "--tilt": `${slide.tilt}deg`,
+                "--drop": `${slide.drop}px`,
+                "--at": slide.at,
+                "--at-narrow": slide.atNarrow,
+              } as CSSProperties
+            }
+            className={cn(
+              "hs-slide w-[28vw] max-w-36 sm:w-[clamp(6rem,15vw,11.5rem)] sm:max-w-none",
+              // Phones show the middle three, whole: nothing is cropped.
+              (index === 0 || index === SLIDES.length - 1) && "max-sm:hidden",
+            )}
+          >
+            <div className="hs-card relative overflow-hidden rounded-[7%] border border-border bg-card shadow-[0_14px_30px_-18px_color-mix(in_oklch,var(--foreground)_45%,transparent)]">
+              <img
+                src={`/hero/slide-0${slide.n}.webp`}
+                alt=""
+                width={600}
+                height={750}
+                decoding="async"
+                draggable={false}
+                className="block h-auto w-full select-none"
               />
-            </Suspense>
-          </SceneBoundary>
-        </div>
-      ) : null}
-    </div>
+              {/* The safe area the render measures against. */}
+              <span className="hs-guide pointer-events-none absolute inset-[7%] rounded-[4%] border border-dashed border-brand" />
+            </div>
+            <figcaption className="hs-check mt-3 flex items-center justify-center gap-1 font-mono text-[10px] whitespace-nowrap text-muted-foreground sm:mt-4 sm:text-xs">
+              <Check aria-hidden className="size-3 shrink-0 text-brand" />
+              {slide.check()}
+            </figcaption>
+          </figure>
+        ))}
+        {/* The scan: a full-width layer whose right edge is the line. */}
+        <span
+          aria-hidden
+          className="hs-scan pointer-events-none absolute inset-x-0 -top-3 bottom-6 border-r-2 border-brand bg-linear-to-l from-brand/10 to-transparent to-25% sm:bottom-8"
+        />
+      </div>
+      <p className="hs-status mt-5 flex items-center gap-2 rounded-full border bg-card px-3 py-1 font-mono text-xs text-muted-foreground sm:mt-7">
+        <span className="size-1.5 rounded-full bg-brand" />
+        {m.hero_stage_status()}
+      </p>
+    </Reveal>
   );
 }

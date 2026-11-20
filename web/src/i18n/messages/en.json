@@ -17,7 +17,7 @@
   "hero_cta_install": "Install",
   "hero_cta_github": "View on GitHub",
   "hero_note": "No SaaS. No account. No download limits.",
-  "hero_scene_label": "Carousel slides settling into order",
+  "hero_scene_label": "A five-slide carousel passing its quality checks",
   "copy": "Copy",
   "copied": "Copied",
   "brief_eyebrow": "Interactive brief",
@@ -118,5 +118,11 @@
   "theme_toggle_label": "Theme: {mode}",
   "theme_mode_light": "light",
   "theme_mode_dark": "dark",
-  "theme_mode_auto": "system"
+  "theme_mode_auto": "system",
+  "hero_check_1": "Contrast",
+  "hero_check_2": "Safe zones",
+  "hero_check_3": "No widows",
+  "hero_check_4": "Sources",
+  "hero_check_5": "Alt text",
+  "hero_stage_status": "0 errors · ready for your approval"
 }

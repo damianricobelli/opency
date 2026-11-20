@@ -78,7 +78,7 @@ export function Hero() {
       </div>
       <HeroStage
         label={m.hero_scene_label()}
-        className="rise -mx-5 mt-4 -mb-6 w-[calc(100%+2.5rem)] self-center sm:mx-0 sm:mt-10 sm:-mb-12 sm:w-full sm:max-w-5xl"
+        className="mt-10 w-full self-center sm:mt-16 sm:max-w-5xl"
       />
     </section>
   );

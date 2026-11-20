@@ -188,6 +188,126 @@
         }
     }
 
+    /* Hero stage: a finished carousel going through quality control.
+       Timeline (ms): slides settle 0–900 · scan 700–2300 · each check lands as
+       the line reaches its slide · status at 2400. Plays once, in view. */
+    .hero-stage {
+        --scan-start: 700ms;
+        --scan-time: 1600ms;
+    }
+
+    .hs-slide {
+        transform: translateY(var(--drop));
+    }
+
+    .hs-card {
+        transform: rotate(var(--tilt));
+        transition: translate 220ms var(--ease-out);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .hs-card:hover {
+            translate: 0 -6px;
+        }
+    }
+
+    .hs-guide,
+    .hs-scan {
+        opacity: 0;
+    }
+
+    @media (width < 40rem) {
+        .hs-slide {
+            --at: var(--at-narrow);
+        }
+    }
+
+    @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+        .hs-card,
+        .hs-check,
+        .hs-status {
+            opacity: 0;
+        }
+
+        .hero-stage[data-visible] .hs-card {
+            animation: hs-settle 640ms var(--ease-out) both;
+            animation-delay: calc(var(--i) * 70ms);
+        }
+
+        .hero-stage[data-visible] .hs-scan {
+            animation: hs-scan var(--scan-time) linear var(--scan-start) both;
+        }
+
+        .hero-stage[data-visible] .hs-guide {
+            animation: hs-guide 900ms var(--ease-out) both;
+            animation-delay: calc(
+                var(--scan-start) + var(--at) * var(--scan-time) - 200ms
+            );
+        }
+
+        .hero-stage[data-visible] .hs-check {
+            animation: hs-land 420ms var(--ease-out) both;
+            animation-delay: calc(
+                var(--scan-start) + var(--at) * var(--scan-time) + 80ms
+            );
+        }
+
+        .hero-stage[data-visible] .hs-status {
+            animation: hs-land 480ms var(--ease-out) both;
+            animation-delay: calc(var(--scan-start) + var(--scan-time) + 120ms);
+        }
+    }
+
+    @keyframes hs-settle {
+        from {
+            opacity: 0;
+            transform: translateY(26px) rotate(var(--tilt)) scale(0.96);
+        }
+        to {
+            opacity: 1;
+            transform: rotate(var(--tilt));
+        }
+    }
+
+    /* The layer starts fully to the left, so its right edge (the line) crosses
+       the row at constant speed; it fades at both ends. */
+    @keyframes hs-scan {
+        0% {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+        8%,
+        92% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes hs-guide {
+        0%,
+        100% {
+            opacity: 0;
+        }
+        30%,
+        60% {
+            opacity: 0.9;
+        }
+    }
+
+    @keyframes hs-land {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
     /* Below the fold: hidden only where a script can reveal it again. */
     @media (scripting: enabled) {
         [data-reveal] {

@@ -17,7 +17,7 @@
   "hero_cta_install": "Instalar",
   "hero_cta_github": "Ver en GitHub",
   "hero_note": "Sin SaaS. Sin cuenta. Sin límite de descargas.",
-  "hero_scene_label": "Slides de un carrusel acomodándose en orden",
+  "hero_scene_label": "Un carrusel de cinco slides pasando su control de calidad",
   "copy": "Copiar",
   "copied": "Copiado",
   "brief_eyebrow": "Brief interactivo",
@@ -118,5 +118,11 @@
   "theme_toggle_label": "Tema: {mode}",
   "theme_mode_light": "claro",
   "theme_mode_dark": "oscuro",
-  "theme_mode_auto": "sistema"
+  "theme_mode_auto": "sistema",
+  "hero_check_1": "Contraste",
+  "hero_check_2": "Zonas seguras",
+  "hero_check_3": "Sin viudas",
+  "hero_check_4": "Fuentes",
+  "hero_check_5": "Texto alt",
+  "hero_stage_status": "0 errores · lista para tu aprobación"
 }

@@ -1,6 +1,6 @@
 # opency · web
 
-The opency landing page. TanStack Start, shadcn/ui (Base UI, `base-maia` style), Tailwind v4, Paraglide and a React Three Fiber scene in the hero.
+The opency landing page. TanStack Start, shadcn/ui (Base UI, `base-maia` style), Tailwind v4, Paraglide.
 
 English is the base language and lives at `/`; Spanish is a translation under `/es`.
 
@@ -34,4 +34,4 @@ No domain is hardcoded. Without `VITE_SITE_URL`, every absolute URL uses the ori
 
 - New copy goes in both files under `src/i18n/messages/`, English first.
 - Routes live in `src/features/<feature>/routes` (virtual routes in `src/routes.ts`).
-- three.js loads on its own, when the browser is idle and only there (`hero-stage.tsx`); with `prefers-reduced-motion` or without WebGL the CSS fan stays.
+- The hero shows the demo carousel's real renders (`public/hero/`, refreshed with `pnpm hero-slides`) and animates with CSS only (`.hero-stage` in `styles.css`): no WebGL, nothing to lazy-load, and a static version under `prefers-reduced-motion`.
