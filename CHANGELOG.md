@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/damianricobelli/opency/compare/opency-v0.4.0...opency-v0.5.0) (2026-11-20)
+
+
+### Features
+
+* **layouts:** editorial redesign — poster, chat and duotone layouts, stronger steps, closer and photo layouts ([29ef779](https://github.com/damianricobelli/opency/commit/29ef7795c189a740cc99797dcda809ba9953ff8d))
+
 ## [0.4.0](https://github.com/damianricobelli/opency/compare/opency-v0.3.0...opency-v0.4.0) (2026-11-20)
 
 
