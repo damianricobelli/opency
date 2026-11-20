@@ -1,6 +1,6 @@
 {
   "name": "@opency/cli",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Open-source skill and MCP server that turns your agent into an agency content team: interactive briefs, brand kits, campaigns, stock photos and pixel-level quality checks.",
   "type": "module",
   "license": "MIT",
