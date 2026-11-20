@@ -1,6 +1,6 @@
 export const INSTALL_COMMANDS = {
   skill: "npx skills add damianricobelli/opency",
-  workspace: "npx @opency/cli init",
+  workspace: "npx @opency/cli demo",
   mcp: "claude mcp add opency -- npx -y @opency/cli mcp",
   mcpConfig: `{
   "mcpServers": {

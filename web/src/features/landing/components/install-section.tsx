@@ -21,17 +21,17 @@ export function InstallSection() {
           <Section.Lead>{m.install_lead()}</Section.Lead>
         </Section.Header>
         <Reveal delay={80} className="min-w-0">
-          <Tabs defaultValue="skill" className="min-w-0 gap-4">
+          <Tabs defaultValue="mcp" className="min-w-0 gap-4">
             {/* A full-width segmented control on phones: three targets 44px tall. */}
             <TabsList className="w-full group-data-horizontal/tabs:h-13 sm:w-fit sm:group-data-horizontal/tabs:h-9">
+              <TabsTrigger value="mcp" className="px-4">
+                {m.install_tab_mcp()}
+              </TabsTrigger>
               <TabsTrigger value="skill" className="px-4">
                 {m.install_tab_skill()}
               </TabsTrigger>
               <TabsTrigger value="workspace" className="px-4">
                 {m.install_tab_workspace()}
-              </TabsTrigger>
-              <TabsTrigger value="mcp" className="px-4">
-                {m.install_tab_mcp()}
               </TabsTrigger>
               <TabsIndicator />
             </TabsList>

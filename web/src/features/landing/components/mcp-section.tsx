@@ -5,7 +5,7 @@ import { Section } from "./section";
 const GROUPS = [
   {
     label: m.mcp_group_brand,
-    tools: ["brand_list", "brand_get", "brand_import_site", "brand_check"],
+    tools: ["brand_get", "brand_import_site", "brand_fonts", "brand_check"],
   },
   {
     label: m.mcp_group_brief,
@@ -27,11 +27,11 @@ const GROUPS = [
   {
     label: m.mcp_group_pieces,
     tools: [
-      "piece_create",
-      "piece_write",
-      "piece_render",
-      "piece_version",
-      "piece_motion",
+      "piece_compose",
+      "piece_edit",
+      "piece_repair",
+      "piece_preview",
+      "piece_handoff",
     ],
   },
   {
