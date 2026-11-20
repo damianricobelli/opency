@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/damianricobelli/opency/compare/opency-v0.3.0...opency-v0.4.0) (2026-11-20)
+
+
+### Features
+
+* brief in the user's language (English and Spanish), remembered per workspace ([28036f3](https://github.com/damianricobelli/opency/commit/28036f3dfa04b70b918a871ca78ba7d15dab26d8))
+
 ## [0.3.0](https://github.com/damianricobelli/opency/compare/opency-v0.2.0...opency-v0.3.0) (2026-11-20)
 
 
