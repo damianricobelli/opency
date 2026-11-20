@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es" data-format="4:5">
+<head><meta charset="utf-8"><title>fixture con defectos a propósito</title>
+<link rel="stylesheet" href="../../../../brands/_demo/tokens.css">
+<link rel="stylesheet" href="../../../../templates/base/base.css">
+<style>
+  #headline { width: 760px; }
+  #low { color: #777777; margin-top: 40px; }
+  #out { position: absolute; top: -70px; left: 0; }
+  #a { position: absolute; top: 700px; left: 0; } #b { position: absolute; top: 715px; left: 30px; }
+  #tiny { font-size: 14px; position: absolute; top: 900px; }
+</style></head>
+<body>
+<main class="canvas on-primary">
+  <div class="safe"><div class="content">
+    <h1 id="headline" class="t-cover" style="text-wrap: wrap" data-max="20">Una portada bastante larga que termina<br>sola</h1>
+    <p id="low" class="t-body">Texto gris sobre fondo oscuro: no se lee.</p>
+    <p id="out" class="t-body">Fuera de la zona segura</p>
+    <p id="a" class="t-body">Bloque uno superpuesto</p><p id="b" class="t-body">Bloque dos superpuesto</p>
+    <p id="tiny">Letra demasiado chica</p>
+    <p id="claim" class="t-body">Logramos 40% más ventas 🚀 {{DATO}}</p>
+    <img src="https://example.com/foto.jpg" alt="">
+  </div></div>
+</main>
+</body></html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es" data-format="4:5" data-layout="comparison">
+<head>
+<meta charset="utf-8">
+<title>2026-11-24-ejemplo · slide 4 · comparison</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../../templates/base/base.css">
+<style>
+  .split { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; }
+  .split > div:first-child { background: var(--bg-alt); }
+  .content { gap: 88px; justify-content: center; }
+  #headline { max-width: 420px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; column-gap: 160px; }
+  .col { display: grid; gap: 40px; align-content: start; }
+  .col .label { margin-bottom: 6px; }
+  .now .label { display: inline-flex; align-items: center; gap: 14px; }
+  .now .label::before { content: ""; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); }
+  .item { padding-top: 30px; border-top: 2px solid var(--line); }
+</style>
+</head>
+<body>
+<main class="canvas on-bg" data-texture="paper">
+  <div class="split" data-bleed><div></div><div></div></div>
+  <div class="safe">
+    <div class="content">
+      <h2 id="headline" class="t-title">Qué cambió en la semana</h2>
+      <div class="cols">
+        <div class="col">
+          <p id="before-label" class="label">Antes</p>
+          <p id="before-1" class="item t-body">Un brief por post</p>
+          <p id="before-2" class="item t-body">Tres rondas de cambios</p>
+          <p id="before-3" class="item t-body">Diseño desde cero</p>
+        </div>
+        <div class="col now">
+          <p id="now-label" class="label">Ahora</p>
+          <p id="now-1" class="item t-body">Un pedido por chat</p>
+          <p id="now-2" class="item t-body">Una corrección puntual</p>
+          <p id="now-3" class="item t-body">Plantillas aprobadas</p>
+        </div>
+      </div>
+    </div>
+    <footer class="chrome-bar" data-chrome><span id="brand">Tu marca</span><span id="pager">04/05</span></footer>
+  </div>
+</main>
+</body>
+</html>

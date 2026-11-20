@@ -1,0 +1,58 @@
+{
+  "name": "opentcy",
+  "version": "0.1.0",
+  "description": "Skill y servidor MCP open source: tu agente como equipo de contenido de una agencia. Brief interactivo, marcas, campañas, stock y control de calidad a nivel píxel.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Damián Ricobelli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/damianricobelli/opentcy.git"
+  },
+  "homepage": "https://github.com/damianricobelli/opentcy#readme",
+  "keywords": [
+    "mcp",
+    "agent-skill",
+    "claude",
+    "marketing",
+    "social-media",
+    "carousel",
+    "content",
+    "agency",
+    "unsplash",
+    "pexels",
+    "openverse"
+  ],
+  "bin": {
+    "opentcy": "bin/opentcy.mjs"
+  },
+  "files": [
+    "bin",
+    "scripts",
+    "mcp",
+    "templates",
+    "skills",
+    "agents",
+    "brands/_demo",
+    "!scripts/test",
+    "!brands/**/render",
+    "!templates/layouts/render/slide-*",
+    ".claude-plugin",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test scripts/test/*.test.mjs",
+    "mcp": "node mcp/server.mjs",
+    "layouts": "node bin/opentcy.mjs layouts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.20.0",
+    "playwright": "^1.48.0",
+    "sharp": "^0.33.5",
+    "zod": "^3.25.0"
+  },
+  "engines": {
+    "node": ">=18.17"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Marca demo",
+  "slug": "_demo",
+  "handle": "@marca",
+  "language": "es",
+  "country": "AR",
+  "address": "vos",
+  "usesEmoji": false,
+  "usesDashes": false,
+  "pillars": [],
+  "defaults": { "texture": "paper", "grade": "editorial", "dominantMode": "type" },
+  "logos": {},
+  "verified": []
+}

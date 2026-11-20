@@ -1,0 +1,14 @@
+language js
+
+// `m` is paraglide's message namespace. Reading it with a computed key keeps
+// every message alive in that chunk, since the bundler cannot tell which one
+// is used. Reference the message function itself instead, e.g. a record of
+// `m.some_message` keyed by id.
+`m[$key]` where {
+  ! $key <: r"[0-9]+",
+  register_diagnostic(
+    span = $key,
+    message = "Computed access on paraglide's `m` pulls every message into the bundle. Reference the message functions directly.",
+    severity = "error"
+  )
+}

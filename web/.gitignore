@@ -1,0 +1,9 @@
+node_modules
+.DS_Store
+dist
+*.local
+.env
+.tanstack
+.output
+.pnpm-store
+/project.inlang/cache/

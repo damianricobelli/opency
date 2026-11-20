@@ -1,0 +1,466 @@
+#!/usr/bin/env node
+// Render + control de calidad de una pieza.
+//
+// Uso: npx opentcy render pieces/<id> [--scale 2] [--only 3] [--pdf] [--strict]
+//
+// Genera en pieces/<id>/render/:
+//   slide-NN.png        PNG sRGB al tamaño del formato (× scale)
+//   slide-NN.jpg        JPG 95, croma 4:4:4 (texto nítido tras la recompresión de Instagram)
+//   contact-sheet.png   todos los slides al tamaño real de un teléfono: es lo que el agente inspecciona
+//   carousel.pdf        con --pdf (carrusel para LinkedIn: una página por slide)
+//   report.json / .md   hallazgos de calidad
+//
+// Chequeos (mecánicos, composición, fotos y copy), medidos sobre el render real:
+//   contraste píxel a píxel incluso sobre fotos y degradados · viudas en titulares · zona segura y franja crítica
+//   superposición de bloques · texto recortado · tamaño ilegible en el teléfono · masa de acento
+//   fotos agrandadas (pixeladas) · caras/sujetos cortados por el recorte · texto sobre el sujeto · assets vetados
+//   fuentes que no cargaron · colores literales fuera de tokens · marcadores sin completar · copy (lib/copy-lint)
+
+import { readdir, writeFile, mkdir, readFile } from "node:fs/promises";
+import path from "node:path";
+import { pathToFileURL, fileURLToPath } from "node:url";
+import sharp from "sharp";
+import { FORMATS, parseArgs, readJSON, writeJSON, loadBrand, loadAssets, brandOf, resolvePiece, launchBrowser, ROOT } from "./lib/project.mjs";
+import { lintCopy } from "./lib/copy-lint.mjs";
+
+const args = parseArgs(process.argv.slice(2));
+let pieceDir;
+try { pieceDir = await resolvePiece(args._[0], args); }
+catch (e) { console.error(`✗ ${e.message}\nUso: npx opentcy render <id de pieza | ruta> [--brand slug] [--scale 2] [--only N] [--pdf] [--strict]`); process.exit(1); }
+const scale = Number(args.scale ?? 1);
+if (![1, 2, 3, 4].includes(scale)) { console.error("--scale debe ser 1, 2, 3 o 4"); process.exit(1); }
+
+const piece = await readJSON(path.join(pieceDir, "piece.json"), {});
+const format = piece.format ?? "4:5";
+const spec = FORMATS[format];
+if (!spec) { console.error(`Formato desconocido "${format}"`); process.exit(1); }
+const brandSlug = brandOf(pieceDir);
+const brand = await loadBrand(brandSlug);
+const assets = await loadAssets(brandSlug);
+
+let files = (await readdir(pieceDir)).filter((f) => /^slide-\d+\.html$/.test(f)).sort();
+if (args.only) files = files.filter((f) => Number(f.match(/\d+/)[0]) === Number(args.only));
+if (!files.length) { console.error("No hay slide-NN.html para renderizar."); process.exit(1); }
+
+const outDir = path.join(pieceDir, "render");
+await mkdir(outDir, { recursive: true });
+
+const launch = () => launchBrowser().catch((e) => { console.error(`✗ ${e.message}`); process.exit(1); });
+const browser = await launch();
+const context = await browser.newContext({ viewport: { width: spec.w, height: spec.h }, deviceScaleFactor: scale });
+
+// ---------- Inspección del DOM (corre dentro de la página) ----------
+function inspect({ spec, assets }) {
+  const W = spec.w, H = spec.h, S = spec.safe;
+  const issues = [];
+  const add = (code, el, msg, severity = "warn") => issues.push({ code, where: el ? label(el) : "", msg, severity });
+  function label(el) { return el.id ? `#${el.id}` : `${el.tagName.toLowerCase()}${el.className && typeof el.className === "string" ? "." + el.className.split(" ")[0] : ""}`; }
+  const inBleed = (el) => !!el.closest("[data-bleed]");
+  const isChrome = (el) => !!el.closest("[data-chrome]");
+  const visible = (el) => { const cs = getComputedStyle(el); return cs.visibility !== "hidden" && cs.display !== "none" && Number(cs.opacity) > 0.02; };
+  const ownText = (el) => [...el.childNodes].filter((n) => n.nodeType === 3 && n.textContent.trim());
+
+  // color computado → rgba real (resuelve color-mix, oklab, etc.)
+  const cv = document.createElement("canvas"); cv.width = cv.height = 1;
+  const cx = cv.getContext("2d", { willReadFrequently: true });
+  const toRGBA = (c) => { cx.clearRect(0, 0, 1, 1); cx.fillStyle = "#000"; cx.fillStyle = c; cx.fillRect(0, 0, 1, 1); const d = cx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
+
+  const textRect = (el) => {
+    const r = document.createRange(); let box = null;
+    for (const n of ownText(el)) {
+      r.selectNodeContents(n);
+      for (const q of r.getClientRects()) {
+        if (!q.width || !q.height) continue;
+        box = box ? { l: Math.min(box.l, q.left), t: Math.min(box.t, q.top), r: Math.max(box.r, q.right), b: Math.max(box.b, q.bottom) } : { l: q.left, t: q.top, r: q.right, b: q.bottom };
+      }
+    }
+    return box;
+  };
+
+  // ---- Bloques de texto ----
+  const textEls = [...document.body.querySelectorAll("*")].filter((el) => ownText(el).length && visible(el) && !el.closest("script,style,title"));
+  const blocks = textEls.filter((el) => !textEls.some((o) => o !== el && o.contains(el)));
+  const headlineSel = "h1,h2,h3,.t-hero,.t-cover,.t-closer,.t-title,.t-subtitle,[data-role=headline]";
+  const roleOf = (el) => el.dataset.role || (isChrome(el) ? "chrome" : el.matches(headlineSel) ? "headline" : el.matches(".t-intro,[id*=support],[id*=bajada]") ? "support" : el.matches(".label,.t-label,.chip") ? "label" : "body");
+
+  const texts = [];
+  const contrastTargets = [];
+  for (const el of textEls) {
+    const tr = textRect(el); if (!tr) continue;
+    const cs = getComputedStyle(el);
+    const fs = parseFloat(cs.fontSize), fw = Number(cs.fontWeight) || 400;
+    const displayPx = fs * spec.display / W;
+    const large = displayPx >= 24 || (displayPx >= 18.66 && fw >= 700);
+    contrastTargets.push({ where: label(el), rect: tr, color: toRGBA(cs.color), large, fs });
+    const small = isChrome(el) || el.closest(".label,.t-label,.chip,[data-role=label]");
+    const minPx = small ? 9 : 10.5;
+    if (displayPx < minPx) add("illegible_text_size", el, `${fs.toFixed(0)} px en canvas = ${displayPx.toFixed(1)} pt en el teléfono (mín. ${minPx}${small ? " para etiquetas" : ""})`);
+    if (inBleed(el) || el.closest("[aria-hidden=true]")) continue;
+    // límites (tolerancia: el área de glifo excede la caja de línea ~0.15em arriba y abajo)
+    const tol = fs * 0.16;
+    if (tr.l < -tol || tr.t < -tol || tr.r > W + tol || tr.b > H + tol) add("layer_out_of_bounds", el, "texto fuera del canvas", "error");
+    else if (tr.l < S.left - 2 || tr.t < S.top - tol || tr.r > W - S.right + 2 || tr.b > H - S.bottom + tol) add("outside_safe_area", el, "texto fuera de la zona segura");
+    else if (!isChrome(el) && tr.b > H - spec.critical + tol && spec.critical > S.bottom) add("critical_zone", el, `texto de contenido en los ${spec.critical} px inferiores (los tapa la interfaz); solo chrome ahí`);
+    // desborde respecto de su propia caja
+    const er = el.getBoundingClientRect();
+    if (tr.r > er.right + 2 || tr.l < er.left - 2) add("text_overflow", el, "el texto se sale de su caja (palabra demasiado larga para el ancho)");
+    if (cs.overflow !== "visible" && (el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1)) add("text_overflow", el, "texto recortado por overflow", "error");
+  }
+
+  for (const el of blocks) {
+    const text = el.innerText.replace(/\s+/g, " ").trim();
+    texts.push({ id: el.id || label(el), role: roleOf(el), text, chrome: isChrome(el) });
+  }
+
+  // ---- Viudas en titulares: última línea de una sola palabra ----
+  for (const el of blocks.filter((b) => b.matches(headlineSel) || b.querySelector(headlineSel))) {
+    const r = document.createRange(); const words = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const n = walker.currentNode; const re = /\S+/g; let m;
+      while ((m = re.exec(n.textContent))) { r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length); const q = r.getBoundingClientRect(); if (q.width) words.push({ w: m[0], top: q.top, h: q.height }); }
+    }
+    if (words.length < 3) continue;
+    const lines = [];
+    for (const w of words) { const L = lines.find((l) => Math.abs(l.top - w.top) < w.h * 0.5); L ? L.words.push(w.w) : lines.push({ top: w.top, words: [w.w] }); }
+    if (lines.length >= 2 && lines[lines.length - 1].words.length === 1) add("headline_orphan", el, `última línea con una sola palabra: "${lines[lines.length - 1].words[0]}"`, "error");
+  }
+
+  // ---- Superposición crítica entre bloques de texto ----
+  const rects = blocks.map((el) => ({ el, r: textRect(el) })).filter((x) => x.r && !inBleed(x.el) && !x.el.closest("[aria-hidden=true]"));
+  for (let i = 0; i < rects.length; i++) for (let j = i + 1; j < rects.length; j++) {
+    const a = rects[i].r, b = rects[j].r;
+    const ix = Math.max(0, Math.min(a.r, b.r) - Math.max(a.l, b.l)), iy = Math.max(0, Math.min(a.b, b.b) - Math.max(a.t, b.t));
+    const minA = Math.min((a.r - a.l) * (a.b - a.t), (b.r - b.l) * (b.b - b.t));
+    if (ix * iy > minA * 0.04) add("critical_overlap", rects[i].el, `se superpone con ${label(rects[j].el)}`, "error");
+  }
+
+  // ---- Espacio muerto: franjas verticales vacías dentro de la zona de contenido ----
+  {
+    const area = W * H;
+    const big = [...document.querySelectorAll("img,.photo,video")].some((e) => { const q = e.getBoundingClientRect(); return q.width * q.height > area * 0.5; });
+    if (!big) {
+      const top = S.top, bottom = H - spec.critical;
+      const spans = [];
+      for (const { el, r } of rects) if (!isChrome(el)) spans.push([r.t, r.b]);
+      for (const e of document.querySelectorAll(".rule,.chip,.card,.glass,.nc,.photo,img,svg,[data-bleed],[aria-hidden=true],.bar,hr,[data-fill]")) {
+        if (e.closest("[data-chrome]")) continue;
+        const q = e.getBoundingClientRect();
+        if (q.width * q.height < area * 0.002 || q.width * q.height > area * 0.6) continue;
+        spans.push([q.top, q.bottom]);
+      }
+      const segs = spans.map(([a, b]) => [Math.max(a, top), Math.min(b, bottom)]).filter(([a, b]) => b > a).sort((x, y) => x[0] - y[0]);
+      const zone = bottom - top;
+      let cursor = top, middle = 0, topGap = null;
+      for (const [a, b] of segs) { if (topGap === null) topGap = a - top; else middle = Math.max(middle, a - cursor); cursor = Math.max(cursor, b); }
+      const bottomGap = bottom - cursor;
+      const T = (topGap ?? 0) / zone, B = bottomGap / zone, M = middle / zone, pct = (x) => `${Math.round(x * 100)} %`;
+      const hint = "repartí el contenido, agrandá la jerarquía o sumá un elemento con función";
+      if (!segs.length) {}
+      else if (B > 0.3 && B - T > 0.15) add("top_stack", null, `contenido amontonado arriba: ${pct(B)} de la zona vacía abajo; ${hint}`);
+      else if (T > 0.35 && T - B > 0.15) add("dead_space", null, `contenido hundido: ${pct(T)} vacío arriba; ${hint}`);
+      else if (M > 0.4) add("dead_space", null, `hueco de ${pct(M)} en el medio; ${hint}`);
+      else if (T > 0.38 && B > 0.38) add("dead_space", null, `contenido chico para el slide (${pct(T)} arriba y ${pct(B)} abajo vacíos); ${hint}`);
+    }
+  }
+
+  // ---- Logo ----
+  for (const el of document.querySelectorAll("[data-role=logo], .logo, #logo")) {
+    const q = el.getBoundingClientRect();
+    if (q.left < S.left - 1 || q.top < S.top - 1 || q.right > W - S.right + 1 || q.bottom > H - S.bottom + 1) add("outside_safe_area", el, "logo fuera de la zona segura");
+  }
+
+  // ---- Imágenes: faltantes, externas, agrandadas, recortes de sujeto, texto sobre el sujeto ----
+  const byId = Object.fromEntries(assets.map((a) => [a.id, a]));
+  const dpr = window.devicePixelRatio;
+  const imgs = [], logos = [];
+  for (const img of document.querySelectorAll("img")) {
+    const q = img.getBoundingClientRect();
+    const src = img.getAttribute("src") || "";
+    if (/^https?:/i.test(src)) add("external_image", img, "imagen externa: descargala a assets/ y registrala (npx opentcy assets add)", "error");
+    if (!img.complete || !img.naturalWidth) { add("missing_asset", img, `no cargó ${src}`, "error"); continue; }
+    const fit = getComputedStyle(img).objectFit;
+    const nw = img.naturalWidth, nh = img.naturalHeight;
+    const s = fit === "contain" ? Math.min(q.width / nw, q.height / nh) : fit === "fill" ? Math.max(q.width / nw, q.height / nh) : Math.max(q.width / nw, q.height / nh);
+    const need = s * dpr;
+    if (!/\.svg(\?|$)/i.test(src) && need > 1.02 && q.width * q.height > 40000) add("image_upscaled", img, `se muestra al ${(need * 100).toFixed(0)} % de su tamaño real (${nw}×${nh}) → se va a ver blanda/pixelada`, need > 1.3 ? "error" : "warn");
+    const id = img.dataset.asset;
+    const meta = id ? byId[id] : null;
+    const isLogo = img.matches("[data-role=logo], .logo, #logo") || /\/logos\//.test(src);
+    if (isLogo) { /* los logos se declaran en brand.json, no en el registro de fotos */ }
+    else if (!id) add("asset_untracked", img, "imagen sin data-asset: no se puede controlar repetición ni recorte");
+    else if (!isLogo && !meta) add("asset_unregistered", img, `data-asset="${id}" no está en assets/assets.json`);
+    if (meta?.vetoed) add("vetoed_asset", img, `asset vetado por la persona: ${id}`, "error");
+    if (isLogo && !img.closest("[data-bleed]") && !img.matches("[data-bleed]")) logos.push({ where: label(img), src: img.src, rect: { l: q.left, t: q.top, w: q.width, h: q.height } });
+    if (!isLogo) imgs.push({ id, rect: { l: q.left, t: q.top, r: q.right, b: q.bottom } });
+    // regiones protegidas (coordenadas normalizadas 0–1 sobre la imagen original)
+    if (meta?.analysis?.protectedRegions?.length && (fit === "cover" || fit === "")) {
+      const pos = getComputedStyle(img).objectPosition.split(" ").map((v) => parseFloat(v) / 100);
+      const dw = nw * s, dh = nh * s;
+      const ox = q.left + (q.width - dw) * (isNaN(pos[0]) ? 0.5 : pos[0]);
+      const oy = q.top + (q.height - dh) * (isNaN(pos[1]) ? 0.5 : pos[1]);
+      const clip = { l: Math.max(q.left, 0), t: Math.max(q.top, 0), r: Math.min(q.right, W), b: Math.min(q.bottom, H) };
+      for (const pr of meta.analysis.protectedRegions) {
+        const R = { l: ox + pr.x * dw, t: oy + pr.y * dh, r: ox + (pr.x + pr.w) * dw, b: oy + (pr.y + pr.h) * dh };
+        const cut = R.l < clip.l - 2 || R.t < clip.t - 2 || R.r > clip.r + 2 || R.b > clip.b + 2;
+        if (cut) add("subject_cropped", img, `el recorte corta ${pr.kind} (${id}); ajustá --fx/--fy o el formato`, pr.kind === "face" ? "error" : "warn");
+        for (const { el, r } of rects) {
+          const ix = Math.max(0, Math.min(R.r, r.r) - Math.max(R.l, r.l)), iy = Math.max(0, Math.min(R.b, r.b) - Math.max(R.t, r.t));
+          if (ix * iy > (R.r - R.l) * (R.b - R.t) * 0.08) add("text_over_subject", el, `el texto tapa ${pr.kind} de ${id}`, pr.kind === "face" ? "error" : "warn");
+        }
+      }
+    }
+  }
+
+  // ---- Fuentes ----
+  const generic = /^(system-ui|sans-serif|serif|monospace|ui-monospace|ui-sans-serif|cursive|fantasy|-apple-system|arial|helvetica)$/i;
+  const loaded = new Set([...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/["']/g, "").toLowerCase()));
+  const missing = new Set();
+  for (const el of blocks) {
+    const fam = getComputedStyle(el).fontFamily.split(",")[0].replace(/["']/g, "").trim();
+    if (!generic.test(fam) && !loaded.has(fam.toLowerCase())) missing.add(fam);
+  }
+  if (missing.size) add("font_not_loaded", null, `no cargaron: ${[...missing].join(", ")} → se ve con una fuente de reemplazo. Preferí fuentes locales en assets/fonts/`, "error");
+
+  // ---- Marcadores y datos pendientes ----
+  if (/\{\{[^}]+\}\}/.test(document.body.innerText)) add("placeholder_left", null, "quedan marcadores {{…}}", "error");
+  if (document.querySelector(".tbd")) add("data_tbd", null, "hay datos marcados como a confirmar (.tbd)", "error");
+
+  // ---- Modo de fondo (para el ritmo del feed) y acento ----
+  const mode = document.querySelector(".photo img") ? "photo" : "flat";
+  const canvasEl = document.querySelector(".canvas") ?? document.body;
+  const accent = toRGBA(getComputedStyle(canvasEl).getPropertyValue("--accent").trim() || "transparent");
+
+  // ---- Presupuesto de caracteres declarado por el layout (data-max) ----
+  for (const el of document.querySelectorAll("[data-max]")) {
+    const max = Number(el.dataset.max), len = el.innerText.replace(/\s+/g, " ").trim().length;
+    if (max && len > max * 1.2) add("over_budget", el, `${len} caracteres; este layout está dibujado para ~${max}. Acortá o cambiá de layout (no achiques la letra)`);
+  }
+
+  // ---- Datos para la coherencia entre slides ----
+  const chrome = {};
+  for (const el of document.querySelectorAll("[data-chrome] [id], [data-chrome][id]")) { const q = el.getBoundingClientRect(); chrome[el.id] = { l: Math.round(q.left), r: Math.round(q.right), b: Math.round(q.bottom), size: getComputedStyle(el).fontSize }; }
+  const material = { texture: canvasEl.dataset?.texture ?? "", grade: document.querySelector(".photo")?.dataset.grade ?? "" };
+
+  return { issues, texts, contrastTargets, mode, accent, images: imgs, logos, chrome, material };
+}
+
+// ---------- Mediciones sobre píxeles ----------
+const lum = (r, g, b) => { const f = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+
+async function measureContrast(bgPng, targets) {
+  const img = sharp(bgPng); const { width, height } = await img.metadata();
+  const raw = await img.removeAlpha().raw().toBuffer();
+  const out = [];
+  for (const t of targets) {
+    if (t.color[3] < 0.05) continue;
+    const l = Math.max(0, Math.floor(t.rect.l * scale)), tp = Math.max(0, Math.floor(t.rect.t * scale));
+    const r = Math.min(width, Math.ceil(t.rect.r * scale)), b = Math.min(height, Math.ceil(t.rect.b * scale));
+    if (r - l < 2 || b - tp < 2) continue;
+    const step = Math.max(1, Math.floor(Math.sqrt(((r - l) * (b - tp)) / 4000)));
+    const ratios = []; let sum = 0, sum2 = 0, n = 0;
+    for (let y = tp; y < b; y += step) for (let x = l; x < r; x += step) {
+      const i = (y * width + x) * 3;
+      const [br, bg, bb] = [raw[i], raw[i + 1], raw[i + 2]];
+      const a = t.color[3];
+      const tl = lum(t.color[0] * a + br * (1 - a), t.color[1] * a + bg * (1 - a), t.color[2] * a + bb * (1 - a));
+      const bl = lum(br, bg, bb);
+      ratios.push(ratio(tl, bl)); sum += bl; sum2 += bl * bl; n++;
+    }
+    ratios.sort((x, y) => x - y);
+    const p10 = ratios[Math.floor(ratios.length * 0.1)];
+    const std = Math.sqrt(Math.max(0, sum2 / n - (sum / n) ** 2));
+    out.push({ ...t, p10, busy: std > 0.06 });
+  }
+  return out;
+}
+
+// Logo contra su fondo real: porcentaje de píxeles opacos del logo que casi no se distinguen
+async function logoVisibility(flatPng, logo) {
+  const w = Math.round(logo.rect.w * scale), h = Math.round(logo.rect.h * scale);
+  const left = Math.round(logo.rect.l * scale), top = Math.round(logo.rect.t * scale);
+  if (w < 4 || h < 4 || left < 0 || top < 0) return null;
+  let lg;
+  try { lg = await sharp(fileURLToPath(logo.src), { density: 300 }).resize(w, h, { fit: "fill" }).ensureAlpha().raw().toBuffer(); } catch { return null; }
+  const meta = await sharp(flatPng).metadata();
+  if (left + w > meta.width || top + h > meta.height) return null;
+  const bg = await sharp(flatPng).extract({ left, top, width: w, height: h }).removeAlpha().raw().toBuffer();
+  let opaque = 0, lost = 0;
+  for (let i = 0, j = 0; i < lg.length; i += 4, j += 3) {
+    if (lg[i + 3] < 128) continue;
+    opaque++;
+    if (ratio(lum(lg[i], lg[i + 1], lg[i + 2]), lum(bg[j], bg[j + 1], bg[j + 2])) < 1.6) lost++;
+  }
+  return opaque ? lost / opaque : null;
+}
+
+async function accentMass(png, accent) {
+  if (!accent || accent[3] < 0.5) return 0;
+  const { data, info } = await sharp(png).resize(270).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  let hit = 0; const total = info.width * info.height;
+  for (let i = 0; i < data.length; i += 3) {
+    const d = Math.abs(data[i] - accent[0]) + Math.abs(data[i + 1] - accent[1]) + Math.abs(data[i + 2] - accent[2]);
+    if (d < 45) hit++;
+  }
+  return hit / total;
+}
+
+// Colores literales en el HTML del slide (fuera de tokens)
+function literalColors(html) {
+  const css = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join("\n") + "\n" + [...html.matchAll(/style="([^"]*)"/gi)].map((m) => m[1]).join(";\n");
+  const found = new Set();
+  for (const line of css.split(/[;\n]/)) {
+    if (/shadow|^\s*--(veil|scrim|vignette|grain|fx|fy|duo)/i.test(line)) continue;
+    const m = line.match(/#[0-9a-f]{3,8}\b|\b(rgba?|hsla?|oklch|oklab)\([^)]*\)/gi);
+    if (m) m.forEach((c) => found.add(c));
+  }
+  return [...found];
+}
+
+// ---------- Loop de slides ----------
+const report = { piece: piece.id ?? path.basename(pieceDir), format, scale, renderedAt: new Date().toISOString(), slides: [], copy: [] };
+const pngs = [];
+
+for (const file of files) {
+  const n = Number(file.match(/\d+/)[0]);
+  const page = await context.newPage();
+  const netErrors = [];
+  page.on("requestfailed", (r) => netErrors.push(r.url()));
+  page.on("pageerror", (e) => netErrors.push(`JS: ${e.message}`));
+  await page.goto(pathToFileURL(path.join(pieceDir, file)).href, { waitUntil: "networkidle" });
+  await page.evaluate(async () => { await document.fonts.ready; await Promise.all([...document.images].map((i) => i.decode().catch(() => {}))); });
+  // Congela animaciones en su estado final para el still
+  await page.evaluate(async () => {
+    document.getAnimations().forEach((a) => { try { a.finish(); } catch { a.pause(); } });
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  });
+
+  const dom = await page.evaluate(inspect, { spec, assets });
+  const png = await page.screenshot({ clip: { x: 0, y: 0, width: spec.w, height: spec.h }, type: "png" });
+
+  // Fondo sin texto para medir contraste real
+  await page.addStyleTag({ content: "*{color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important;text-decoration-color:transparent!important}" });
+  const bgPng = await page.screenshot({ clip: { x: 0, y: 0, width: spec.w, height: spec.h }, type: "png" });
+  // Sin fotos: para medir la masa de acento sin que una foto de tonos parecidos la infle
+  await page.addStyleTag({ content: "img,.photo,video{visibility:hidden!important}" });
+  const flatPng = await page.screenshot({ clip: { x: 0, y: 0, width: spec.w, height: spec.h }, type: "png" });
+  await page.close();
+
+  const issues = [...dom.issues];
+  for (const u of netErrors) issues.push({ code: "request_failed", where: "", msg: `no cargó ${u}`, severity: /fonts\.(googleapis|gstatic)/.test(u) ? "warn" : "error" });
+
+  for (const c of await measureContrast(bgPng, dom.contrastTargets)) {
+    const min = c.large ? 3 : 4.5;
+    if (c.p10 < min) issues.push({ code: "unreadable_contrast", where: c.where, severity: c.p10 < min * 0.8 ? "error" : "warn",
+      msg: `contraste ${c.p10.toFixed(2)}:1 (mín. ${min}:1${c.large ? ", texto grande" : ""})${c.busy ? " sobre fondo con textura/foto → velo, scrim o mover el bloque" : ""}` });
+  }
+  for (const lg of dom.logos) {
+    const lost = await logoVisibility(flatPng, lg);
+    if (lost !== null && lost > 0.12) issues.push({ code: "logo_low_contrast", where: lg.where, severity: "error", msg: `${Math.round(lost * 100)} % del logo no se distingue de su fondo: usá la variante para esta superficie (brand.json → logos)` });
+  }
+  const mass = await accentMass(flatPng, dom.accent);
+  if (mass > 0.1) issues.push({ code: "accent_mass", where: "", msg: `el acento cubre ${(mass * 100).toFixed(0)} % del slide (máx. ~10 %)`, severity: "warn" });
+
+  const lits = literalColors(await readFile(path.join(pieceDir, file), "utf8"));
+  if (lits.length) issues.push({ code: "brand_literal_color", where: "", msg: `colores fuera de tokens: ${lits.slice(0, 5).join(", ")}`, severity: "warn" });
+
+  const base = file.replace(/\.html$/, "");
+  await sharp(png).withIccProfile("srgb").png({ compressionLevel: 9 }).toFile(path.join(outDir, `${base}.png`));
+  await sharp(png).flatten({ background: "#ffffff" }).withIccProfile("srgb").jpeg({ quality: 95, chromaSubsampling: "4:4:4", mozjpeg: true }).toFile(path.join(outDir, `${base}.jpg`));
+  pngs.push({ n, png });
+
+  report.slides.push({ n, file, mode: dom.mode, accentMass: Number(mass.toFixed(3)), texts: dom.texts, images: dom.images.map((i) => i.id).filter(Boolean), chrome: dom.chrome, material: dom.material, issues });
+}
+await browser.close();
+
+// ---------- Coherencia entre slides ----------
+if (!args.only && report.slides.length > 1 && piece.status !== "reference") {
+  const first = report.slides[0];
+  const drift = new Set(), mat = new Set();
+  for (const s of report.slides.slice(1)) {
+    for (const [id, c] of Object.entries(s.chrome)) {
+      const ref = first.chrome[id]; if (!ref) continue;
+      if (Math.abs(c.b - ref.b) > 2 || c.size !== ref.size || (Math.abs(c.l - ref.l) > 2 && Math.abs(c.r - ref.r) > 2)) drift.add(s.n);
+    }
+    if (s.material.texture !== first.material.texture) mat.add(`slide ${s.n}: textura "${s.material.texture || "ninguna"}"`);
+  }
+  const grades = new Set(report.slides.map((s) => s.material.grade).filter(Boolean));
+  if (drift.size) first.issues.push({ code: "alignment_drift", where: "", msg: `la marca o el paginador cambian de posición o tamaño en los slides ${[...drift].join(", ")} respecto del 1`, severity: "warn" });
+  if (mat.size) first.issues.push({ code: "material_drift", where: "", msg: `textura distinta a la del slide 1 ("${first.material.texture || "ninguna"}") en ${[...mat].join("; ")}. Un material por pieza`, severity: "warn" });
+  if (grades.size > 1) first.issues.push({ code: "material_drift", where: "", msg: `tratamientos de foto mezclados: ${[...grades].join(", ")}. Uno por pieza`, severity: "warn" });
+  const layouts = (piece.slides ?? []).map((x) => x.layout).filter(Boolean);
+  if (layouts.length >= 4 && new Set(layouts).size === 1) first.issues.push({ code: "template_rhythm", where: "", msg: `los ${layouts.length} slides usan el mismo layout (${layouts[0]}): variá la estructura`, severity: "warn" });
+}
+
+// ---------- Copy (todos los slides + captions) ----------
+if (!args.only) {
+  report.copy = lintCopy({
+    slides: report.slides.map((s) => ({ n: s.n, texts: s.texts })),
+    captions: piece.captions ?? {},
+    voiceSamples: brand.voiceSamples, address: brand.address,
+    brandUsesEmoji: brand.usesEmoji, brandUsesDashes: brand.usesDashes, brandName: brand.name,
+    verified: brand.verified, sources: piece.sources ?? [],
+  });
+  const missingAlt = (piece.slides ?? []).filter((s) => !s.alt).map((s) => s.n);
+  if (missingAlt.length) report.copy.push({ code: "missing_alt_text", where: `slides ${missingAlt.join(",")}`, msg: "falta texto alternativo (accesibilidad; Instagram y LinkedIn lo aceptan)", severity: "warn" });
+}
+
+// ---------- Captions y alt text como archivos listos para pegar ----------
+if (!args.only) {
+  for (const [net, c] of Object.entries(piece.captions ?? {})) {
+    const text = typeof c === "string" ? c : (c?.thread ?? []).map((t, i) => `${i + 1}/ ${t}`).join("\n\n");
+    if (text.trim()) await writeFile(path.join(outDir, `caption-${net}.txt`), text.trim() + "\n");
+  }
+  const alts = (piece.slides ?? []).filter((s) => s.alt).map((s) => `Slide ${s.n}: ${s.alt}`).join("\n");
+  if (alts) await writeFile(path.join(outDir, "alt-text.txt"), alts + "\n");
+}
+
+// ---------- Hoja de contacto al tamaño de un teléfono ----------
+if (!args.only) {
+  const tw = spec.display, th = Math.round(spec.h * tw / spec.w), gap = 24, cols = Math.min(pngs.length, 5);
+  const rows = Math.ceil(pngs.length / cols);
+  const tiles = await Promise.all(pngs.map(async ({ png }, i) => ({
+    input: await sharp(png).resize(tw, th, { kernel: "lanczos3" }).png().toBuffer(),
+    left: gap + (i % cols) * (tw + gap), top: gap + Math.floor(i / cols) * (th + gap),
+  })));
+  await sharp({ create: { width: gap + cols * (tw + gap), height: gap + rows * (th + gap), channels: 3, background: "#d9d9d9" } })
+    .composite(tiles).png().toFile(path.join(outDir, "contact-sheet.png"));
+}
+
+// ---------- PDF (LinkedIn) ----------
+if (args.pdf && !args.only) {
+  const b2 = await launch();
+  const p = await b2.newPage();
+  const imgs = pngs.map(({ png }) => `<img src="data:image/png;base64,${png.toString("base64")}">`).join("");
+  await p.setContent(`<style>@page{size:${spec.w}px ${spec.h}px;margin:0}body{margin:0}img{display:block;width:${spec.w}px;height:${spec.h}px;page-break-after:always}</style>${imgs}`);
+  await p.pdf({ path: path.join(outDir, "carousel.pdf"), width: `${spec.w}px`, height: `${spec.h}px`, printBackground: true });
+  await b2.close();
+}
+
+// ---------- Reporte ----------
+const all = [...report.slides.flatMap((s) => s.issues.map((i) => ({ ...i, slide: s.n }))), ...report.copy.map((i) => ({ ...i, slide: "copy" }))];
+report.summary = { errors: all.filter((i) => i.severity === "error").length, warnings: all.filter((i) => i.severity !== "error").length, mode: report.slides[0]?.mode };
+report.cover = { hook: report.slides.find((s) => s.n === 1)?.texts.find((t) => t.role === "headline")?.text ?? "", images: report.slides.find((s) => s.n === 1)?.images ?? [] };
+await writeJSON(path.join(outDir, "report.json"), report);
+
+const md = [`# Reporte de calidad — ${report.piece}`, "", `${format} · ${files.length} slide(s) · ×${scale} · ${report.summary.errors} errores · ${report.summary.warnings} advertencias`, ""];
+for (const s of report.slides) {
+  md.push(`## Slide ${s.n} (${s.mode})`);
+  md.push(s.issues.length ? s.issues.map((i) => `- ${i.severity === "error" ? "**ERROR**" : "aviso"} \`${i.code}\` ${i.where} — ${i.msg}`).join("\n") : "- sin hallazgos");
+  md.push("");
+}
+md.push("## Copy y captions", report.copy.length ? report.copy.map((i) => `- ${i.severity === "error" ? "**ERROR**" : "aviso"} \`${i.code}\` ${i.where} — ${i.msg}`).join("\n") : "- sin hallazgos");
+await writeFile(path.join(outDir, "report.md"), md.join("\n") + "\n");
+
+// ---------- Consola ----------
+const rel = (p) => path.relative(process.cwd(), p);
+for (const s of report.slides) {
+  const e = s.issues.filter((i) => i.severity === "error").length;
+  console.log(`${e ? "✗" : s.issues.length ? "⚠" : "✓"} slide ${String(s.n).padStart(2, "0")} (${s.mode})`);
+  for (const i of s.issues) console.log(`    ${i.severity === "error" ? "ERROR" : "aviso"} ${i.code} ${i.where} — ${i.msg}`);
+}
+if (report.copy.length) { console.log("copy:"); for (const i of report.copy) console.log(`    ${i.severity === "error" ? "ERROR" : "aviso"} ${i.code} ${i.where} — ${i.msg}`); }
+console.log(`\n→ ${rel(outDir)}/ (png, jpg${args.pdf ? ", carousel.pdf" : ""}, contact-sheet.png, report.md)`);
+console.log(`${report.summary.errors} errores · ${report.summary.warnings} advertencias. Mirá contact-sheet.png antes de entregar.`);
+if (args.strict && report.summary.errors) process.exit(2);

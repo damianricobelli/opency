@@ -1,0 +1,380 @@
+{
+  "piece": "_ejemplo-carrusel",
+  "format": "4:5",
+  "scale": 1,
+  "renderedAt": "2026-11-20T14:15:34.253Z",
+  "slides": [
+    {
+      "n": 1,
+      "file": "slide-01.html",
+      "mode": "flat",
+      "accentMass": 0.008,
+      "texts": [
+        {
+          "id": "kicker",
+          "role": "label",
+          "text": "CÓMO TRABAJAMOS",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Tu marca en cada pieza",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "Así armamos el contenido de la semana con un agente.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "TU MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "01/05",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 241,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 2,
+      "file": "slide-02.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "El agente arranca de lo que ya aprobaste.",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "Lee el brand kit, las plantillas y cada corrección que le hiciste antes.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "TU MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "02/05",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 241,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 3,
+      "file": "slide-03.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Un pedido, cuatro pasos",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "01",
+          "chrome": false
+        },
+        {
+          "id": "step-1",
+          "role": "body",
+          "text": "Le pedís la pieza por chat.",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "02",
+          "chrome": false
+        },
+        {
+          "id": "step-2",
+          "role": "body",
+          "text": "Escribe el copy con la voz de la marca.",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "03",
+          "chrome": false
+        },
+        {
+          "id": "step-3",
+          "role": "body",
+          "text": "Diseña y se revisa en tamaño teléfono.",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "04",
+          "chrome": false
+        },
+        {
+          "id": "step-4",
+          "role": "body",
+          "text": "Te entrega los archivos para aprobar.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "TU MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "03/05",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 241,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 4,
+      "file": "slide-04.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Qué cambió en la semana",
+          "chrome": false
+        },
+        {
+          "id": "before-label",
+          "role": "label",
+          "text": "ANTES",
+          "chrome": false
+        },
+        {
+          "id": "before-1",
+          "role": "body",
+          "text": "Un brief por post",
+          "chrome": false
+        },
+        {
+          "id": "before-2",
+          "role": "body",
+          "text": "Tres rondas de cambios",
+          "chrome": false
+        },
+        {
+          "id": "before-3",
+          "role": "body",
+          "text": "Diseño desde cero",
+          "chrome": false
+        },
+        {
+          "id": "now-label",
+          "role": "label",
+          "text": "AHORA",
+          "chrome": false
+        },
+        {
+          "id": "now-1",
+          "role": "body",
+          "text": "Un pedido por chat",
+          "chrome": false
+        },
+        {
+          "id": "now-2",
+          "role": "body",
+          "text": "Una corrección puntual",
+          "chrome": false
+        },
+        {
+          "id": "now-3",
+          "role": "body",
+          "text": "Plantillas aprobadas",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "TU MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "04/05",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 241,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 5,
+      "file": "slide-05.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "kicker",
+          "role": "label",
+          "text": "PARA CERRAR",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Vos decidís qué se publica.",
+          "chrome": false
+        },
+        {
+          "id": "cta-text",
+          "role": "body",
+          "text": "Escribinos AGENTE por DM y te mostramos el flujo",
+          "chrome": false
+        },
+        {
+          "id": "arrow",
+          "role": "body",
+          "text": "→",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "@TUMARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "05/05",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 241,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    }
+  ],
+  "copy": [],
+  "summary": {
+    "errors": 0,
+    "warnings": 0,
+    "mode": "flat"
+  },
+  "cover": {
+    "hook": "Tu marca en cada pieza",
+    "images": []
+  }
+}

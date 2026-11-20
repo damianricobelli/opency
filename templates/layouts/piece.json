@@ -1,0 +1,81 @@
+{
+  "id": "_layouts",
+  "title": "Librería de layouts (referencia)",
+  "status": "reference",
+  "format": "4:5",
+  "version": 1,
+  "note": "No es una pieza publicable. Son 14 arquetipos para combinar. Copy de muestra: reemplazarlo siempre.",
+  "slides": [
+    {
+      "n": 1,
+      "layout": "cover-type",
+      "alt": "Portada tipográfica con titular grande y un círculo de acento que sale del borde."
+    },
+    {
+      "n": 2,
+      "layout": "cover-photo",
+      "alt": "Portada con foto a sangre de una silueta frente a un atardecer y titular arriba."
+    },
+    {
+      "n": 3,
+      "layout": "statement",
+      "alt": "Afirmación en letra grande sobre fondo oscuro con una línea de acento."
+    },
+    {
+      "n": 4,
+      "layout": "big-number",
+      "alt": "Un número grande en color de acento con la frase que lo explica."
+    },
+    {
+      "n": 5,
+      "layout": "steps",
+      "alt": "Lista numerada de cuatro pasos separados por líneas."
+    },
+    {
+      "n": 6,
+      "layout": "comparison",
+      "alt": "Dos columnas: antes y ahora, tres puntos cada una."
+    },
+    {
+      "n": 7,
+      "layout": "photo-card",
+      "alt": "Foto en la mitad superior y una tarjeta de texto abajo."
+    },
+    {
+      "n": 8,
+      "layout": "data-bars",
+      "alt": "Gráfico de barras horizontales con cuatro etapas y sus horas."
+    },
+    {
+      "n": 9,
+      "layout": "testimonial",
+      "alt": "Cita entre comillas con nombre y cargo de quien la dijo."
+    },
+    {
+      "n": 10,
+      "layout": "closer",
+      "alt": "Frase de cierre y una llamada a la acción concreta."
+    },
+    {
+      "n": 11,
+      "layout": "news-cards",
+      "alt": "Cuatro tarjetas con novedades y, abajo, el título de la edición semanal."
+    },
+    {
+      "n": 12,
+      "layout": "app-window",
+      "alt": "Titular y una ventana de software dibujada con una lista de tres piezas y su estado."
+    },
+    {
+      "n": 13,
+      "layout": "logo-grid",
+      "alt": "Titular y una grilla de seis logos de clientes."
+    },
+    {
+      "n": 14,
+      "layout": "cobrand",
+      "alt": "Foto de fondo con los nombres de dos marcas unidos por una cruz y una frase."
+    }
+  ],
+  "captions": {}
+}

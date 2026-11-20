@@ -1,0 +1,58 @@
+{
+  "$schema": "./assets.schema.md",
+  "assets": [
+    {
+      "id": "muestra-atardecer",
+      "kind": "photo",
+      "file": "photos/muestra-atardecer.jpg",
+      "description": "Muestra: silueta de pie frente a un atardecer, horizonte bajo (imagen generada para probar layouts)",
+      "source": "propio",
+      "credit": null,
+      "license": "propio",
+      "addedAt": "2026-11-20",
+      "vetoed": false,
+      "quality": {
+        "width": 2400,
+        "height": 3000,
+        "format": "jpeg",
+        "hasAlpha": false,
+        "space": "srgb",
+        "sharpness": 1.19,
+        "brightness": 0.35,
+        "tone": "oscura",
+        "palette": [
+          "#202020",
+          "#c08060",
+          "#606060",
+          "#404060",
+          "#806060"
+        ],
+        "coverage": {
+          "4:5": "2K",
+          "1:1": "2K",
+          "9:16": "1080",
+          "16:9": "1080"
+        }
+      },
+      "analysis": {
+        "complete": true,
+        "focalPoint": {
+          "x": 0.54,
+          "y": 0.5
+        },
+        "protectedRegions": [
+          {
+            "kind": "subject",
+            "x": 0.49,
+            "y": 0.47,
+            "w": 0.08,
+            "h": 0.2
+          }
+        ],
+        "cropSafe": null,
+        "updatedAt": "2026-11-20"
+      },
+      "usage": []
+    }
+  ]
+}

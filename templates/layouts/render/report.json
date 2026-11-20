@@ -1,0 +1,1094 @@
+{
+  "piece": "_layouts",
+  "format": "4:5",
+  "scale": 1,
+  "renderedAt": "2026-11-20T17:11:32.546Z",
+  "slides": [
+    {
+      "n": 1,
+      "file": "slide-01.html",
+      "mode": "flat",
+      "accentMass": 0.008,
+      "texts": [
+        {
+          "id": "kicker",
+          "role": "label",
+          "text": "GUÍA · 5 PASOS",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Tres errores que frenan tus ventas",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "Lo que cambiamos en nuestra cuenta y qué pasó después.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "01/14",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 2,
+      "file": "slide-02.html",
+      "mode": "photo",
+      "accentMass": 0.008,
+      "texts": [
+        {
+          "id": "tag",
+          "role": "label",
+          "text": "CASO REAL",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Salimos a correr antes del amanecer",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "Seis semanas de entrenamiento contadas desde adentro.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "02/14",
+          "chrome": true
+        }
+      ],
+      "images": [
+        "muestra-atardecer"
+      ],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "film",
+        "grade": "editorial"
+      },
+      "issues": []
+    },
+    {
+      "n": 3,
+      "file": "slide-03.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Publicar todos los días no es una estrategia.",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "Lo que mueve el alcance es repetir el formato que ya funcionó, con un tema nuevo.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "03/14",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "coarse",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 4,
+      "file": "slide-04.html",
+      "mode": "flat",
+      "accentMass": 0.001,
+      "texts": [
+        {
+          "id": "kicker",
+          "role": "label",
+          "text": "MÉTODO",
+          "chrome": false
+        },
+        {
+          "id": "number",
+          "role": "headline",
+          "text": "5",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "pasos para armar un carrusel en una tarde",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "De la idea al archivo listo, sin abrir un editor.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "04/14",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "fine",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 5,
+      "file": "slide-05.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Cómo lo armamos, de punta a punta",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "01",
+          "chrome": false
+        },
+        {
+          "id": "step-1",
+          "role": "body",
+          "text": "Elegimos una sola idea por pieza.",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "02",
+          "chrome": false
+        },
+        {
+          "id": "step-2",
+          "role": "body",
+          "text": "Escribimos el copy antes de diseñar.",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "03",
+          "chrome": false
+        },
+        {
+          "id": "step-3",
+          "role": "body",
+          "text": "Revisamos en tamaño teléfono.",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "04",
+          "chrome": false
+        },
+        {
+          "id": "step-4",
+          "role": "body",
+          "text": "Guardamos lo que funcionó como plantilla.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "05/14",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 6,
+      "file": "slide-06.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Qué cambió en el proceso",
+          "chrome": false
+        },
+        {
+          "id": "before-label",
+          "role": "label",
+          "text": "ANTES",
+          "chrome": false
+        },
+        {
+          "id": "before-1",
+          "role": "body",
+          "text": "Un brief por post",
+          "chrome": false
+        },
+        {
+          "id": "before-2",
+          "role": "body",
+          "text": "Tres rondas de cambios",
+          "chrome": false
+        },
+        {
+          "id": "before-3",
+          "role": "body",
+          "text": "Diseño desde cero",
+          "chrome": false
+        },
+        {
+          "id": "now-label",
+          "role": "label",
+          "text": "AHORA",
+          "chrome": false
+        },
+        {
+          "id": "now-1",
+          "role": "body",
+          "text": "Un pedido por chat",
+          "chrome": false
+        },
+        {
+          "id": "now-2",
+          "role": "body",
+          "text": "Una corrección puntual",
+          "chrome": false
+        },
+        {
+          "id": "now-3",
+          "role": "body",
+          "text": "Plantillas aprobadas",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "06/14",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 7,
+      "file": "slide-07.html",
+      "mode": "photo",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "kicker",
+          "role": "label",
+          "text": "SEMANA 3",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "El ritmo se arma con salidas cortas y constantes",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "Cuatro salidas de 30 minutos rindieron más que dos largas.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "07/14",
+          "chrome": true
+        }
+      ],
+      "images": [
+        "muestra-atardecer"
+      ],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "fine",
+        "grade": "immersive"
+      },
+      "issues": []
+    },
+    {
+      "n": 8,
+      "file": "slide-08.html",
+      "mode": "flat",
+      "accentMass": 0.01,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Dónde se va el tiempo de una pieza",
+          "chrome": false
+        },
+        {
+          "id": "l1",
+          "role": "body",
+          "text": "Idea",
+          "chrome": false
+        },
+        {
+          "id": "v1",
+          "role": "body",
+          "text": "1 h",
+          "chrome": false
+        },
+        {
+          "id": "l2",
+          "role": "body",
+          "text": "Diseño",
+          "chrome": false
+        },
+        {
+          "id": "v2",
+          "role": "body",
+          "text": "3 h",
+          "chrome": false
+        },
+        {
+          "id": "l3",
+          "role": "body",
+          "text": "Revisión",
+          "chrome": false
+        },
+        {
+          "id": "v3",
+          "role": "body",
+          "text": "1 h",
+          "chrome": false
+        },
+        {
+          "id": "l4",
+          "role": "body",
+          "text": "Publicación",
+          "chrome": false
+        },
+        {
+          "id": "v4",
+          "role": "body",
+          "text": "30 min",
+          "chrome": false
+        },
+        {
+          "id": "source",
+          "role": "label",
+          "text": "FUENTE: REGISTRO INTERNO (DATO DE EJEMPLO)",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "08/14",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 9,
+      "file": "slide-09.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "mark",
+          "role": "body",
+          "text": "“",
+          "chrome": false
+        },
+        {
+          "id": "quote",
+          "role": "headline",
+          "text": "Dejamos de pedir piezas por mail. Ahora las revisamos el lunes y salen el martes.",
+          "chrome": false
+        },
+        {
+          "id": "name",
+          "role": "body",
+          "text": "Nombre Apellido",
+          "chrome": false
+        },
+        {
+          "id": "role",
+          "role": "label",
+          "text": "CARGO · EMPRESA",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "09/14",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "film",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 10,
+      "file": "slide-10.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "kicker",
+          "role": "label",
+          "text": "PARA CERRAR",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Una idea por pieza. Siempre.",
+          "chrome": false
+        },
+        {
+          "id": "cta-text",
+          "role": "body",
+          "text": "Escribinos PLAN por DM y te mandamos la plantilla",
+          "chrome": false
+        },
+        {
+          "id": "arrow",
+          "role": "body",
+          "text": "→",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "@MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "10/14",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 201,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 11,
+      "file": "slide-11.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "t1",
+          "role": "label",
+          "text": "PRODUCTO",
+          "chrome": false
+        },
+        {
+          "id": "n1",
+          "role": "body",
+          "text": "Lanzamos el nuevo panel de reportes",
+          "chrome": false
+        },
+        {
+          "id": "t2",
+          "role": "label",
+          "text": "EQUIPO",
+          "chrome": false
+        },
+        {
+          "id": "n2",
+          "role": "body",
+          "text": "Sumamos dos personas a soporte",
+          "chrome": false
+        },
+        {
+          "id": "t3",
+          "role": "label",
+          "text": "AGENDA",
+          "chrome": false
+        },
+        {
+          "id": "n3",
+          "role": "body",
+          "text": "Charla abierta el jueves a las 18",
+          "chrome": false
+        },
+        {
+          "id": "t4",
+          "role": "label",
+          "text": "GUÍA",
+          "chrome": false
+        },
+        {
+          "id": "n4",
+          "role": "body",
+          "text": "Cómo ordenar tu calendario mensual",
+          "chrome": false
+        },
+        {
+          "id": "kicker",
+          "role": "label",
+          "text": "EDICIÓN 12",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Qué pasó esta semana en la marca",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "11/14",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 12,
+      "file": "slide-12.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Todo el contenido del mes en una carpeta",
+          "chrome": false
+        },
+        {
+          "id": "win-title",
+          "role": "label",
+          "text": "PIEZAS / NOVIEMBRE",
+          "chrome": false
+        },
+        {
+          "id": "r1",
+          "role": "body",
+          "text": "Lanzamiento del plan",
+          "chrome": false
+        },
+        {
+          "id": "s1",
+          "role": "label",
+          "text": "APROBADA",
+          "chrome": false
+        },
+        {
+          "id": "r2",
+          "role": "body",
+          "text": "Guía de primeros pasos",
+          "chrome": false
+        },
+        {
+          "id": "s2",
+          "role": "label",
+          "text": "EN REVISIÓN",
+          "chrome": false
+        },
+        {
+          "id": "r3",
+          "role": "body",
+          "text": "Caso de un cliente",
+          "chrome": false
+        },
+        {
+          "id": "s3",
+          "role": "label",
+          "text": "BORRADOR",
+          "chrome": false
+        },
+        {
+          "id": "r4",
+          "role": "body",
+          "text": "Resumen de la semana",
+          "chrome": false
+        },
+        {
+          "id": "s4",
+          "role": "label",
+          "text": "BORRADOR",
+          "chrome": false
+        },
+        {
+          "id": "r5",
+          "role": "body",
+          "text": "Cierre de campaña",
+          "chrome": false
+        },
+        {
+          "id": "s5",
+          "role": "label",
+          "text": "IDEA",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "12/14",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 13,
+      "file": "slide-13.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "kicker",
+          "role": "label",
+          "text": "CON QUIÉNES TRABAJAMOS",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Equipos que ya publican con nosotros",
+          "chrome": false
+        },
+        {
+          "id": "l1",
+          "role": "label",
+          "text": "LOGO 1",
+          "chrome": false
+        },
+        {
+          "id": "l2",
+          "role": "label",
+          "text": "LOGO 2",
+          "chrome": false
+        },
+        {
+          "id": "l3",
+          "role": "label",
+          "text": "LOGO 3",
+          "chrome": false
+        },
+        {
+          "id": "l4",
+          "role": "label",
+          "text": "LOGO 4",
+          "chrome": false
+        },
+        {
+          "id": "l5",
+          "role": "label",
+          "text": "LOGO 5",
+          "chrome": false
+        },
+        {
+          "id": "l6",
+          "role": "label",
+          "text": "LOGO 6",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "13/14",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 14,
+      "file": "slide-14.html",
+      "mode": "photo",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "a",
+          "role": "body",
+          "text": "Marca",
+          "chrome": false
+        },
+        {
+          "id": "x",
+          "role": "body",
+          "text": "×",
+          "chrome": false
+        },
+        {
+          "id": "b",
+          "role": "body",
+          "text": "Aliado",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "Desde diciembre entrenamos juntos todos los sábados.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "MARCA",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "14/14",
+          "chrome": true
+        }
+      ],
+      "images": [
+        "muestra-atardecer"
+      ],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "film",
+        "grade": "editorial"
+      },
+      "issues": []
+    }
+  ],
+  "copy": [],
+  "summary": {
+    "errors": 0,
+    "warnings": 0,
+    "mode": "flat"
+  },
+  "cover": {
+    "hook": "Tres errores que frenan tus ventas",
+    "images": []
+  }
+}

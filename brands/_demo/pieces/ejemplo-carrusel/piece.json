@@ -1,0 +1,81 @@
+{
+  "id": "_ejemplo-carrusel",
+  "title": "Ejemplo: cómo trabaja el agente",
+  "status": "draft",
+  "category": "educativo",
+  "plannedDate": null,
+  "format": "4:5",
+  "version": 1,
+  "language": "es",
+  "direction": {
+    "intent": "enseñar",
+    "thesis": "El agente diseña con tu marca y vos aprobás lo que sale.",
+    "dominantMode": "type",
+    "density": "media",
+    "signatureMove": "círculo de acento que sangra en la portada",
+    "avoid": [
+      "fotos de stock genéricas"
+    ]
+  },
+  "hook": "Tu marca en cada pieza",
+  "slides": [
+    {
+      "n": 1,
+      "file": "slide-01.html",
+      "layout": "cover-type",
+      "role": "hook",
+      "claim": "Tu marca en cada pieza",
+      "alt": "Portada: «Tu marca en cada pieza» en letra grande, con un círculo naranja que sale del borde."
+    },
+    {
+      "n": 2,
+      "file": "slide-02.html",
+      "layout": "statement",
+      "role": "mechanism",
+      "claim": "El agente parte de lo aprobado",
+      "alt": "Fondo oscuro con la frase «El agente arranca de lo que ya aprobaste»."
+    },
+    {
+      "n": 3,
+      "file": "slide-03.html",
+      "layout": "steps",
+      "role": "sequence",
+      "claim": "El proceso en cuatro pasos",
+      "alt": "Lista de cuatro pasos: pedir por chat, escribir el copy, diseñar y revisar, entregar para aprobar."
+    },
+    {
+      "n": 4,
+      "file": "slide-04.html",
+      "layout": "comparison",
+      "role": "evidence",
+      "claim": "Qué cambia en la semana",
+      "alt": "Dos columnas, antes y ahora: de un brief por post a un pedido por chat; de tres rondas de cambios a una corrección; de diseñar desde cero a plantillas aprobadas."
+    },
+    {
+      "n": 5,
+      "file": "slide-05.html",
+      "layout": "closer",
+      "role": "close",
+      "claim": "La persona aprueba",
+      "alt": "Cierre: «Vos decidís qué se publica» y la invitación a escribir AGENTE por mensaje directo."
+    }
+  ],
+  "captions": {
+    "instagram": "Armamos el contenido de la semana con un agente que lee nuestro brand kit, escribe con nuestra voz y nos entrega archivos para revisar. Cada corrección que le hacemos la aplica en la pieza siguiente.\n\nNada sale sin que lo aprobemos.\n\nEscribinos AGENTE por DM y te mostramos el flujo completo.\n\n#contenidodemarca #carruseles",
+    "linkedin": "Dejamos de briefear cada post desde cero.\n\nAhora le pedimos la pieza a un agente que trabaja sobre nuestro brand kit, nuestras plantillas y las correcciones que le fuimos haciendo. Escribe el copy, diseña, se revisa en tamaño teléfono y nos entrega archivos editables.\n\nLa decisión de qué se publica sigue siendo nuestra.\n\n¿Cuánto tiempo le dedica tu equipo a cada pieza?",
+    "tiktok": "",
+    "x": {
+      "thread": []
+    }
+  },
+  "sources": [],
+  "feedback": [],
+  "history": [
+    {
+      "version": 1,
+      "date": "2026-11-20",
+      "change": "pieza de ejemplo incluida con el agente",
+      "by": "agente"
+    }
+  ]
+}

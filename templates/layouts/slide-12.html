@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es" data-format="4:5" data-layout="app-window">
+<head>
+<meta charset="utf-8">
+<title>layout 12 · app-window — mostrar un producto digital con una ventana dibujada</title>
+<link rel="stylesheet" href="../../brands/_demo/tokens.css">
+<link rel="stylesheet" href="../../templates/base/base.css">
+<style>
+  .content { gap: 52px; }
+  #headline { max-width: 13ch; }
+  .win { flex: 1; min-height: 0; background: var(--bg); border: 2px solid var(--line); border-radius: var(--radius); overflow: hidden; display: grid; grid-template-rows: auto 1fr; box-shadow: 0 30px 60px -30px rgb(0 0 0 / .25); }
+  .bar { display: flex; align-items: center; gap: 12px; padding: 20px 24px; border-bottom: 2px solid var(--line); }
+  .dot { width: 18px; height: 18px; border-radius: 50%; background: var(--line); }
+  .bar .label { margin-left: 16px; color: var(--ink-muted); }
+  .rows { padding: 12px 28px; display: grid; align-content: start; }
+  .row { display: grid; grid-template-columns: 28px 1fr auto; gap: 20px; align-items: center; padding: 24px 0; border-bottom: 2px solid var(--line); font-size: calc(var(--size-cue) * var(--k) * 1px); }
+  .row:last-child { border-bottom: 0; }
+  .ico { width: 28px; height: 28px; border-radius: 6px; background: var(--bg-alt); }
+  .row.on .ico { background: var(--accent); }
+  .row .label { color: var(--ink-muted); }
+</style>
+</head>
+<body>
+<main class="canvas on-alt" data-texture="paper">
+  <div class="safe">
+    <div class="content">
+      <h1 id="headline" class="t-title" data-max="48">Todo el contenido del mes en una carpeta</h1>
+      <div class="win" data-fill>
+        <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span id="win-title" class="label">piezas / noviembre</span></div>
+        <div class="rows">
+          <div class="row on"><i class="ico"></i><span id="r1">Lanzamiento del plan</span><span id="s1" class="label">Aprobada</span></div>
+          <div class="row"><i class="ico"></i><span id="r2">Guía de primeros pasos</span><span id="s2" class="label">En revisión</span></div>
+          <div class="row"><i class="ico"></i><span id="r3">Caso de un cliente</span><span id="s3" class="label">Borrador</span></div>
+          <div class="row"><i class="ico"></i><span id="r4">Resumen de la semana</span><span id="s4" class="label">Borrador</span></div>
+          <div class="row"><i class="ico"></i><span id="r5">Cierre de campaña</span><span id="s5" class="label">Idea</span></div>
+        </div>
+      </div>
+    </div>
+    <footer class="chrome-bar" data-chrome><span id="brand">Marca</span><span id="pager">12/14</span></footer>
+  </div>
+</main>
+</body>
+</html>

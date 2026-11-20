@@ -1,0 +1,182 @@
+/*
+ * BASE — infraestructura y librería de materiales. No es un estilo de marca: todo color sale de tokens.css.
+ *
+ * Formato:        <html data-format="4:5|1:1|9:16|16:9">
+ * Escala por rol: .t-hero .t-cover .t-closer .t-title .t-subtitle .t-body .t-intro .t-cue .t-label
+ * Superficies:    .on-bg .on-alt .on-primary .on-accent
+ * Materiales:     <main class="canvas" data-texture="fine|coarse|paper|fabric|film" data-vignette>
+ * Fotos:          <figure class="photo" data-grade="none|editorial|immersive|mono|duotone"><img data-asset="id"></figure>
+ * Velos:          <div class="veil" data-veil="flat|low|high|window"></div>   (card = texto en .card, sin velo)
+ * Scrim:          <div class="scrim" style="left;top;width;height"></div>     (sombra local detrás de un bloque)
+ * Otros:          .glass .card .chip .label .rule  ·  [data-bleed] decoración que puede salir del canvas
+ *                 [data-chrome] marca/paginador/handle: puede vivir en la franja inferior
+ *                 [data-max="N"] presupuesto de caracteres del layout (el render avisa si se excede +20 %)
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+/* ---------- Formatos: tamaño, zona segura y factor de escala tipográfica ---------- */
+html {
+  --w: 1080px; --h: 1350px; --k: 1;
+  --safe-top: 80px; --safe-right: 80px; --safe-bottom: 80px; --safe-left: 80px;
+  --critical-bottom: 250px;   /* 4:5: el feed inmersivo tapa ~250 px abajo; solo chrome ahí */
+}
+html[data-format="1:1"]  { --w: 1080px; --h: 1080px; --k: 0.94; --critical-bottom: 80px; }
+html[data-format="9:16"] { --w: 1080px; --h: 1920px; --k: 1.08; --safe-top: 250px; --safe-bottom: 340px; --critical-bottom: 340px; }
+html[data-format="16:9"] { --w: 1920px; --h: 1080px; --k: 1.2; --safe-top: 96px; --safe-right: 120px; --safe-bottom: 96px; --safe-left: 120px; --critical-bottom: 150px; }
+
+body {
+  width: var(--w); height: var(--h); overflow: hidden;
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-weight: var(--weight-body); line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
+  font-kerning: normal; font-feature-settings: "kern", "liga", "calt";
+  hanging-punctuation: first last;
+}
+
+.canvas { position: relative; width: var(--w); height: var(--h); overflow: hidden; isolation: isolate; }
+.safe {
+  position: absolute; z-index: 10;
+  top: var(--safe-top); right: var(--safe-right); bottom: var(--safe-bottom); left: var(--safe-left);
+  display: flex; flex-direction: column;
+}
+
+h1, h2, h3, p, figure, blockquote { margin: 0; }
+img { display: block; max-width: none; }
+
+/* ---------- Escala tipográfica por rol ---------- */
+.t-hero, .t-cover, .t-closer, .t-title, .t-subtitle {
+  font-family: var(--font-display); text-wrap: balance;
+  font-variant-numeric: lining-nums;
+}
+.t-hero     { font-size: calc(var(--size-hero)     * var(--k) * 1px); font-weight: var(--weight-display); letter-spacing: var(--tracking-display); line-height: var(--leading-hero); }
+.t-cover    { font-size: calc(var(--size-cover)    * var(--k) * 1px); font-weight: var(--weight-display); letter-spacing: var(--tracking-display); line-height: var(--leading-display); }
+.t-closer   { font-size: calc(var(--size-closer)   * var(--k) * 1px); font-weight: var(--weight-display); letter-spacing: var(--tracking-display); line-height: var(--leading-display); }
+.t-title    { font-size: calc(var(--size-title)    * var(--k) * 1px); font-weight: var(--weight-title);   letter-spacing: var(--tracking-title);   line-height: var(--leading-display); }
+.t-subtitle { font-size: calc(var(--size-subtitle) * var(--k) * 1px); font-weight: var(--weight-title);   letter-spacing: var(--tracking-title);   line-height: 1.08; }
+.t-body     { font-size: calc(var(--size-body)     * var(--k) * 1px); line-height: var(--leading-body); text-wrap: pretty; }
+.t-intro    { font-size: calc(var(--size-intro)    * var(--k) * 1px); line-height: var(--leading-body); text-wrap: pretty; }
+.t-cue      { font-size: calc(var(--size-cue)      * var(--k) * 1px); font-weight: var(--weight-strong); }
+.t-label, .label {
+  font-family: var(--font-mono); font-size: calc(var(--size-label) * var(--k) * 1px);
+  text-transform: uppercase; letter-spacing: var(--tracking-label); line-height: 1.2;
+}
+.num { font-variant-numeric: tabular-nums lining-nums; }
+
+/* ---------- Superficies ---------- */
+.on-bg      { background: var(--bg);      color: var(--ink); }
+.on-alt     { background: var(--bg-alt);  color: var(--ink); }
+.on-primary { background: var(--primary); color: var(--ink-inverse); }
+.on-secondary { background: var(--secondary); color: var(--ink-inverse); }
+/* Sobre superficies oscuras el acento puede cambiar (marcas donde accent = primary): --accent-inverse */
+.on-primary, .on-secondary, .photo-slide { --accent: var(--accent-inverse, var(--accent-base)); --line: color-mix(in oklab, var(--ink-inverse) 26%, transparent); }
+.on-accent  { background: var(--accent);  color: var(--on-accent, var(--ink)); }
+.muted      { color: var(--ink-muted); }
+.accent-text, .hl { color: var(--accent); }   /* etiqueta o UNA palabra del titular en el color de acento */
+.on-primary .muted, .on-secondary .muted, .photo-slide .muted { color: var(--ink-inverse-muted); }
+
+/* ---------- Texturas de la casa (SVG procedural, sin archivos) ---------- */
+.canvas[data-texture]::after {
+  content: ""; position: absolute; inset: 0; z-index: 40; pointer-events: none;
+  opacity: var(--grain); mix-blend-mode: soft-light; background-repeat: repeat;
+}
+.canvas[data-texture="fine"]::after {
+  background-size: 300px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.canvas[data-texture="coarse"]::after {
+  background-size: 420px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.canvas[data-texture="paper"]::after {
+  mix-blend-mode: multiply; opacity: calc(var(--grain) * 0.7); background-size: 600px, 300px;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.012 0.04' numOctaves='4' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.40  0 0 0 0 0.33  0 0 0 0.35 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.3  0 0 0 0 0.28  0 0 0 0 0.25  0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.canvas[data-texture="fabric"]::after {
+  mix-blend-mode: multiply; opacity: calc(var(--grain) * 0.6); background-size: 6px 6px, 6px 6px, 300px;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.10) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 1px, transparent 1px 3px),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.5'/></svg>");
+}
+.canvas[data-texture="film"]::after {
+  mix-blend-mode: overlay; background-size: 220px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='turbulence' baseFrequency='0.75' numOctaves='3' seed='9' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.canvas[data-vignette]::before {
+  content: ""; position: absolute; inset: 0; z-index: 39; pointer-events: none;
+  background: radial-gradient(ellipse 85% 75% at 50% 45%, transparent 55%, rgb(0 0 0 / var(--vignette, 0.35)) 100%);
+}
+
+/* ---------- Fotos ---------- */
+.photo { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+.photo > img { width: 100%; height: 100%; object-fit: cover; object-position: var(--fx, 50%) var(--fy, 50%); }
+.photo[data-grade="editorial"] > img { filter: contrast(1.05) saturate(0.84) sepia(0.07) brightness(0.98); }
+.photo[data-grade="immersive"] > img { filter: contrast(1.14) saturate(1.1) brightness(0.93); }
+.photo[data-grade="mono"]      > img { filter: grayscale(1) contrast(1.12); }
+.photo[data-grade="duotone"]   > img { filter: grayscale(1) contrast(1.2) brightness(1.05); }
+.photo[data-grade="duotone"]::after { content: ""; position: absolute; inset: 0; background: var(--duo, var(--primary)); mix-blend-mode: color; }
+.photo-slide { color: var(--ink-inverse); }
+
+/* Velos: legibilidad del texto sobre foto. --veil = opacidad (0.45 simple, 0.6 con low/high) */
+.veil { position: absolute; inset: 0; z-index: 1; pointer-events: none; --veil-color: var(--primary); }
+.veil[data-veil="flat"]   { background: color-mix(in oklab, var(--veil-color) calc(var(--veil, 0.45) * 100%), transparent); }
+.veil[data-veil="low"]    { background: linear-gradient(to top, color-mix(in oklab, var(--veil-color) calc(var(--veil, 0.6) * 100%), transparent) 0%, transparent 62%); }
+.veil[data-veil="high"]   { background: linear-gradient(to bottom, color-mix(in oklab, var(--veil-color) calc(var(--veil, 0.6) * 100%), transparent) 0%, transparent 58%); }
+.veil[data-veil="window"] { background: radial-gradient(ellipse 70% 60% at 50% 50%, transparent 30%, color-mix(in oklab, var(--veil-color) calc(var(--veil, 0.55) * 100%), transparent) 100%); }
+.scrim {
+  position: absolute; z-index: 2; pointer-events: none;
+  background: radial-gradient(closest-side, rgb(0 0 0 / var(--scrim, 0.5)), transparent);
+}
+
+/* ---------- Superficies y piezas de UI ---------- */
+.card  { background: var(--bg); color: var(--ink); border-radius: var(--radius); padding: 40px 44px; }
+.glass {
+  background: color-mix(in oklab, var(--ink-inverse) 14%, transparent);
+  backdrop-filter: blur(28px) saturate(1.2); -webkit-backdrop-filter: blur(28px) saturate(1.2);
+  border: 1.5px solid color-mix(in oklab, var(--ink-inverse) 26%, transparent);
+  border-radius: var(--radius); padding: 36px 40px; color: var(--ink-inverse);
+}
+.chip {
+  display: inline-flex; align-items: center; align-self: flex-start; gap: .5em;
+  padding: .5em .95em; border-radius: var(--radius-chip);
+  background: var(--accent-base, var(--accent)); color: var(--on-accent, var(--ink));
+  font-family: var(--font-mono); font-size: calc(var(--size-label) * var(--k) * 1px);
+  text-transform: uppercase; letter-spacing: var(--tracking-label); line-height: 1;
+}
+.rule { height: 10px; width: 112px; background: var(--accent); }
+.logo { height: var(--logo-height); width: auto; display: block; }
+.chrome-bar .logo { opacity: 1; }
+.chrome-bar:has(.logo) { opacity: 1; }
+.chrome-bar:has(.logo) > :not(.logo) { opacity: 0.72; }
+
+/* ---------- Composición ---------- */
+/* .content: área para contenido. Termina donde empieza la franja crítica (4:5) o deja lugar a la barra inferior (1:1, 9:16) */
+.content { position: absolute; inset: 0 0 max(calc(var(--critical-bottom) - var(--safe-bottom)), calc(var(--logo-height) + 72px)) 0; display: flex; flex-direction: column; }
+/* .chrome-bar: marca, handle y paginador; vive en la franja inferior */
+.chrome-bar {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--font-mono); font-size: calc(var(--size-label) * var(--k) * 1px);
+  letter-spacing: var(--tracking-label); text-transform: uppercase; opacity: 0.72;
+}
+
+[data-bleed] { pointer-events: none; }
+.tbd { background: #FFE600; color: #000; padding: 0 .15em; }  /* dato a confirmar: visible a propósito */
+
+/* ---------- Movimiento (para npm run motion; en la imagen fija se ve el estado final) ----------
+   <main class="canvas" data-motion> anima la entrada escalonada del contenido y un acercamiento lento de la foto. */
+@keyframes m-rise { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: none; } }
+@keyframes m-push { from { transform: scale(1.1); } to { transform: scale(1); } }
+@keyframes m-fade { from { opacity: 0; } to { opacity: 1; } }
+.canvas[data-motion] .content > *, .canvas[data-motion] .content li, .canvas[data-motion] .content .col { animation: m-rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.canvas[data-motion] .content > :nth-child(1), .canvas[data-motion] .content li:nth-child(1), .canvas[data-motion] .content .col:nth-child(1) { animation-delay: 0.2s; }
+.canvas[data-motion] .content > :nth-child(2), .canvas[data-motion] .content li:nth-child(2), .canvas[data-motion] .content .col:nth-child(2) { animation-delay: 0.45s; }
+.canvas[data-motion] .content > :nth-child(3), .canvas[data-motion] .content li:nth-child(3) { animation-delay: 0.7s; }
+.canvas[data-motion] .content > :nth-child(4), .canvas[data-motion] .content li:nth-child(4) { animation-delay: 0.95s; }
+.canvas[data-motion] .content > :nth-child(n+5), .canvas[data-motion] .content li:nth-child(n+5) { animation-delay: 1.2s; }
+.canvas[data-motion] .photo > img { animation: m-push 6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.canvas[data-motion] [data-bleed]:not(.photo) { animation: m-fade 1.2s ease-out both; }

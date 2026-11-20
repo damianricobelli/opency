@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+.env
+**/render/.frames-*/
+**/.check.html
+
+# Las marcas reales son de cada persona: solo la de ejemplo va al repo.
+brands/*
+!brands/_demo/
+
+# Del render de los layouts solo se versiona la hoja de contacto.
+templates/layouts/render/slide-*

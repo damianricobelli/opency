@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es" data-format="4:5" data-layout="cover-type">
+<head>
+<meta charset="utf-8">
+<title>layout 01 · cover-type — portada tipográfica</title>
+<link rel="stylesheet" href="../../brands/_demo/tokens.css">
+<link rel="stylesheet" href="../../templates/base/base.css">
+<style>
+  .content { justify-content: space-between; }
+  #headline { max-width: 9ch; }
+  #support { max-width: 24ch; margin-top: 36px; }
+  #mark { position: absolute; right: -180px; top: 120px; width: 560px; height: 560px; border-radius: 50%; border: 14px solid var(--accent); }
+</style>
+</head>
+<body>
+<main class="canvas on-bg" data-texture="paper">
+  <div id="mark" data-bleed></div>
+  <div class="safe">
+    <div class="content">
+      <p id="kicker" class="label">Guía · 5 pasos</p>
+      <div>
+        <h1 id="headline" class="t-cover" data-max="45">Tres errores que frenan tus ventas</h1>
+        <p id="support" class="t-intro muted" data-max="95">Lo que cambiamos en nuestra cuenta y qué pasó después.</p>
+      </div>
+    </div>
+    <footer class="chrome-bar" data-chrome><span id="brand">Marca</span><span id="pager">01/14</span></footer>
+  </div>
+</main>
+</body>
+</html>
