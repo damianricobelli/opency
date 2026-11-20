@@ -1,32 +1,65 @@
-# opentcy
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/hero-dark.webp">
+    <img src=".github/assets/hero-light.webp" alt="opentcy: your agency's content team, inside your agent" width="100%">
+  </picture>
+</p>
 
-**Your agent as an agency content team.** An open-source skill and MCP server that turn Claude Code, Claude Desktop, Cursor, Codex or any MCP client into account manager, art director, designer and copywriter.
+<h1 align="center">opentcy</h1>
 
-It asks what you want to say before it designs. It builds the campaign with your brand's identity. It searches Openverse and Unsplash for photos. It renders every piece and checks it at the pixel level. You approve what ships.
+<p align="center">
+  <strong>Your agency's content team, inside your agent.</strong><br>
+  An open-source skill and MCP server that turn Claude Code, Claude Desktop, Cursor, Codex or any MCP client<br>
+  into account manager, art director, designer and copywriter.
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-111111"></a>
+  <img alt="Node 18.17+" src="https://img.shields.io/badge/node-%E2%89%A518.17-111111">
+  <img alt="MCP server" src="https://img.shields.io/badge/MCP-server-e8502a">
+  <img alt="Agent skill" src="https://img.shields.io/badge/agent-skill-e8502a">
+  <img alt="Local first" src="https://img.shields.io/badge/local--first-no%20account-111111">
+</p>
+
+<p align="center">
+  <a href="#install">Install</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#what-the-render-checks">Quality control</a> ·
+  <a href="#mcp-tools">MCP tools</a> ·
+  <a href="#commands">Commands</a>
+</p>
+
+---
+
+It asks what you want to say before it designs. It builds the campaign with your brand's identity. It finds photos on Openverse and Unsplash. It renders every piece and checks it at the pixel level. **You approve what ships.**
 
 Everything runs on your machine and everything is a file you own: HTML/CSS per slide, PNG/JPG/PDF/MP4 ready to upload. No account, no download limits, no SaaS.
 
-```
-> I want a campaign for the cold brew launch
+<p align="center">
+  <img src=".github/assets/example-carousel.webp" alt="A five-slide carousel produced by opentcy: cover, statement, steps, comparison and closer" width="100%">
+  <br><sub>A carousel straight out of <code>npx opentcy render</code>: five slides, one material, zero errors.</sub>
+</p>
 
-  What do you want to get across? If people remember one thing, what should it be?
-  What has to happen for you to call it a success?
-  Where will it run?  What images do we have?
+## Why opentcy
 
-  So: "cold coffee can be specialty coffee too". Here is a plan with 5 pieces…
-```
+| | |
+|---|---|
+| **It asks first** | A short, interactive brief before any campaign: what you want to get across, to whom, where and by when. It never asks what it can read from your brand or your website. |
+| **It stays on brand** | Colors, typefaces, logo and voice are read from your site and stored as tokens. Every piece is built from them, never from scratch. |
+| **It checks its own work** | Contrast, safe zones, widows, cropped faces and unsourced figures are measured on the actual render, then a fresh subagent reviews the result cold. |
+| **It is yours** | Open source, local-first, plain files in a folder. Several brands per workspace, ready for agencies from day one. |
 
 ## Install
 
-Requires Node 18.17+. For video, ffmpeg.
+Requires Node 18.17+ and Chrome (or the bundled Chromium). For video, ffmpeg.
 
-**1. The skill** (the instructions the agent follows):
+**1. The skill** — the instructions the agent follows:
 
 ```bash
 npx skills add damianricobelli/opentcy
 ```
 
-**2. The workspace** (where your brands and pieces live):
+**2. The workspace** — where your brands and pieces live:
 
 ```bash
 npx opentcy init my-agency
@@ -36,13 +69,14 @@ npx opentcy init my-agency
 npx opentcy setup
 ```
 
-**3. The MCP server** (optional in Claude Code and Cursor, which can already run the commands; required in clients without a terminal, such as Claude Desktop):
+**3. The MCP server** — optional in Claude Code and Cursor, which can already run the commands; required in clients without a terminal, such as Claude Desktop:
 
 ```bash
 claude mcp add opentcy -- npx -y opentcy mcp
 ```
 
-In any other client:
+<details>
+<summary>Any other MCP client</summary>
 
 ```json
 {
@@ -56,35 +90,102 @@ In any other client:
 }
 ```
 
-**As a Claude Code plugin** (skill + MCP server + reviewer subagent in one step):
+</details>
+
+<details>
+<summary>As a Claude Code plugin (skill + MCP server + reviewer subagent in one step)</summary>
 
 ```
 /plugin marketplace add damianricobelli/opentcy
 /plugin install opentcy@opentcy
 ```
 
-## Usage
+</details>
 
-Open the workspace with your agent and ask:
+Then open the workspace with your agent and ask:
 
-> Load my brand from mysite.com.
-> Build a campaign for the December launch.
-> Carousel about automating reports, 6 slides, for Thursday.
-> Adapt it to a story and make the video.
+> Load my brand from mysite.com.<br>
+> Build a campaign for the December launch.<br>
+> Carousel about automating reports, 6 slides, for Thursday.<br>
+> Adapt it to a story and make the video.<br>
 > Propose this week's content plan.
 
 The agent answers in your language and writes the copy in the brand's language.
 
 ## How it works
 
-1. **Brief.** Before a campaign or a new brand, it asks what it needs to know, a few questions at a time: what you want to get across, objective, audience, offer, tone, channels, dates, images. It does not ask what it can infer from the brand or the website. Over MCP the questions arrive as a form.
-2. **Brand.** It reads colors, typefaces, logo and copy from a website and proposes 7 color roles, 3 font families, a voice with hard rules and a list of verified facts. It writes them when you say yes. Several brands can live in one workspace.
-3. **Plan.** Each piece of the campaign proves the message from a different angle. You approve the plan before anything is designed.
-4. **Images.** Your own photos first. Then stock: it searches Openverse and (if you connect it) Unsplash at once, looks at the previews, imports only the chosen photo at full resolution and records author and license. It marks the focal point and faces so they are never cropped.
-5. **Pieces.** HTML/CSS with the brand's tokens, on top of 14 tested layouts. Formats 4:5, 1:1, 9:16 and 16:9. Captions per network, alt text, PDF for LinkedIn and MP4 video.
-6. **Quality control.** Measured on the actual render, not on the code.
-7. **Cold review.** A subagent that did not see the process looks at the contact sheet and returns up to 5 findings.
-8. **You decide.** opentcy never publishes on its own.
+```mermaid
+flowchart LR
+    A([Your request]) --> B[Brief]
+    B --> C[Brand kit]
+    C --> D[Campaign plan]
+    D --> E[Copy]
+    E --> F[Images]
+    F --> G[Compose<br/>HTML/CSS]
+    G --> H{Render +<br/>quality checks}
+    H -- errors --> G
+    H -- clean --> I[Cold review]
+    I --> J([You approve])
+```
+
+### 1. It asks before it designs
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/brief-dark.webp">
+    <img src=".github/assets/brief-light.webp" alt="The interactive brief: the agent asks what you want to convey, audience, channels and verified facts, then produces the piece" width="100%">
+  </picture>
+</p>
+
+Before a campaign or a new brand, the agent runs a brief a few questions at a time: what you want to get across, objective, audience, offer, tone, channels, dates, images. What it can infer from the brand or the website, it proposes instead of asking. Over MCP the questions arrive as a form (`brief_interview` uses MCP elicitation when the client supports it).
+
+The one question it never skips: **what do you want to get across?** The answer becomes the thesis every piece has to prove.
+
+### 2. It learns your brand
+
+`npx opentcy brand import mysite.com` reads colors by surface, ink colors, typefaces, logo and copy from a website. The agent proposes 7 color roles, 3 font families, a voice made of hard rules and a list of verified facts, and writes them only when you say yes. Several brands can live in one workspace.
+
+### 3. It plans, then builds
+
+Each piece of the campaign proves the message from a different angle, and you approve the plan before anything is designed. Pieces are HTML/CSS using the brand's tokens, composed from 14 tested layouts:
+
+<p align="center">
+  <img src=".github/assets/layouts.webp" alt="The 14 slide layouts: type cover, photo cover, statement, big number, steps, comparison, photo card, data bars, testimonial, closer, news cards, app window, logo grid and co-brand" width="100%">
+</p>
+
+Formats 4:5, 1:1, 9:16 and 16:9. Captions per network, alt text, PDF for LinkedIn and MP4 video.
+
+### 4. It finds the right photo
+
+Your own photos come first. Then stock: one search queries the available providers in parallel, the agent **looks at the previews**, imports only the chosen photo at full resolution and records author and license. It marks the focal point and the faces so they are never cropped or covered by text.
+
+| Provider | Key | License |
+|---|---|---|
+| [Openverse](https://openverse.org) | None needed | Only CC0, public domain and CC BY (attribution is recorded) |
+| [Unsplash](https://unsplash.com/developers) | Your own Access Key (free) | Unsplash License |
+
+Openverse works out of the box. Unsplash is optional and uses **your own** account — opentcy ships no keys:
+
+```bash
+npx opentcy stock connect unsplash
+```
+
+It walks you through creating a free app in your Unsplash account, asks for the Access Key with hidden input, checks it and saves it to the workspace's git-ignored `.env`. Requests count against your own quota (50 per hour on a demo app).
+
+### 5. It measures the render, not the intent
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/quality-dark.webp">
+    <img src=".github/assets/quality-light.webp" alt="Quality control: contrast over photos, safe zones, widows, face crops, unsourced figures and AI-sounding phrases" width="100%">
+  </picture>
+</p>
+
+Every piece is rendered with Chrome and checked pixel by pixel. Nothing is delivered with errors, and passing checks is not aesthetic approval — so a subagent that did not see the process reviews the contact sheet cold and returns up to 5 findings.
+
+### 6. You decide
+
+opentcy never publishes on its own. It leaves everything ready in `render/`, and you approve, adjust or veto.
 
 ## What the render checks
 
@@ -96,6 +197,59 @@ The agent answers in your language and writes the copy in the brand's language.
 - **Photos:** upscaled beyond their resolution, crops that cut faces, text over the subject, unregistered or vetoed images.
 - **Brand:** colors outside the tokens and fonts that failed to load.
 - **Copy:** "AI-sounding" phrases, mixed form of address, subheads that repeat the headline, figures without a source (checked one by one), filler hashtags, generic CTAs, per-network limits and missing alt text.
+
+<details>
+<summary>What a report looks like when things go wrong</summary>
+
+An excerpt of the real report for the deliberately broken fixture used in the test suite:
+
+```
+# Quality report — defects
+
+4:5 · 1 slide(s) · ×1 · 7 errors · 11 warnings
+
+## Slide 1 (flat)
+- warning `outside_safe_area` #out — text outside the safe area
+- warning `illegible_text_size` #tiny — 14 px on canvas = 5.1 pt on a phone (min. 10.5)
+- **ERROR** `headline_orphan` #headline — last line has a single word: "sola"
+- **ERROR** `critical_overlap` #a — overlaps #b
+- **ERROR** `external_image` img — external image: download it into assets/ and register it
+- **ERROR** `placeholder_left` — {{…}} placeholders left unfilled
+- warning `over_budget` #headline — 43 characters; this layout is designed for ~20
+- warning `unreadable_contrast` #low — contrast 4.18:1 (min. 4.5:1)
+- warning `brand_literal_color` — colors outside tokens: #777777
+
+## Copy and captions
+- **ERROR** `unsourced_figure` slide 1 #claim — "40%": unsourced figure
+- warning `copy_too_many_hashtags` caption instagram — 4 hashtags (max. 3)
+- warning `copy_generic_cta` caption instagram — generic CTA: name the object (what, where, how)
+- warning `missing_alt_text` slides 1 — missing alt text
+```
+
+</details>
+
+## What you get
+
+A workspace is a folder of plain files. Nothing is locked in a database.
+
+```
+my-agency/
+├── AGENTS.md · references/          the agent's instructions
+├── templates/                       base.css and the 14 layouts
+└── brands/
+    └── acme/
+        ├── brand.json               form of address, logos, pillars, verified facts
+        ├── brand-kit.md             voice, color roles, standing instructions
+        ├── tokens.css               the actual colors, typefaces and scale
+        ├── assets/                  logos, photos, stock, fonts + assets.json
+        ├── campaigns/winter/        brief.json, brief.md and the piece plan
+        └── pieces/2026-12-01-launch/
+            ├── piece.json           direction, copy, captions, sources, history
+            ├── slide-01.html …      one HTML file per slide
+            ├── versions/            saved versions, no git required
+            └── render/              slide-NN.png/jpg, contact-sheet.png, carousel.pdf,
+                                     caption-*.txt, alt-text.txt, report.md
+```
 
 ## MCP tools
 
@@ -111,22 +265,9 @@ The agent answers in your language and writes the copy in the brand's language.
 
 Also: the skill's instructions as resources (`opentcy://guide/…`) and three prompts (`new-campaign`, `load-brand`, `weekly-plan`).
 
-Tools that render or search return **images**, not just text: the agent sees the contact sheet and the stock previews before it decides. `brief_interview` uses MCP *elicitation* when the client supports it and otherwise returns the questions for the chat.
-
-## Stock photo providers
-
-| Provider | Key | License |
-|---|---|---|
-| [Openverse](https://openverse.org) | None needed | Only CC0, public domain and CC BY (attribution is recorded) |
-| [Unsplash](https://unsplash.com/developers) | Your own Access Key (free) | Unsplash License |
-
-Openverse works out of the box. Unsplash is optional and uses **your own** account: opentcy ships no keys.
-
-```bash
-npx opentcy stock connect unsplash
-```
-
-It walks you through creating a free app in your Unsplash account, asks for the Access Key with hidden input, checks it and saves it to the workspace's git-ignored `.env`. Requests then count against your own quota (50 per hour on a demo app). `npx opentcy stock status` shows what is connected. Once connected, a search queries both providers in parallel and interleaves the results.
+- **Tools return images, not just text.** The agent sees the contact sheet and the stock previews before it decides.
+- **One implementation.** Every tool runs the same script as the CLI, so MCP and terminal never drift apart.
+- **Guardrails built in.** `brand_write` refuses to overwrite a loaded brand without the user's confirmation, slides cannot contain scripts, downloads reject private addresses, and API keys never travel through the chat.
 
 ## Commands
 
@@ -157,18 +298,27 @@ All of them accept `--brand <slug>`. The workspace is the folder that contains `
 - **Photos with people:** the face-crop check depends on the agent marking the regions correctly.
 - **Video:** no automatic subtitles or voice-over.
 - **Copy linter:** the cliché phrase lists target Spanish-language copy. Structural checks (figures without a source, limits, alt text, repeated subheads) apply to any language.
-- **Demo brand:** `brands/_demo` and the sample copy in the layouts are in Spanish.
 
 ## Development
 
 ```bash
+git clone https://github.com/damianricobelli/opentcy
+cd opentcy
 npm install
 npm test                          # engine + MCP server
 OPENTCY_TEST_NETWORK=1 npm test   # adds the live stock test
 ```
 
-The landing page lives in [`web/`](web) (TanStack Start). Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md).
+| Path | What it is |
+|---|---|
+| `scripts/` | The engine: each file is a command |
+| `mcp/server.mjs` | The MCP server |
+| `skills/opentcy/` | `SKILL.md` and its references: what the agent reads |
+| `templates/` | `base.css` and the layouts |
+| `web/` | The landing page (TanStack Start) |
+
+Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md).
 
 ## License
 
-[MIT](LICENSE).
+[MIT](LICENSE). The fonts bundled with the demo brand are under the SIL Open Font License.
