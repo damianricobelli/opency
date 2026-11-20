@@ -4,7 +4,7 @@
   "status": "reference",
   "format": "4:5",
   "version": 1,
-  "note": "Not a publishable piece. These are 14 archetypes to combine. Sample copy: always replace it.",
+  "note": "Not a publishable piece. These are 17 archetypes to combine. Sample copy: always replace it.",
   "slides": [
     {
       "n": 1,
@@ -39,7 +39,7 @@
     {
       "n": 7,
       "layout": "photo-card",
-      "alt": "A photo in the top half and a text card below."
+      "alt": "A photo that fades into a dark surface, with the headline set large on the seam."
     },
     {
       "n": 8,
@@ -75,6 +75,21 @@
       "n": 14,
       "layout": "cobrand",
       "alt": "Background photo with the names of two brands joined by a cross, and one line of text."
+    },
+    {
+      "n": 15,
+      "layout": "poster",
+      "alt": "A color field with one short line in very large type, a small label on each top corner and a supporting line."
+    },
+    {
+      "n": 16,
+      "layout": "chat",
+      "alt": "A headline and a chat conversation in four message bubbles that ends in a confirmation."
+    },
+    {
+      "n": 17,
+      "layout": "photo-duotone",
+      "alt": "A full-bleed photo tinted in one brand color, with the headline at the bottom."
     }
   ],
   "captions": {}

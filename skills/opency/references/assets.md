@@ -4,7 +4,7 @@ Read this before using a photo or a logo, or searching for stock.
 
 **Only use images registered in `brands/<brand>/assets/assets.json`**, referenced with `<img data-asset="id" src="../../assets/…">`. External URLs are not rendered.
 
-**Order of preference:**
+**Order of preference** (for a product or service brand, the product itself comes before any photo: see "What makes a piece look designed" in `references/art-direction.md`):
 1. The brand's own photos.
 2. House textures (`data-texture`: they need no file and no credit).
 3. Stock libraries: `npx @opency/cli assets stock "<search in English>"` queries Openverse (no key needed) and, if the user connected their own account with `npx @opency/cli stock connect unsplash`, Unsplash too. Then `stock-import <ref>`. Credit and license are recorded automatically.

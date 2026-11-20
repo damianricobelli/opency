@@ -118,12 +118,16 @@ function inspect({ spec, assets }) {
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     while (walker.nextNode()) {
       const n = walker.currentNode; const re = /\S+/g; let m;
-      while ((m = re.exec(n.textContent))) { r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length); const q = r.getBoundingClientRect(); if (q.width) words.push({ w: m[0], top: q.top, h: q.height }); }
+      while ((m = re.exec(n.textContent))) { r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length); const q = r.getBoundingClientRect(); if (q.width) words.push({ w: m[0], top: q.top, h: q.height, left: q.left, right: q.right }); }
     }
     if (words.length < 3) continue;
     const lines = [];
-    for (const w of words) { const L = lines.find((l) => Math.abs(l.top - w.top) < w.h * 0.5); L ? L.words.push(w.w) : lines.push({ top: w.top, words: [w.w] }); }
-    if (lines.length >= 2 && lines[lines.length - 1].words.length === 1) add("headline_orphan", el, `last line has a single word: "${lines[lines.length - 1].words[0]}"`, "error");
+    for (const w of words) { const L = lines.find((l) => Math.abs(l.top - w.top) < w.h * 0.5); if (L) { L.words.push(w.w); L.left = Math.min(L.left, w.left); L.right = Math.max(L.right, w.right); } else lines.push({ top: w.top, words: [w.w], left: w.left, right: w.right }); }
+    // An orphan is a short word left alone under fuller lines. Display type set in stacked short lines
+    // (a poster headline) is not one: there the last line holds its own against the widest.
+    const last = lines[lines.length - 1], widest = Math.max(...lines.map((l) => l.right - l.left));
+    const stacked = lines.length >= 2 && (last.right - last.left) >= widest * 0.55;
+    if (lines.length >= 2 && last.words.length === 1 && !stacked) add("headline_orphan", el, `last line has a single word: "${lines[lines.length - 1].words[0]}"`, "error");
   }
 
   // ---- Critical overlap between text blocks ----
@@ -183,7 +187,10 @@ function inspect({ spec, assets }) {
     const nw = img.naturalWidth, nh = img.naturalHeight;
     const s = fit === "contain" ? Math.min(q.width / nw, q.height / nh) : fit === "fill" ? Math.max(q.width / nw, q.height / nh) : Math.max(q.width / nw, q.height / nh);
     const need = s * dpr;
-    if (!/\.svg(\?|$)/i.test(src) && need > 1.02 && q.width * q.height > 40000) add("image_upscaled", img, `shown at ${(need * 100).toFixed(0)} % of its real size (${nw}×${nh}) → it will look soft/pixelated`, need > 1.3 ? "error" : "warn");
+    // A graded photo (grain, tint, darkening) hides a little softness; a clean one does not.
+    const grade = img.closest("figure.photo")?.dataset.grade;
+    const tolerance = grade && grade !== "none" ? 1.15 : 1.02;
+    if (!/\.svg(\?|$)/i.test(src) && need > tolerance && q.width * q.height > 40000) add("image_upscaled", img, `shown at ${(need * 100).toFixed(0)} % of its real size (${nw}×${nh}) → it will look soft/pixelated`, need > 1.3 ? "error" : "warn");
     const id = img.dataset.asset;
     const meta = id ? byId[id] : null;
     const isLogo = img.matches("[data-role=logo], .logo, #logo") || /\/logos\//.test(src);

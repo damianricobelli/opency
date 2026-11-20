@@ -2,36 +2,42 @@
   "piece": "_example-carousel",
   "format": "4:5",
   "scale": 1,
-  "renderedAt": "2026-11-20T17:29:17.881Z",
+  "renderedAt": "2026-11-20T19:44:52.478Z",
   "slides": [
     {
       "n": 1,
       "file": "slide-01.html",
       "mode": "flat",
-      "accentMass": 0.008,
+      "accentMass": 0.001,
       "texts": [
         {
-          "id": "kicker",
+          "id": "meta-left",
           "role": "label",
           "text": "HOW WE WORK",
           "chrome": false
         },
         {
+          "id": "meta-right",
+          "role": "label",
+          "text": "WEEKLY",
+          "chrome": false
+        },
+        {
           "id": "headline",
           "role": "headline",
-          "text": "Your brand in every piece",
+          "text": "Your brand, every piece.",
           "chrome": false
         },
         {
           "id": "support",
           "role": "support",
-          "text": "How we build the week's content with an agent.",
+          "text": "How we build the week's content with an agent that knows the brand.",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "YOUR BRAND",
+          "text": "@BRAND",
           "chrome": true
         },
         {
@@ -45,7 +51,7 @@
       "chrome": {
         "brand": {
           "l": 80,
-          "r": 282,
+          "r": 201,
           "b": 1270,
           "size": "28px"
         },
@@ -66,24 +72,48 @@
       "n": 2,
       "file": "slide-02.html",
       "mode": "flat",
-      "accentMass": 0,
+      "accentMass": 0.008,
       "texts": [
         {
           "id": "headline",
           "role": "headline",
-          "text": "The agent starts from what you already approved.",
+          "text": "It starts with a question",
           "chrome": false
         },
         {
-          "id": "support",
-          "role": "support",
-          "text": "It reads the brand kit, the templates and every correction you gave it before.",
+          "id": "in-1",
+          "role": "body",
+          "text": "A carousel about our new hours, for Friday.",
+          "chrome": false
+        },
+        {
+          "id": "out-1",
+          "role": "body",
+          "text": "Got it. What should people remember?",
+          "chrome": false
+        },
+        {
+          "id": "in-2",
+          "role": "body",
+          "text": "That we open earlier now.",
+          "chrome": false
+        },
+        {
+          "id": "out-2",
+          "role": "body",
+          "text": "Here are five slides, checked and ready to review.",
+          "chrome": false
+        },
+        {
+          "id": "status",
+          "role": "label",
+          "text": "0 ERRORS",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "YOUR BRAND",
+          "text": "@BRAND",
           "chrome": true
         },
         {
@@ -97,7 +127,7 @@
       "chrome": {
         "brand": {
           "l": 80,
-          "r": 282,
+          "r": 201,
           "b": 1270,
           "size": "28px"
         },
@@ -177,7 +207,7 @@
         {
           "id": "brand",
           "role": "chrome",
-          "text": "YOUR BRAND",
+          "text": "@BRAND",
           "chrome": true
         },
         {
@@ -191,7 +221,7 @@
       "chrome": {
         "brand": {
           "l": 80,
-          "r": 282,
+          "r": 201,
           "b": 1270,
           "size": "28px"
         },
@@ -271,7 +301,7 @@
         {
           "id": "brand",
           "role": "chrome",
-          "text": "YOUR BRAND",
+          "text": "@BRAND",
           "chrome": true
         },
         {
@@ -285,7 +315,7 @@
       "chrome": {
         "brand": {
           "l": 80,
-          "r": 282,
+          "r": 201,
           "b": 1270,
           "size": "28px"
         },
@@ -335,7 +365,7 @@
         {
           "id": "brand",
           "role": "chrome",
-          "text": "@YOURBRAND",
+          "text": "@BRAND",
           "chrome": true
         },
         {
@@ -349,7 +379,7 @@
       "chrome": {
         "brand": {
           "l": 80,
-          "r": 282,
+          "r": 201,
           "b": 1270,
           "size": "28px"
         },
@@ -374,7 +404,7 @@
     "mode": "flat"
   },
   "cover": {
-    "hook": "Your brand in every piece",
+    "hook": "Your brand, every piece.",
     "images": []
   }
 }

@@ -21,7 +21,7 @@ scripts/                     the engine (each file is a command)
 mcp/server.mjs               MCP server (stdio): every tool runs an engine script
 skills/opency/              SKILL.md + references/: what the agent reads
 agents/visual-reviewer.md    cold-review subagent
-templates/                   base.css and the 14 layouts
+templates/                   base.css and the 17 layouts
 brands/_demo/                demo brand (the only one versioned)
 .claude-plugin/              Claude Code plugin and marketplace manifests
 web/                         landing page (TanStack Start); separate project with its own package.json

@@ -37,7 +37,7 @@ opency works in a **workspace**: a folder with `brands/` and `templates/`. You n
 ```
 AGENTS.md · references/                  instructions
 templates/base/                           base.css: canvas, zones, scale, materials, motion
-templates/layouts/                        14 tested slide archetypes
+templates/layouts/                        17 tested slide archetypes
 brands/<brand>/
   brand.json                              data the scripts read: form of address, logos, pillars, verified
   brand-kit.md                            voice, color roles, creative profile, instructions, assumptions
@@ -109,7 +109,7 @@ A layout has **slots**: the texts it takes, each with a character budget (`layou
 1. **Context.** Everything from the previous step, plus the brand's templates and, if you are editing an existing piece, `npx @opency/cli version <piece> diff` and its `history`: what the user changed stays untouched.
 2. **Direction.** Intent and recipe (`references/planning.md`), a one-sentence thesis, dominant mode, signature move and what to avoid. It goes in `piece.direction`. If the request is ambiguous and redoing is expensive, ask a single question (`piece` brief); otherwise decide and say what you assumed.
 3. **Full copy before design** (`references/copy.md`): role, claim and support of each slide, captions and alt text.
-4. **Images** (`references/assets.md`): the brand's own photos first; then house textures; then stock. Search, **look at the previews**, import only the chosen one and analyze it before use.
+4. **Images** (`references/assets.md`): the brand's own photos and product first. With none, the piece is typographic: color fields, large type, the product itself (`chat`, `app-window`). Stock is the last resort, never the default: a generic photo of a person holding a phone is what makes a piece look like a template. If you do use stock, **look at the previews**, import only the chosen one, analyze it, and set it full-bleed and graded (`cover-photo`, `photo-duotone`), never small above a white card.
 5. **Compose** with `piece_compose` (`references/art-direction.md`): one layout per slide, varied, with the copy in its slots. If a text does not fit a layout, change the layout: do not shrink the type.
 6. **Read the report.** Run `piece_repair` for the safe fixes. Fix the remaining errors with `piece_edit` or another layout. Warnings are fixed or justified in one line. Do not iterate more than twice on the same thing (`references/quality.md`).
 7. **Look at the contact sheet.** Look for what the checks cannot see: hierarchy, rhythm, whether it looks like the brand.
@@ -123,6 +123,7 @@ A layout has **slots**: the texts it takes, each with a character budget (`layou
 - **One idea per piece.** Cover of 8 words or fewer. Slide 2 sharpens the promise.
 - **One material per piece:** the brand's texture and photo treatment, identical on every slide.
 - **Vary the structure:** never the same layout on every slide; the bottom bar does not move.
+- **One big gesture per slide, and at least one slide in color or dark.** A carousel that is white from end to end reads as a document, not as a piece. Open on the brand's strongest surface (`poster`, `cover-photo`, `photo-duotone`), not on a pale one.
 - **Images:** only those registered in `assets.json`, analyzed before use. Never upscaled. Credit and license of a stock photo are recorded; if the license requires attribution (CC BY), it goes in the caption.
 - **Logos:** the variant in `brand.json → logos` for each surface.
 - **A one-off correction is not a rule.** It becomes a rule if the user says it is permanent or if it repeats in 2 pieces.

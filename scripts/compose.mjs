@@ -25,6 +25,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ROOT, FORMATS, parseArgs, readJSON, writeJSON, resolveBrand, brandDir, resolvePiece, loadAssets, brandOf, slugify, today } from "./lib/project.mjs";
 import { describeSlide, fillSlide } from "./lib/compose.mjs";
+import { ensureWorkspace } from "./lib/project.mjs";
+
+ensureWorkspace();
 
 const args = parseArgs(process.argv.slice(2));
 const [cmd, target] = args._;

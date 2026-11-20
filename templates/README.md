@@ -3,7 +3,7 @@
 - **`base/`:** the infrastructure common to all brands.
   - `base.css` defines the canvas, the zones per format, the type scale by role, the materials (textures, photos, veils, scrim, glass, chips) and motion.
   - `slide.html` is the blank slide.
-- **`layouts/`:** 14 slide archetypes tested against quality control. See its README.
+- **`layouts/`:** 17 slide archetypes tested against quality control. See its README.
 
 Each brand's own templates (approved pieces) live in `brands/<brand>/templates/<name>/`.
 

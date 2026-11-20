@@ -6,11 +6,12 @@
 <link rel="stylesheet" href="../../brands/_demo/tokens.css">
 <link rel="stylesheet" href="../../templates/base/base.css">
 <style>
-  .content { gap: 72px; justify-content: center; }
-  #headline { max-width: 15ch; }
-  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 2px solid var(--line); }
-  li { display: grid; grid-template-columns: 96px 1fr; align-items: baseline; padding: 44px 0; border-bottom: 2px solid var(--line); }
-  .n { font-family: var(--font-mono); font-size: calc(var(--size-label) * var(--k) * 1px); color: var(--ink-muted); letter-spacing: var(--tracking-label); }
+  .content { gap: 52px; }
+  #headline { max-width: 14ch; }
+  ol { list-style: none; margin: 0; padding: 0; flex: 1; min-height: 0; display: grid; grid-auto-rows: 1fr; border-top: 2px solid var(--line); }
+  li { display: grid; grid-template-columns: 148px 1fr; align-items: center; border-bottom: 2px solid var(--line); }
+  .n { font-family: var(--font-display); font-weight: var(--weight-display); font-size: calc(var(--size-title) * var(--k) * 1px); letter-spacing: var(--tracking-display); line-height: 1; text-transform: none; color: var(--ink-muted); }
+  li > span:last-child { max-width: 27ch; }
 </style>
 </head>
 <body>
@@ -25,7 +26,7 @@
         <li><span class="n label num">04</span><span id="step-4" class="t-body" data-max="48">We save what worked as a template.</span></li>
       </ol>
     </div>
-    <footer class="chrome-bar" data-chrome><span id="brand">Brand</span><span id="pager">05/14</span></footer>
+    <footer class="chrome-bar" data-chrome><span id="brand">Brand</span><span id="pager">05/17</span></footer>
   </div>
 </main>
 </body>

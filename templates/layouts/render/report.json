@@ -2,7 +2,7 @@
   "piece": "_layouts",
   "format": "4:5",
   "scale": 1,
-  "renderedAt": "2026-11-20T17:52:19.659Z",
+  "renderedAt": "2026-11-20T19:46:14.783Z",
   "slides": [
     {
       "n": 1,
@@ -37,7 +37,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "01/14",
+          "text": "01/17",
           "chrome": true
         }
       ],
@@ -95,7 +95,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "02/14",
+          "text": "02/17",
           "chrome": true
         }
       ],
@@ -149,7 +149,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "03/14",
+          "text": "03/17",
           "chrome": true
         }
       ],
@@ -213,7 +213,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "04/14",
+          "text": "04/17",
           "chrome": true
         }
       ],
@@ -307,7 +307,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "05/14",
+          "text": "05/17",
           "chrome": true
         }
       ],
@@ -401,7 +401,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "06/14",
+          "text": "06/17",
           "chrome": true
         }
       ],
@@ -459,7 +459,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "07/14",
+          "text": "07/17",
           "chrome": true
         }
       ],
@@ -481,8 +481,8 @@
         }
       },
       "material": {
-        "texture": "fine",
-        "grade": "immersive"
+        "texture": "film",
+        "grade": "editorial"
       },
       "issues": []
     },
@@ -490,7 +490,7 @@
       "n": 8,
       "file": "slide-08.html",
       "mode": "flat",
-      "accentMass": 0.01,
+      "accentMass": 0.017,
       "texts": [
         {
           "id": "headline",
@@ -561,7 +561,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "08/14",
+          "text": "08/17",
           "chrome": true
         }
       ],
@@ -625,7 +625,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "09/14",
+          "text": "09/17",
           "chrome": true
         }
       ],
@@ -689,7 +689,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "10/14",
+          "text": "10/17",
           "chrome": true
         }
       ],
@@ -709,7 +709,7 @@
         }
       },
       "material": {
-        "texture": "paper",
+        "texture": "fine",
         "grade": ""
       },
       "issues": []
@@ -789,7 +789,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "11/14",
+          "text": "11/17",
           "chrome": true
         }
       ],
@@ -901,7 +901,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "12/14",
+          "text": "12/17",
           "chrome": true
         }
       ],
@@ -989,7 +989,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "13/14",
+          "text": "13/17",
           "chrome": true
         }
       ],
@@ -1053,7 +1053,7 @@
         {
           "id": "pager",
           "role": "chrome",
-          "text": "14/14",
+          "text": "14/17",
           "chrome": true
         }
       ],
@@ -1077,6 +1077,212 @@
       "material": {
         "texture": "film",
         "grade": "editorial"
+      },
+      "issues": []
+    },
+    {
+      "n": 15,
+      "file": "slide-15.html",
+      "mode": "flat",
+      "accentMass": 0.001,
+      "texts": [
+        {
+          "id": "meta-left",
+          "role": "label",
+          "text": "THE RULE",
+          "chrome": false
+        },
+        {
+          "id": "meta-right",
+          "role": "label",
+          "text": "NO. 12",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Say one thing well.",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "A piece that says two things is remembered for neither. Pick the one that matters.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "BRAND",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "15/17",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "fine",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 16,
+      "file": "slide-16.html",
+      "mode": "flat",
+      "accentMass": 0.006,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "It all happens in the chat",
+          "chrome": false
+        },
+        {
+          "id": "in-1",
+          "role": "body",
+          "text": "Hi, do you have a table for Friday?",
+          "chrome": false
+        },
+        {
+          "id": "out-1",
+          "role": "body",
+          "text": "Yes: 8:00, 9:30 or 10:15. Which one works?",
+          "chrome": false
+        },
+        {
+          "id": "in-2",
+          "role": "body",
+          "text": "9:30 for four, please.",
+          "chrome": false
+        },
+        {
+          "id": "out-2",
+          "role": "body",
+          "text": "Done. Here is the link to confirm it.",
+          "chrome": false
+        },
+        {
+          "id": "status",
+          "role": "label",
+          "text": "BOOKED",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "BRAND",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "16/17",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "fine",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 17,
+      "file": "slide-17.html",
+      "mode": "photo",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "meta-left",
+          "role": "label",
+          "text": "FIELD NOTES",
+          "chrome": false
+        },
+        {
+          "id": "meta-right",
+          "role": "label",
+          "text": "WEEK 3",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Short runs, long gains",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "Notes from a season of early starts.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "BRAND",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "17/17",
+          "chrome": true
+        }
+      ],
+      "images": [
+        "sample-sunset"
+      ],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "film",
+        "grade": "duotone"
       },
       "issues": []
     }

@@ -13,8 +13,11 @@ import path from "node:path";
 import { PKG, parseArgs } from "./lib/project.mjs";
 
 const args = parseArgs(process.argv.slice(2));
+const VERSION = JSON.parse(await readFile(path.join(PKG, "package.json"), "utf8")).version;
 const dest = path.resolve(args._[0] ?? ".");
-const force = !!args.force;
+// --sync refreshes what opency owns (instructions, templates, demo brand) and nothing else.
+const sync = !!args.sync;
+const force = !!args.force || sync;
 const done = [], kept = [];
 
 async function put(rel, content) {
@@ -44,6 +47,8 @@ await put(".claude/agents/visual-reviewer.md", await readFile(path.join(PKG, "ag
 if (args.demo !== false && !args["no-demo"]) await copyTree(path.join(PKG, "brands/_demo"), "brands/_demo");
 else await mkdir(path.join(dest, "brands"), { recursive: true });
 
+await writeFile(path.join(dest, "templates/.opency-version"), VERSION + "\n");
+if (sync) { console.log(`✓ Templates and instructions updated to ${VERSION} at ${dest}`); process.exit(0); }
 await put(".mcp.json", JSON.stringify({ mcpServers: { opency: { command: "npx", args: ["-y", "@opency/cli", "mcp"] } } }, null, 2) + "\n");
 await put(".gitignore", "node_modules/\n.DS_Store\n.env\n**/render/.frames-*/\n**/.check.html\n");
 

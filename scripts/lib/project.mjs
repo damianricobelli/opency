@@ -77,7 +77,16 @@ export const slugify = (s) => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "")
  * had to create it.
  */
 export function ensureWorkspace({ quiet = false } = {}) {
-  if (hasWorkspace()) return false;
+  if (hasWorkspace()) {
+    // Layouts and base.css belong to opency: after an upgrade the workspace copy is refreshed, so
+    // pieces get the new layouts. The package's own checkout is its workspace and needs no copy.
+    if (path.resolve(ROOT) !== PKG) {
+      let current = ""; try { current = readFileSync(path.join(ROOT, "templates/.opency-version"), "utf8").trim(); } catch { /* older workspace */ }
+      const installed = JSON.parse(readFileSync(path.join(PKG, "package.json"), "utf8")).version;
+      if (current !== installed) spawnSync(process.execPath, [path.join(PKG, "scripts/init.mjs"), ROOT, "--sync"], { encoding: "utf8" });
+    }
+    return false;
+  }
   const made = spawnSync(process.execPath, [path.join(PKG, "scripts/init.mjs"), ROOT], { encoding: "utf8" });
   if (made.status !== 0) throw new Error(`Could not create the workspace at ${ROOT}: ${(made.stderr || made.stdout).trim()}`);
   if (!quiet) console.error(`· No workspace here: created one at ${ROOT} (set OPENCY_HOME or run \`opency init <folder>\` to use another).`);

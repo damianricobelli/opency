@@ -80,4 +80,18 @@ Read this before composing or when a piece looks generic.
 
 ## Layouts
 
-14 archetypes in `templates/layouts/` (`npx @opency/cli layouts` shows them): typographic and photo covers, statement, number, steps, comparison, photo with card, data bars, testimonial, closer, news cards, product window, logo grid and co-brand. They are starting points: each brand takes them into its own system (see how `brands/urbs/pieces/` turned out).
+17 archetypes in `templates/layouts/` (`npx @opency/cli layouts` shows them): typographic and photo covers, statement, number, steps, comparison, photo with card, data bars, testimonial, closer, news cards, product window, logo grid and co-brand. They are starting points: each brand takes them into its own system (see how `brands/urbs/pieces/` turned out).
+
+## What makes a piece look designed
+
+Passing the checks makes a piece correct. These make it look like someone designed it.
+
+- **One big gesture per slide.** A line of type large enough to own the slide, or an image that fills it. Never three medium things. If the headline is the gesture, give it the `t-cover` or `t-hero` scale and keep it short.
+- **Frame the gesture with small furniture.** A `.corners` row of two short labels in the top corners (topic, date, place, issue number), a rule, the pager. Small mono labels around large type is what reads as editorial.
+- **Open on the strongest surface.** The cover goes on a color field, a dark surface or a full-bleed image. A pale cover with a mid-size headline does not stop anyone.
+- **Alternate surfaces.** Color or dark, then light, then dark again. At least one slide in color or dark in every carousel; never white from end to end.
+- **Images fill the slide or stay out of it.** Full bleed with the type on top (`cover-photo`, `photo-duotone`), or fading into the surface (`photo-card`). A small photo above a white card is the look of a template.
+- **Show the thing, not a person using it.** For a product, the product is the image: the conversation (`chat`), the screen (`app-window`), the number (`big-number`), the comparison. A stock photo of someone smiling at a phone says nothing about the brand and could belong to anyone.
+- **Stock is the last resort.** Use it only when the idea needs a photo and the brand has none, and then: search for something specific (an object, a place, a texture, a gesture — not "person using phone"), choose a frame with one clear subject and room for text, and tint or grade it (`photo-duotone`, `data-grade`) so it belongs to the brand. Two searches with nothing good: go typographic.
+- **Fewer words, bigger.** If a slide needs a paragraph, it is two slides. The `poster` headline takes about 26 characters; that limit is the design.
+

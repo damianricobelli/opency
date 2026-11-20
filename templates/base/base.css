@@ -8,7 +8,7 @@
  * Photos:         <figure class="photo" data-grade="none|editorial|immersive|mono|duotone"><img data-asset="id"></figure>
  * Veils:          <div class="veil" data-veil="flat|low|high|window"></div>   (card = text in .card, no veil)
  * Scrim:          <div class="scrim" style="left;top;width;height"></div>     (local shadow behind a block)
- * Other:          .glass .card .chip .label .rule  ·  [data-bleed] decoration that may leave the canvas
+ * Other:          .glass .card .chip .label .rule .corners  ·  [data-bleed] decoration that may leave the canvas
  *                 [data-chrome] brand/pager/handle: may live in the bottom strip
  *                 [data-max="N"] the layout's character budget (the render warns if it is exceeded by +20%)
  */
@@ -148,6 +148,9 @@ img { display: block; max-width: none; }
   text-transform: uppercase; letter-spacing: var(--tracking-label); line-height: 1;
 }
 .rule { height: 10px; width: 112px; background: var(--accent); }
+/* .corners: a row of small labels (date, place, issue) pushed to the corners. Editorial furniture: it frames
+   the one big gesture of the slide. Keep each label to a few words. */
+.corners { display: flex; justify-content: space-between; align-items: baseline; gap: 32px; opacity: 0.78; }
 .logo { height: var(--logo-height); width: auto; display: block; }
 .chrome-bar .logo { opacity: 1; }
 .chrome-bar:has(.logo) { opacity: 1; }

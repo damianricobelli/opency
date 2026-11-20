@@ -4,7 +4,7 @@ Slide 3: A statement in large type on a dark background with an accent line.
 Slide 4: A large number with the line that explains it.
 Slide 5: Numbered list of four steps separated by lines.
 Slide 6: Two columns: before and now, three points each.
-Slide 7: A photo in the top half and a text card below.
+Slide 7: A photo that fades into a dark surface, with the headline set large on the seam.
 Slide 8: Horizontal bar chart with four stages and their hours.
 Slide 9: A quote in quotation marks with the name and role of the person who said it.
 Slide 10: A closing line and a specific call to action.
@@ -12,3 +12,6 @@ Slide 11: Four cards with news items and, below, the title of the weekly issue.
 Slide 12: A headline and a drawn software window with a list of five pieces and their status.
 Slide 13: A headline and a grid of six customer logos.
 Slide 14: Background photo with the names of two brands joined by a cross, and one line of text.
+Slide 15: A color field with one short line in very large type, a small label on each top corner and a supporting line.
+Slide 16: A headline and a chat conversation in four message bubbles that ends in a confirmation.
+Slide 17: A full-bleed photo tinted in one brand color, with the headline at the bottom.

@@ -42,7 +42,7 @@ before(async () => {
   const brand = JSON.parse(await readFile(path.join(bdir, "brand.json"), "utf8"));
   brand.logos = { onLight: "assets/logos/dark.svg", onDark: "assets/logos/light.svg" };
   await writeFile(path.join(bdir, "brand.json"), JSON.stringify(brand, null, 2));
-  const created = cli("new", "repair", "--layouts", "cover-type,steps,closer", "--date", "2026-12-01");
+  const created = cli("new", "repair", "--layouts", "cover-type,steps,comparison", "--date", "2026-12-01");
   assert.equal(created.status, 0, created.stderr);
   dir = path.join(bdir, "pieces", ID);
 });

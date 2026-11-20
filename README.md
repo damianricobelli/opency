@@ -156,10 +156,10 @@ The agent does not write HTML. It sends each slide as data — a layout and the 
              "step-3": "Four minutes, then press." } }
 ```
 
-Every slot has a character budget, checked before rendering: when a text does not fit, the answer is another layout, never smaller type. There are 14 tested layouts, and raw HTML stays available for the idea no layout covers.
+Every slot has a character budget, checked before rendering: when a text does not fit, the answer is another layout, never smaller type. There are 17 tested layouts — type and photo covers, posters, a chat conversation, steps, comparisons, data, product windows — and raw HTML stays available for the idea no layout covers.
 
 <p align="center">
-  <img src=".github/assets/layouts.webp" alt="The 14 slide layouts: type cover, photo cover, statement, big number, steps, comparison, photo card, data bars, testimonial, closer, news cards, app window, logo grid and co-brand" width="100%">
+  <img src=".github/assets/layouts.webp" alt="The slide layouts: type cover, photo cover, statement, big number, steps, comparison, photo card, data bars, testimonial, closer, news cards, app window, logo grid, co-brand, poster, chat and duotone photo" width="100%">
 </p>
 
 Formats 4:5, 1:1, 9:16 and 16:9. Captions per network, alt text, PDF for LinkedIn and MP4 video.
@@ -249,7 +249,7 @@ A workspace is a folder of plain files. Nothing is locked in a database.
 ```
 my-agency/
 ├── AGENTS.md · references/          the agent's instructions
-├── templates/                       base.css and the 14 layouts
+├── templates/                       base.css and the 17 layouts
 └── brands/
     └── acme/
         ├── brand.json               form of address, logos, pillars, verified facts

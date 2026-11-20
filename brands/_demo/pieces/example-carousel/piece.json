@@ -12,52 +12,52 @@
     "thesis": "The agent designs with your brand and you approve what goes out.",
     "dominantMode": "type",
     "density": "medium",
-    "signatureMove": "accent circle that bleeds off the cover",
+    "signatureMove": "a color-field cover in hero-size type, then the conversation itself as the image",
     "avoid": [
       "generic stock photos"
     ]
   },
-  "hook": "Your brand in every piece",
+  "hook": "Your brand, every piece.",
   "slides": [
     {
       "n": 1,
       "file": "slide-01.html",
-      "layout": "cover-type",
+      "layout": "poster",
       "role": "hook",
-      "claim": "Your brand in every piece",
-      "alt": "Cover: \"Your brand in every piece\" in large type, with an orange circle that runs off the edge."
+      "claim": "",
+      "alt": "Cover on a deep green field: \"Your brand, every piece.\" in very large type."
     },
     {
       "n": 2,
       "file": "slide-02.html",
-      "layout": "statement",
-      "role": "mechanism",
-      "claim": "The agent starts from what is approved",
-      "alt": "Dark background with the line \"The agent starts from what you already approved\"."
+      "layout": "chat",
+      "role": "",
+      "claim": "",
+      "alt": "A chat: a request for a carousel, one question back, and five slides ready to review."
     },
     {
       "n": 3,
       "file": "slide-03.html",
       "layout": "steps",
-      "role": "sequence",
-      "claim": "The process in four steps",
-      "alt": "List of four steps: ask by chat, write the copy, design and review, hand over for approval."
+      "role": "",
+      "claim": "",
+      "alt": "List of four steps: ask by chat, write the copy, design and check, approve."
     },
     {
       "n": 4,
       "file": "slide-04.html",
       "layout": "comparison",
-      "role": "evidence",
-      "claim": "What changes in the week",
-      "alt": "Two columns, before and now: from one brief per post to one request by chat; from three rounds of changes to one fix; from designing from scratch to approved templates."
+      "role": "",
+      "claim": "",
+      "alt": "Two columns, before and now: from one brief per post to one request by chat."
     },
     {
       "n": 5,
       "file": "slide-05.html",
       "layout": "closer",
       "role": "close",
-      "claim": "The person approves",
-      "alt": "Close: \"You decide what gets published\" and the invitation to send AGENT by direct message."
+      "claim": "",
+      "alt": "Close on a dark surface: \"You decide what gets published\" and the invitation to message AGENT."
     }
   ],
   "captions": {

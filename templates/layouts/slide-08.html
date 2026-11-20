@@ -6,16 +6,15 @@
 <link rel="stylesheet" href="../../brands/_demo/tokens.css">
 <link rel="stylesheet" href="../../templates/base/base.css">
 <style>
-  .content { gap: 60px; }
+  .content { gap: 52px; }
   #headline { max-width: 15ch; }
-  .chart { display: grid; gap: 34px; }
-  .row { display: grid; gap: 12px; }
-  .meta { display: flex; justify-content: space-between; align-items: baseline; }
-  .bar { height: 26px; background: var(--bg-alt); }
+  .chart { flex: 1; min-height: 0; display: grid; grid-auto-rows: 1fr; align-items: center; }
+  .row { display: grid; gap: 16px; }
+  .line { display: flex; justify-content: space-between; align-items: baseline; }
+  .bar { height: 40px; background: var(--bg-alt); }
   .bar > i { display: block; height: 100%; width: var(--v); background: var(--ink); }
   .row.hi .bar > i { background: var(--accent); }
-  .val { font-family: var(--font-display); font-weight: var(--weight-title); }
-  #source { margin-top: auto; }
+  .val { font-family: var(--font-display); font-weight: var(--weight-display); font-size: calc(var(--size-subtitle) * var(--k) * 1px); letter-spacing: var(--tracking-title); line-height: 1; }
 </style>
 </head>
 <body>
@@ -24,14 +23,14 @@
     <div class="content">
       <h2 id="headline" class="t-title" data-max="48">Where the time on a piece goes</h2>
       <div class="chart">
-        <div class="row"><div class="meta"><span id="l1" class="t-body">Idea</span><span id="v1" class="t-body val num">1 h</span></div><div class="bar"><i style="--v:22%"></i></div></div>
-        <div class="row hi"><div class="meta"><span id="l2" class="t-body">Design</span><span id="v2" class="t-body val num">3 h</span></div><div class="bar"><i style="--v:66%"></i></div></div>
-        <div class="row"><div class="meta"><span id="l3" class="t-body">Review</span><span id="v3" class="t-body val num">1 h</span></div><div class="bar"><i style="--v:22%"></i></div></div>
-        <div class="row"><div class="meta"><span id="l4" class="t-body">Publishing</span><span id="v4" class="t-body val num">30 min</span></div><div class="bar"><i style="--v:11%"></i></div></div>
+        <div class="row"><div class="line"><span id="l1" class="t-body">Idea</span><span id="v1" class="t-body val num">1 h</span></div><div class="bar"><i style="--v:22%"></i></div></div>
+        <div class="row hi"><div class="line"><span id="l2" class="t-body">Design</span><span id="v2" class="t-body val num">3 h</span></div><div class="bar"><i style="--v:66%"></i></div></div>
+        <div class="row"><div class="line"><span id="l3" class="t-body">Review</span><span id="v3" class="t-body val num">1 h</span></div><div class="bar"><i style="--v:22%"></i></div></div>
+        <div class="row"><div class="line"><span id="l4" class="t-body">Publishing</span><span id="v4" class="t-body val num">30 min</span></div><div class="bar"><i style="--v:11%"></i></div></div>
       </div>
       <p id="source" class="label muted">Source: internal log (sample data)</p>
     </div>
-    <footer class="chrome-bar" data-chrome><span id="brand">Brand</span><span id="pager">08/14</span></footer>
+    <footer class="chrome-bar" data-chrome><span id="brand">Brand</span><span id="pager">08/17</span></footer>
   </div>
 </main>
 </body>

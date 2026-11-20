@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en" data-format="4:5" data-layout="photo-duotone">
+<head>
+<meta charset="utf-8">
+<title>Layout 17 · photo-duotone</title>
+<link rel="stylesheet" href="../../brands/_demo/tokens.css">
+<link rel="stylesheet" href="../base/base.css">
+<style>
+  .content { justify-content: space-between; }
+  .bottom { display: grid; gap: 26px; }
+  #headline { max-width: 9ch; }
+  #support { max-width: 20ch; }
+</style>
+</head>
+<body>
+<main class="canvas photo-slide" data-texture="film" data-vignette style="--grain:.5">
+  <figure class="photo" data-grade="duotone" style="--duo: var(--secondary)">
+    <img data-asset="sample-sunset" src="../../brands/_demo/assets/photos/sample-sunset.jpg" alt="" style="--fx:54%;--fy:50%">
+  </figure>
+  <div class="veil" data-veil="low" style="--veil:.9"></div>
+  <div class="safe">
+    <div class="content">
+      <div class="corners"><span id="meta-left" class="label">Field notes</span><span id="meta-right" class="label">Week 3</span></div>
+      <div class="bottom">
+        <h1 id="headline" class="t-title" data-max="40">Short runs, long gains</h1>
+        <p id="support" class="t-intro" data-max="95">Notes from a season of early starts.</p>
+      </div>
+    </div>
+    <footer class="chrome-bar" data-chrome><span id="brand">Brand</span><span id="pager">17/17</span></footer>
+  </div>
+</main>
+</body>
+</html>
