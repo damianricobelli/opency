@@ -1,26 +1,26 @@
 /*
- * BASE — infraestructura y librería de materiales. No es un estilo de marca: todo color sale de tokens.css.
+ * BASE — infrastructure and material library. It is not a brand style: every color comes from tokens.css.
  *
- * Formato:        <html data-format="4:5|1:1|9:16|16:9">
- * Escala por rol: .t-hero .t-cover .t-closer .t-title .t-subtitle .t-body .t-intro .t-cue .t-label
- * Superficies:    .on-bg .on-alt .on-primary .on-accent
- * Materiales:     <main class="canvas" data-texture="fine|coarse|paper|fabric|film" data-vignette>
- * Fotos:          <figure class="photo" data-grade="none|editorial|immersive|mono|duotone"><img data-asset="id"></figure>
- * Velos:          <div class="veil" data-veil="flat|low|high|window"></div>   (card = texto en .card, sin velo)
- * Scrim:          <div class="scrim" style="left;top;width;height"></div>     (sombra local detrás de un bloque)
- * Otros:          .glass .card .chip .label .rule  ·  [data-bleed] decoración que puede salir del canvas
- *                 [data-chrome] marca/paginador/handle: puede vivir en la franja inferior
- *                 [data-max="N"] presupuesto de caracteres del layout (el render avisa si se excede +20 %)
+ * Format:         <html data-format="4:5|1:1|9:16|16:9">
+ * Scale by role:  .t-hero .t-cover .t-closer .t-title .t-subtitle .t-body .t-intro .t-cue .t-label
+ * Surfaces:       .on-bg .on-alt .on-primary .on-accent
+ * Materials:      <main class="canvas" data-texture="fine|coarse|paper|fabric|film" data-vignette>
+ * Photos:         <figure class="photo" data-grade="none|editorial|immersive|mono|duotone"><img data-asset="id"></figure>
+ * Veils:          <div class="veil" data-veil="flat|low|high|window"></div>   (card = text in .card, no veil)
+ * Scrim:          <div class="scrim" style="left;top;width;height"></div>     (local shadow behind a block)
+ * Other:          .glass .card .chip .label .rule  ·  [data-bleed] decoration that may leave the canvas
+ *                 [data-chrome] brand/pager/handle: may live in the bottom strip
+ *                 [data-max="N"] the layout's character budget (the render warns if it is exceeded by +20%)
  */
 
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 
-/* ---------- Formatos: tamaño, zona segura y factor de escala tipográfica ---------- */
+/* ---------- Formats: size, safe zone and type scale factor ---------- */
 html {
   --w: 1080px; --h: 1350px; --k: 1;
   --safe-top: 80px; --safe-right: 80px; --safe-bottom: 80px; --safe-left: 80px;
-  --critical-bottom: 250px;   /* 4:5: el feed inmersivo tapa ~250 px abajo; solo chrome ahí */
+  --critical-bottom: 250px;   /* 4:5: the immersive feed covers ~250 px at the bottom; chrome only there */
 }
 html[data-format="1:1"]  { --w: 1080px; --h: 1080px; --k: 0.94; --critical-bottom: 80px; }
 html[data-format="9:16"] { --w: 1080px; --h: 1920px; --k: 1.08; --safe-top: 250px; --safe-bottom: 340px; --critical-bottom: 340px; }
@@ -45,7 +45,7 @@ body {
 h1, h2, h3, p, figure, blockquote { margin: 0; }
 img { display: block; max-width: none; }
 
-/* ---------- Escala tipográfica por rol ---------- */
+/* ---------- Type scale by role ---------- */
 .t-hero, .t-cover, .t-closer, .t-title, .t-subtitle {
   font-family: var(--font-display); text-wrap: balance;
   font-variant-numeric: lining-nums;
@@ -64,19 +64,19 @@ img { display: block; max-width: none; }
 }
 .num { font-variant-numeric: tabular-nums lining-nums; }
 
-/* ---------- Superficies ---------- */
+/* ---------- Surfaces ---------- */
 .on-bg      { background: var(--bg);      color: var(--ink); }
 .on-alt     { background: var(--bg-alt);  color: var(--ink); }
 .on-primary { background: var(--primary); color: var(--ink-inverse); }
 .on-secondary { background: var(--secondary); color: var(--ink-inverse); }
-/* Sobre superficies oscuras el acento puede cambiar (marcas donde accent = primary): --accent-inverse */
+/* On dark surfaces the accent may change (brands where accent = primary): --accent-inverse */
 .on-primary, .on-secondary, .photo-slide { --accent: var(--accent-inverse, var(--accent-base)); --line: color-mix(in oklab, var(--ink-inverse) 26%, transparent); }
 .on-accent  { background: var(--accent);  color: var(--on-accent, var(--ink)); }
 .muted      { color: var(--ink-muted); }
-.accent-text, .hl { color: var(--accent); }   /* etiqueta o UNA palabra del titular en el color de acento */
+.accent-text, .hl { color: var(--accent); }   /* a label or ONE word of the headline in the accent color */
 .on-primary .muted, .on-secondary .muted, .photo-slide .muted { color: var(--ink-inverse-muted); }
 
-/* ---------- Texturas de la casa (SVG procedural, sin archivos) ---------- */
+/* ---------- House textures (procedural SVG, no files) ---------- */
 .canvas[data-texture]::after {
   content: ""; position: absolute; inset: 0; z-index: 40; pointer-events: none;
   opacity: var(--grain); mix-blend-mode: soft-light; background-repeat: repeat;
@@ -111,7 +111,7 @@ img { display: block; max-width: none; }
   background: radial-gradient(ellipse 85% 75% at 50% 45%, transparent 55%, rgb(0 0 0 / var(--vignette, 0.35)) 100%);
 }
 
-/* ---------- Fotos ---------- */
+/* ---------- Photos ---------- */
 .photo { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
 .photo > img { width: 100%; height: 100%; object-fit: cover; object-position: var(--fx, 50%) var(--fy, 50%); }
 .photo[data-grade="editorial"] > img { filter: contrast(1.05) saturate(0.84) sepia(0.07) brightness(0.98); }
@@ -121,7 +121,7 @@ img { display: block; max-width: none; }
 .photo[data-grade="duotone"]::after { content: ""; position: absolute; inset: 0; background: var(--duo, var(--primary)); mix-blend-mode: color; }
 .photo-slide { color: var(--ink-inverse); }
 
-/* Velos: legibilidad del texto sobre foto. --veil = opacidad (0.45 simple, 0.6 con low/high) */
+/* Veils: legibility of text over a photo. --veil = opacity (0.45 plain, 0.6 with low/high) */
 .veil { position: absolute; inset: 0; z-index: 1; pointer-events: none; --veil-color: var(--primary); }
 .veil[data-veil="flat"]   { background: color-mix(in oklab, var(--veil-color) calc(var(--veil, 0.45) * 100%), transparent); }
 .veil[data-veil="low"]    { background: linear-gradient(to top, color-mix(in oklab, var(--veil-color) calc(var(--veil, 0.6) * 100%), transparent) 0%, transparent 62%); }
@@ -132,7 +132,7 @@ img { display: block; max-width: none; }
   background: radial-gradient(closest-side, rgb(0 0 0 / var(--scrim, 0.5)), transparent);
 }
 
-/* ---------- Superficies y piezas de UI ---------- */
+/* ---------- Surfaces and UI pieces ---------- */
 .card  { background: var(--bg); color: var(--ink); border-radius: var(--radius); padding: 40px 44px; }
 .glass {
   background: color-mix(in oklab, var(--ink-inverse) 14%, transparent);
@@ -153,10 +153,10 @@ img { display: block; max-width: none; }
 .chrome-bar:has(.logo) { opacity: 1; }
 .chrome-bar:has(.logo) > :not(.logo) { opacity: 0.72; }
 
-/* ---------- Composición ---------- */
-/* .content: área para contenido. Termina donde empieza la franja crítica (4:5) o deja lugar a la barra inferior (1:1, 9:16) */
+/* ---------- Composition ---------- */
+/* .content: the content area. It ends where the critical strip starts (4:5) or leaves room for the bottom bar (1:1, 9:16) */
 .content { position: absolute; inset: 0 0 max(calc(var(--critical-bottom) - var(--safe-bottom)), calc(var(--logo-height) + 72px)) 0; display: flex; flex-direction: column; }
-/* .chrome-bar: marca, handle y paginador; vive en la franja inferior */
+/* .chrome-bar: brand, handle and pager; lives in the bottom strip */
 .chrome-bar {
   position: absolute; left: 0; right: 0; bottom: 0;
   display: flex; justify-content: space-between; align-items: center;
@@ -165,10 +165,10 @@ img { display: block; max-width: none; }
 }
 
 [data-bleed] { pointer-events: none; }
-.tbd { background: #FFE600; color: #000; padding: 0 .15em; }  /* dato a confirmar: visible a propósito */
+.tbd { background: #FFE600; color: #000; padding: 0 .15em; }  /* fact to confirm: visible on purpose */
 
-/* ---------- Movimiento (para npm run motion; en la imagen fija se ve el estado final) ----------
-   <main class="canvas" data-motion> anima la entrada escalonada del contenido y un acercamiento lento de la foto. */
+/* ---------- Motion (for npx opentcy motion; the still image shows the final state) ----------
+   <main class="canvas" data-motion> animates a staggered entrance of the content and a slow push-in on the photo. */
 @keyframes m-rise { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: none; } }
 @keyframes m-push { from { transform: scale(1.1); } to { transform: scale(1); } }
 @keyframes m-fade { from { opacity: 0; } to { opacity: 1; } }

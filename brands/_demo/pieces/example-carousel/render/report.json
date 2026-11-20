@@ -1,0 +1,380 @@
+{
+  "piece": "_example-carousel",
+  "format": "4:5",
+  "scale": 1,
+  "renderedAt": "2026-11-20T17:29:17.881Z",
+  "slides": [
+    {
+      "n": 1,
+      "file": "slide-01.html",
+      "mode": "flat",
+      "accentMass": 0.008,
+      "texts": [
+        {
+          "id": "kicker",
+          "role": "label",
+          "text": "HOW WE WORK",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Your brand in every piece",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "How we build the week's content with an agent.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "YOUR BRAND",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "01/05",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 282,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 2,
+      "file": "slide-02.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "The agent starts from what you already approved.",
+          "chrome": false
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "It reads the brand kit, the templates and every correction you gave it before.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "YOUR BRAND",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "02/05",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 282,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 3,
+      "file": "slide-03.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "One request, four steps",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "01",
+          "chrome": false
+        },
+        {
+          "id": "step-1",
+          "role": "body",
+          "text": "You ask for the piece by chat.",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "02",
+          "chrome": false
+        },
+        {
+          "id": "step-2",
+          "role": "body",
+          "text": "It writes the copy in the brand's voice.",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "03",
+          "chrome": false
+        },
+        {
+          "id": "step-3",
+          "role": "body",
+          "text": "It designs and checks at phone size.",
+          "chrome": false
+        },
+        {
+          "id": "span.n",
+          "role": "label",
+          "text": "04",
+          "chrome": false
+        },
+        {
+          "id": "step-4",
+          "role": "body",
+          "text": "It hands you the files to approve.",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "YOUR BRAND",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "03/05",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 282,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 4,
+      "file": "slide-04.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "What changed this week",
+          "chrome": false
+        },
+        {
+          "id": "before-label",
+          "role": "label",
+          "text": "BEFORE",
+          "chrome": false
+        },
+        {
+          "id": "before-1",
+          "role": "body",
+          "text": "One brief per post",
+          "chrome": false
+        },
+        {
+          "id": "before-2",
+          "role": "body",
+          "text": "Three rounds of changes",
+          "chrome": false
+        },
+        {
+          "id": "before-3",
+          "role": "body",
+          "text": "Design from scratch",
+          "chrome": false
+        },
+        {
+          "id": "now-label",
+          "role": "label",
+          "text": "NOW",
+          "chrome": false
+        },
+        {
+          "id": "now-1",
+          "role": "body",
+          "text": "One request by chat",
+          "chrome": false
+        },
+        {
+          "id": "now-2",
+          "role": "body",
+          "text": "One specific fix",
+          "chrome": false
+        },
+        {
+          "id": "now-3",
+          "role": "body",
+          "text": "Approved templates",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "YOUR BRAND",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "04/05",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 282,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    },
+    {
+      "n": 5,
+      "file": "slide-05.html",
+      "mode": "flat",
+      "accentMass": 0,
+      "texts": [
+        {
+          "id": "kicker",
+          "role": "label",
+          "text": "TO WRAP UP",
+          "chrome": false
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "You decide what gets published.",
+          "chrome": false
+        },
+        {
+          "id": "cta-text",
+          "role": "body",
+          "text": "DM us AGENT and we'll show you the workflow",
+          "chrome": false
+        },
+        {
+          "id": "arrow",
+          "role": "body",
+          "text": "→",
+          "chrome": false
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "@YOURBRAND",
+          "chrome": true
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "05/05",
+          "chrome": true
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 282,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "paper",
+        "grade": ""
+      },
+      "issues": []
+    }
+  ],
+  "copy": [],
+  "summary": {
+    "errors": 0,
+    "warnings": 0,
+    "mode": "flat"
+  },
+  "cover": {
+    "hook": "Your brand in every piece",
+    "images": []
+  }
+}

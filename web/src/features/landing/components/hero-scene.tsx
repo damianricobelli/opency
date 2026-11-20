@@ -32,7 +32,8 @@ function readPalette(): Palette {
     paper: token("--card"),
     ink: token("--foreground"),
     muted: token("--muted"),
-    line: token("--border"),
+    // The darker of the two hairlines: a paper slide on a paper page needs it.
+    line: token("--input"),
     brand: token("--brand"),
   };
 }
@@ -168,7 +169,7 @@ function drawSlide(kind: SlideKind, index: number, palette: Palette) {
 
   // A hairline so paper cards keep their edge on a paper page.
   context.strokeStyle = palette.line;
-  context.lineWidth = 6;
+  context.lineWidth = 8;
   context.beginPath();
   context.roundRect(3, 3, w - 6, h - 6, (CARD.radius / CARD.width) * w);
   context.stroke();
@@ -225,7 +226,7 @@ const SCATTER: readonly (readonly [
 
 type Pose = { position: Vector3; quaternion: Quaternion };
 
-function createPoses() {
+function createPoses(spacing: number) {
   const middle = (SLIDES.length - 1) / 2;
   return SLIDES.map((_, index) => {
     const offset = index - middle;
@@ -239,7 +240,11 @@ function createPoses() {
     };
     // A fanned row: the cover in front, the rest stepping back and turning in.
     const to: Pose = {
-      position: new Vector3(offset * 1.22, -distance * 0.05, -distance * 0.5),
+      position: new Vector3(
+        offset * spacing,
+        -distance * 0.05,
+        -distance * 0.5,
+      ),
       quaternion: new Quaternion().setFromEuler(
         new Euler(0, -offset * 0.26, -offset * 0.015),
       ),
@@ -258,7 +263,10 @@ function Slides({ scheme }: { scheme: string }) {
   const viewportWidth = useThree((state) => state.viewport.width);
 
   const geometry = useMemo(createCardGeometry, []);
-  const poses = useMemo(createPoses, []);
+  // On a phone the slides overlap more instead of all shrinking to fit.
+  const compact = viewportWidth < 5.6;
+  const spacing = compact ? 0.86 : 1.22;
+  const poses = useMemo(() => createPoses(spacing), [spacing]);
   // Repainted when the system's scheme flips: the slides use the page's tokens.
   // biome-ignore lint/correctness/useExhaustiveDependencies: `scheme` is the repaint signal.
   const textures = useMemo(() => {
@@ -330,8 +338,8 @@ function Slides({ scheme }: { scheme: string }) {
     }
   });
 
-  // The fan is ~6.7 units wide; narrower viewports shrink it to fit.
-  const scale = Math.min(1, viewportWidth / 7.1);
+  // The fan is four steps and one slide wide; narrower viewports shrink it.
+  const scale = Math.min(1, viewportWidth / (spacing * 4 + CARD.width + 0.3));
 
   return (
     <group ref={group} scale={scale}>

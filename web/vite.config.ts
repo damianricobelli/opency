@@ -9,6 +9,12 @@ import { defineConfig } from "vite";
 const appDirectory = fileURLToPath(new URL(".", import.meta.url));
 
 const config = defineConfig({
+  define: {
+    // Sitemap `<lastmod>`: the page changes with deploys.
+    "import.meta.env.BUILD_DATE": JSON.stringify(
+      new Date().toISOString().slice(0, 10),
+    ),
+  },
   resolve: {
     tsconfigPaths: true,
     dedupe: ["react", "react-dom", "three"],
@@ -17,7 +23,7 @@ const config = defineConfig({
     paraglideVitePlugin({
       project: "./project.inlang",
       outdir: "./src/paraglide",
-      // The URL decides (`/` is Spanish, `/en` English); the cookie only
+      // The URL decides (`/` is English, `/es` Spanish); the cookie only
       // remembers the language someone picked.
       strategy: ["url", "cookie", "baseLocale"],
       // Physical files instead of Paraglide 3's virtual modules, so `tsc`

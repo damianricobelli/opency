@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { GITHUB_URL } from "@/lib/site";
 import { m } from "@/paraglide/messages";
-import { GITHUB_URL } from "../lib/site";
 import { GithubMark } from "./github-mark";
 import { LocaleSwitch } from "./locale-switch";
+import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
   { href: "#brief", label: m.nav_brief },
@@ -29,10 +30,10 @@ export function Wordmark() {
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-transparent bg-background/80 pt-[env(safe-area-inset-top)] backdrop-blur-md supports-[animation-timeline:scroll()]:animate-[header-border_linear_both] supports-[animation-timeline:scroll()]:[animation-range:0_80px] supports-[animation-timeline:scroll()]:[animation-timeline:scroll()]">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 pr-[max(1.25rem,env(safe-area-inset-right))] pl-[max(1.25rem,env(safe-area-inset-left))] sm:px-8">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 pr-[max(1.25rem,env(safe-area-inset-right))] pl-[max(1.25rem,env(safe-area-inset-left))] sm:px-8">
         <a
           href="#top"
-          className="rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          className="flex h-11 items-center rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
           <Wordmark />
         </a>
@@ -47,11 +48,13 @@ export function SiteHeader() {
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <LocaleSwitch />
+          <ThemeToggle />
           <Button
             variant="outline"
             size="sm"
+            className="max-sm:size-9 max-sm:px-0"
             nativeButton={false}
             render={<a href={GITHUB_URL} target="_blank" rel="noreferrer" />}
           >

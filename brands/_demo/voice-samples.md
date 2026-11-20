@@ -1,14 +1,14 @@
-# Muestras de voz
+# Voice samples
 
-Hasta 5 textos reales escritos por la marca (captions que funcionaron, bio, un mail, una página), de hasta 600 caracteres cada uno, **copiados textuales**. Nunca inventados ni parafraseados.
+Up to 5 real texts written by the brand (captions that worked, the bio, an email, a page), up to 600 characters each, **copied verbatim**. Never invented or paraphrased.
 
-Mandan sobre cualquier regla de estilo genérica. Si la marca usa una frase que el linter considera de "IA", acá queda permitida.
+They override any generic style rule. If the brand uses a phrase the linter flags as "AI", it is allowed here.
 
 ## 1.
-{{texto real}}
+{{real text}}
 
 ## 2.
-{{texto real}}
+{{real text}}
 
 ## 3.
-{{texto real}}
+{{real text}}

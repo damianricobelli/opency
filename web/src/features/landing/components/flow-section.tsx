@@ -22,14 +22,14 @@ export function FlowSection() {
         <Section.Title>{m.flow_title()}</Section.Title>
         <Section.Lead>{m.flow_lead()}</Section.Lead>
       </Section.Header>
-      <ol className="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+      <ol className="mt-10 grid gap-x-10 gap-y-8 sm:mt-14 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-3">
         {STEPS.map((step, index) => (
           <li key={index}>
-            <Reveal delay={STAGGER[index]} className="border-t pt-5">
+            <Reveal delay={STAGGER[index]} className="border-t pt-4 sm:pt-5">
               <span className="font-mono text-xs text-brand">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <h3 className="mt-3 font-display text-2xl leading-tight">
+              <h3 className="mt-2 font-display text-2xl leading-tight sm:mt-3">
                 {step.title()}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-pretty text-muted-foreground">

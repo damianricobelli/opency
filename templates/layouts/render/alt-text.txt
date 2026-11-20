@@ -1,14 +1,14 @@
-Slide 1: Portada tipográfica con titular grande y un círculo de acento que sale del borde.
-Slide 2: Portada con foto a sangre de una silueta frente a un atardecer y titular arriba.
-Slide 3: Afirmación en letra grande sobre fondo oscuro con una línea de acento.
-Slide 4: Un número grande en color de acento con la frase que lo explica.
-Slide 5: Lista numerada de cuatro pasos separados por líneas.
-Slide 6: Dos columnas: antes y ahora, tres puntos cada una.
-Slide 7: Foto en la mitad superior y una tarjeta de texto abajo.
-Slide 8: Gráfico de barras horizontales con cuatro etapas y sus horas.
-Slide 9: Cita entre comillas con nombre y cargo de quien la dijo.
-Slide 10: Frase de cierre y una llamada a la acción concreta.
-Slide 11: Cuatro tarjetas con novedades y, abajo, el título de la edición semanal.
-Slide 12: Titular y una ventana de software dibujada con una lista de tres piezas y su estado.
-Slide 13: Titular y una grilla de seis logos de clientes.
-Slide 14: Foto de fondo con los nombres de dos marcas unidos por una cruz y una frase.
+Slide 1: Typographic cover with a large headline and an accent circle that runs off the edge.
+Slide 2: Cover with a full-bleed photo of a silhouette facing a sunset and the headline on top.
+Slide 3: A statement in large type on a dark background with an accent line.
+Slide 4: A large number with the line that explains it.
+Slide 5: Numbered list of four steps separated by lines.
+Slide 6: Two columns: before and now, three points each.
+Slide 7: A photo in the top half and a text card below.
+Slide 8: Horizontal bar chart with four stages and their hours.
+Slide 9: A quote in quotation marks with the name and role of the person who said it.
+Slide 10: A closing line and a specific call to action.
+Slide 11: Four cards with news items and, below, the title of the weekly issue.
+Slide 12: A headline and a drawn software window with a list of five pieces and their status.
+Slide 13: A headline and a grid of six customer logos.
+Slide 14: Background photo with the names of two brands joined by a cross, and one line of text.

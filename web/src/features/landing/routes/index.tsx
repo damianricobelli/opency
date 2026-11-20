@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { buildPublicSeoHead } from "@/lib/seo";
 import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
 import { BriefSection } from "../components/brief-section";
@@ -10,26 +11,24 @@ import { QualitySection } from "../components/quality-section";
 import { ClosingSection, SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { WhySection } from "../components/why-section";
-
-const OG_LOCALES = { es: "es_AR", en: "en_US" } as const;
+import { landingStructuredData } from "../lib/structured-data";
 
 export const Route = createFileRoute("/")({
   head: () => {
-    const title = m.meta_title();
-    const description = m.meta_description();
+    const locale = getLocale();
     return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:type", content: "website" },
-        { property: "og:site_name", content: "opentcy" },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-        { property: "og:locale", content: OG_LOCALES[getLocale()] },
-        { name: "twitter:card", content: "summary" },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: description },
-      ],
+      ...buildPublicSeoHead({
+        path: "/",
+        variant: "landing",
+        locale,
+        title: m.meta_title(),
+        description: m.meta_description(),
+        imageAlt: m.og_image_alt(),
+      }),
+      scripts: landingStructuredData(locale).map((data) => ({
+        type: "application/ld+json",
+        children: JSON.stringify(data),
+      })),
     };
   },
   component: LandingPage,

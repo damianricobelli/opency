@@ -6,8 +6,8 @@ import {
   Suspense,
   useEffect,
   useState,
-  useSyncExternalStore,
 } from "react";
+import { useThemeMode } from "@/hooks/use-theme-mode";
 import { cn } from "@/lib/utils";
 import { useInView } from "../lib/use-in-view";
 
@@ -26,22 +26,6 @@ class SceneBoundary extends Component<
   render() {
     return this.state.failed ? null : this.props.children;
   }
-}
-
-const DARK_QUERY = "(prefers-color-scheme: dark)";
-
-function subscribeScheme(onChange: () => void) {
-  const query = window.matchMedia(DARK_QUERY);
-  query.addEventListener("change", onChange);
-  return () => query.removeEventListener("change", onChange);
-}
-
-function useScheme() {
-  return useSyncExternalStore(
-    subscribeScheme,
-    () => (window.matchMedia(DARK_QUERY).matches ? "dark" : "light"),
-    () => "light",
-  );
 }
 
 function supportsWebGL() {
@@ -64,7 +48,7 @@ function StaticSlides({ className }: { className?: string }) {
     <div
       aria-hidden
       className={cn(
-        "absolute inset-0 grid place-items-center [perspective:1200px]",
+        "absolute inset-0 grid place-items-center [--fan-step:44%] [perspective:1200px] sm:[--fan-step:66%]",
         className,
       )}
     >
@@ -75,12 +59,14 @@ function StaticSlides({ className }: { className?: string }) {
             key={offset}
             style={
               {
-                transform: `translateX(${offset * 66}%) translateZ(${-distance * 70}px) rotateY(${-offset * 15}deg)`,
+                "--offset": offset,
+                transform: `translateX(calc(var(--offset) * var(--fan-step))) translateZ(${-distance * 70}px) rotateY(${-offset * 15}deg)`,
                 zIndex: 3 - distance,
               } as CSSProperties
             }
             className={cn(
-              "col-start-1 row-start-1 flex aspect-[4/5] h-[62%] flex-col justify-between rounded-[5%] border p-[7%]",
+              // The shadow keeps paper slides apart from a paper page in the light theme.
+              "col-start-1 row-start-1 flex aspect-[4/5] h-[62%] flex-col justify-between rounded-[5%] border border-input p-[7%] shadow-[0_10px_28px_-14px_color-mix(in_oklch,var(--foreground)_40%,transparent)]",
               offset === 0
                 ? "border-transparent bg-foreground text-background"
                 : "bg-card text-foreground",
@@ -118,7 +104,8 @@ export function HeroStage({
   const [stage, inView] = useInView<HTMLDivElement>({ rootMargin: "80px" });
   const [live, setLive] = useState(false);
   const [ready, setReady] = useState(false);
-  const scheme = useScheme();
+  // The slides are painted with the active theme's tokens.
+  const { resolvedTheme } = useThemeMode();
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -139,7 +126,10 @@ export function HeroStage({
       ref={stage}
       role="img"
       aria-label={label}
-      className={cn("relative h-[clamp(15rem,40vw,27rem)] w-full", className)}
+      className={cn(
+        "relative h-52 w-full sm:h-[clamp(15rem,40vw,27rem)]",
+        className,
+      )}
     >
       <StaticSlides
         className={cn(
@@ -158,7 +148,7 @@ export function HeroStage({
             <Suspense fallback={null}>
               <HeroScene
                 running={inView}
-                scheme={scheme}
+                scheme={resolvedTheme}
                 onReady={() => setReady(true)}
               />
             </Suspense>

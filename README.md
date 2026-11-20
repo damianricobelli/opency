@@ -1,48 +1,48 @@
 # opentcy
 
-**Tu agente como equipo de contenido de una agencia.** Un skill y un servidor MCP open source que convierten a Claude Code, Claude Desktop, Cursor, Codex o cualquier cliente MCP en ejecutivo de cuentas, director de arte, diseñador y redactor.
+**Your agent as an agency content team.** An open-source skill and MCP server that turn Claude Code, Claude Desktop, Cursor, Codex or any MCP client into account manager, art director, designer and copywriter.
 
-Te pregunta qué querés transmitir antes de diseñar. Arma la campaña con la identidad de tu marca. Busca fotos en Pexels, Unsplash y Openverse. Renderiza cada pieza y la controla a nivel píxel. Vos aprobás lo que sale.
+It asks what you want to say before it designs. It builds the campaign with your brand's identity. It searches Openverse and Unsplash for photos. It renders every piece and checks it at the pixel level. You approve what ships.
 
-Todo corre en tu máquina y todo son archivos tuyos: HTML/CSS por slide, PNG/JPG/PDF/MP4 listos para subir. Sin cuenta, sin límite de descargas, sin SaaS.
+Everything runs on your machine and everything is a file you own: HTML/CSS per slide, PNG/JPG/PDF/MP4 ready to upload. No account, no download limits, no SaaS.
 
 ```
-> Quiero una campaña para el lanzamiento del cold brew
+> I want a campaign for the cold brew launch
 
-  ¿Qué querés transmitir? Si alguien se acuerda de una sola cosa, ¿cuál tiene que ser?
-  ¿Qué tiene que pasar para que digas que funcionó?
-  ¿Dónde va a salir?  ¿Con qué imágenes contamos?
+  What do you want to get across? If people remember one thing, what should it be?
+  What has to happen for you to call it a success?
+  Where will it run?  What images do we have?
 
-  Entonces: "el café frío también es de especialidad". Te propongo 5 piezas…
+  So: "cold coffee can be specialty coffee too". Here is a plan with 5 pieces…
 ```
 
-## Instalación
+## Install
 
-Requiere Node 18.17+. Para video, ffmpeg.
+Requires Node 18.17+. For video, ffmpeg.
 
-**1. El skill** (las instrucciones que sigue el agente):
+**1. The skill** (the instructions the agent follows):
 
 ```bash
 npx skills add damianricobelli/opentcy
 ```
 
-**2. El workspace** (donde viven tus marcas y piezas):
+**2. The workspace** (where your brands and pieces live):
 
 ```bash
-npx opentcy init mi-agencia
+npx opentcy init my-agency
 ```
 
 ```bash
 npx opentcy setup
 ```
 
-**3. El servidor MCP** (opcional en Claude Code y Cursor, que ya pueden correr los comandos; necesario en clientes sin terminal, como Claude Desktop):
+**3. The MCP server** (optional in Claude Code and Cursor, which can already run the commands; required in clients without a terminal, such as Claude Desktop):
 
 ```bash
 claude mcp add opentcy -- npx -y opentcy mcp
 ```
 
-En cualquier otro cliente:
+In any other client:
 
 ```json
 {
@@ -50,116 +50,125 @@ En cualquier otro cliente:
     "opentcy": {
       "command": "npx",
       "args": ["-y", "opentcy", "mcp"],
-      "env": { "OPENTCY_HOME": "/ruta/a/mi-agencia" }
+      "env": { "OPENTCY_HOME": "/path/to/my-agency" }
     }
   }
 }
 ```
 
-**Como plugin de Claude Code** (skill + MCP + subagente revisor en un paso):
+**As a Claude Code plugin** (skill + MCP server + reviewer subagent in one step):
 
 ```
 /plugin marketplace add damianricobelli/opentcy
 /plugin install opentcy@opentcy
 ```
 
-## Uso
+## Usage
 
-Abrí el workspace con tu agente y pedí:
+Open the workspace with your agent and ask:
 
-> Cargá mi marca desde misitio.com.
-> Armá una campaña para el lanzamiento de diciembre.
-> Carrusel sobre automatizar reportes, 6 slides, para el jueves.
-> Adaptalo a story y armá el video.
-> Proponeme el plan de la semana.
+> Load my brand from mysite.com.
+> Build a campaign for the December launch.
+> Carousel about automating reports, 6 slides, for Thursday.
+> Adapt it to a story and make the video.
+> Propose this week's content plan.
 
-## Cómo trabaja
+The agent answers in your language and writes the copy in the brand's language.
 
-1. **Brief.** Antes de una campaña o de cargar una marca, pregunta lo que necesita saber, de a tandas cortas: qué querés transmitir, objetivo, audiencia, oferta, tono, canales, fechas, imágenes. Lo que puede deducir de la marca o de la web no lo pregunta. Con MCP, las preguntas llegan como formulario.
-2. **Marca.** Lee colores, tipografías, logo y textos de una web y propone 7 roles de color, 3 familias, voz con reglas duras y datos verificados. Escribe cuando decís que sí. Varias marcas en un mismo workspace.
-3. **Plan.** Cada pieza de la campaña prueba el mensaje desde un ángulo distinto. Lo aprobás antes de que se diseñe nada.
-4. **Imágenes.** Fotos propias primero. Después, banco: busca en Pexels, Unsplash y Openverse a la vez, mira las previews, importa solo la elegida a resolución completa y registra autor y licencia. Marca el foco y las caras para no cortarlas.
-5. **Piezas.** HTML/CSS con los tokens de la marca, sobre 14 layouts probados. Formatos 4:5, 1:1, 9:16 y 16:9. Captions por red, alt text, PDF para LinkedIn y video MP4.
-6. **Control de calidad.** Mide sobre el render real, no sobre el código.
-7. **Revisión en frío.** Un subagente que no vio el proceso mira la hoja de contacto y devuelve hasta 5 hallazgos.
-8. **Vos decidís.** opentcy nunca publica solo.
+## How it works
 
-## Qué controla el render
+1. **Brief.** Before a campaign or a new brand, it asks what it needs to know, a few questions at a time: what you want to get across, objective, audience, offer, tone, channels, dates, images. It does not ask what it can infer from the brand or the website. Over MCP the questions arrive as a form.
+2. **Brand.** It reads colors, typefaces, logo and copy from a website and proposes 7 color roles, 3 font families, a voice with hard rules and a list of verified facts. It writes them when you say yes. Several brands can live in one workspace.
+3. **Plan.** Each piece of the campaign proves the message from a different angle. You approve the plan before anything is designed.
+4. **Images.** Your own photos first. Then stock: it searches Openverse and (if you connect it) Unsplash at once, looks at the previews, imports only the chosen photo at full resolution and records author and license. It marks the focal point and faces so they are never cropped.
+5. **Pieces.** HTML/CSS with the brand's tokens, on top of 14 tested layouts. Formats 4:5, 1:1, 9:16 and 16:9. Captions per network, alt text, PDF for LinkedIn and MP4 video.
+6. **Quality control.** Measured on the actual render, not on the code.
+7. **Cold review.** A subagent that did not see the process looks at the contact sheet and returns up to 5 findings.
+8. **You decide.** opentcy never publishes on its own.
 
-- **Contraste píxel a píxel**, también sobre fotos y degradados, y contraste del logo contra su fondo.
-- **Texto:** viudas en titulares, superposición, recortes, tamaño ilegible en teléfono y presupuesto de caracteres de cada layout.
-- **Zonas:** zona segura y franja que tapa la interfaz de cada red.
-- **Composición:** contenido amontonado o hundido, espacio muerto y exceso de acento.
-- **Coherencia entre slides:** barra inferior que se mueve, texturas mezcladas, el mismo layout repetido.
-- **Fotos:** agrandadas más allá de su resolución, recortes que cortan caras, texto sobre el sujeto, imágenes sin registrar o vetadas.
-- **Marca:** colores fuera de los tokens y fuentes que no cargaron.
-- **Copy:** frases "de IA", trato mezclado, bajadas que repiten el titular, cifras sin fuente (cifra por cifra), hashtags de relleno, CTA genéricos, límites por red y alt text faltante.
+## What the render checks
 
-## Herramientas MCP
+- **Pixel-level contrast**, including over photos and gradients, and logo contrast against its background.
+- **Text:** headline widows, overlaps, clipping, sizes unreadable on a phone and each layout's character budget.
+- **Zones:** safe area and the strip each network's UI covers.
+- **Composition:** content crammed or sunk, dead space and too much accent color.
+- **Consistency across slides:** a bottom bar that moves, mixed textures, the same layout repeated.
+- **Photos:** upscaled beyond their resolution, crops that cut faces, text over the subject, unregistered or vetoed images.
+- **Brand:** colors outside the tokens and fonts that failed to load.
+- **Copy:** "AI-sounding" phrases, mixed form of address, subheads that repeat the headline, figures without a source (checked one by one), filler hashtags, generic CTAs, per-network limits and missing alt text.
 
-| Grupo | Herramientas |
+## MCP tools
+
+| Group | Tools |
 |---|---|
 | Workspace | `workspace_status` · `workspace_init` · `doctor` · `skill_guide` |
-| Marca | `brand_list` · `brand_get` · `brand_create` · `brand_use` · `brand_import_site` · `brand_check` · `brand_write` |
+| Brand | `brand_list` · `brand_get` · `brand_create` · `brand_use` · `brand_import_site` · `brand_check` · `brand_write` |
 | Brief | `brief_questions` · `brief_interview` |
-| Campañas | `campaign_create` · `campaign_brief` · `campaign_plan` · `campaign_status` · `campaign_list` |
-| Imágenes | `stock_search` · `stock_import` · `asset_add` · `asset_analyze` · `asset_view` · `asset_list` · `asset_veto` |
-| Piezas | `layouts_list` · `piece_create` · `piece_list` · `piece_read` · `piece_write` · `piece_render` · `piece_view` · `piece_version` · `piece_motion` |
-| Feed y resultados | `feed_check` · `results_add` · `results_summary` |
+| Campaigns | `campaign_create` · `campaign_brief` · `campaign_plan` · `campaign_status` · `campaign_list` |
+| Images | `stock_status` · `stock_search` · `stock_import` · `asset_add` · `asset_analyze` · `asset_view` · `asset_list` · `asset_veto` |
+| Pieces | `layouts_list` · `piece_create` · `piece_list` · `piece_read` · `piece_write` · `piece_render` · `piece_view` · `piece_version` · `piece_motion` |
+| Feed and results | `feed_check` · `results_add` · `results_summary` |
 
-Además: las instrucciones del skill como recursos (`opentcy://guide/…`) y tres prompts (`nueva-campana`, `cargar-marca`, `plan-semanal`).
+Also: the skill's instructions as resources (`opentcy://guide/…`) and three prompts (`new-campaign`, `load-brand`, `weekly-plan`).
 
-Las herramientas que renderizan o buscan devuelven **imágenes**, no solo texto: el agente ve la hoja de contacto y las previews del banco antes de decidir. `brief_interview` usa *elicitation* de MCP cuando el cliente la soporta y, si no, devuelve las preguntas para el chat.
+Tools that render or search return **images**, not just text: the agent sees the contact sheet and the stock previews before it decides. `brief_interview` uses MCP *elicitation* when the client supports it and otherwise returns the questions for the chat.
 
-## Bancos de imágenes
+## Stock photo providers
 
-| Banco | Clave | Licencia |
+| Provider | Key | License |
 |---|---|---|
-| [Openverse](https://openverse.org) | No necesita | Solo CC0, dominio público y CC BY (la atribución queda registrada) |
-| [Pexels](https://www.pexels.com/api/) | `PEXELS_API_KEY` (gratis) | Pexels License |
-| [Unsplash](https://unsplash.com/developers) | `UNSPLASH_ACCESS_KEY` (gratis) | Unsplash License |
+| [Openverse](https://openverse.org) | None needed | Only CC0, public domain and CC BY (attribution is recorded) |
+| [Unsplash](https://unsplash.com/developers) | Your own Access Key (free) | Unsplash License |
 
-Con las claves en el entorno (o en la config del servidor MCP), la búsqueda consulta todos en paralelo e intercala los resultados.
+Openverse works out of the box. Unsplash is optional and uses **your own** account: opentcy ships no keys.
 
-## Comandos
+```bash
+npx opentcy stock connect unsplash
+```
 
-| Comando | Qué hace |
+It walks you through creating a free app in your Unsplash account, asks for the Access Key with hidden input, checks it and saves it to the workspace's git-ignored `.env`. Requests then count against your own quota (50 per hour on a demo app). `npx opentcy stock status` shows what is connected. Once connected, a search queries both providers in parallel and interleaves the results.
+
+## Commands
+
+| Command | What it does |
 |---|---|
-| `npx opentcy init [carpeta]` | Crea un workspace |
-| `npx opentcy setup` · `doctor` | Instala el navegador del render · verifica el entorno |
-| `npx opentcy mcp` | Servidor MCP (stdio) |
-| `npx opentcy brief questions [brand\|campaign\|piece]` | Las preguntas de cada brief |
-| `npx opentcy campaign new / brief / plan / status / list` | Campañas |
-| `npx opentcy brand list / use / new / import <url> / check` | Marcas |
-| `npx opentcy new <slug> --layouts cover-type,steps,closer` | Pieza nueva (`--campaign`, `--from`, `--format`) |
-| `npx opentcy render <pieza>` | PNG, JPG, hoja de contacto, captions y reporte (`--pdf`, `--scale 2`) |
-| `npx opentcy dev <pieza>` | Vista previa con recarga y textos editables |
-| `npx opentcy version <pieza> save / list / diff / restore` | Versiones, sin depender de git |
-| `npx opentcy motion <pieza> --slides all --audio pista.mp3` | Video MP4 |
-| `npx opentcy assets add / stock / stock-import / analyze / veto / list` | Imágenes |
-| `npx opentcy feed` · `results` | Ritmo del feed · qué rindió mejor |
+| `npx opentcy init [folder]` | Creates a workspace |
+| `npx opentcy setup` · `doctor` | Installs the render browser · checks the environment |
+| `npx opentcy mcp` | MCP server (stdio) |
+| `npx opentcy brief questions [brand\|campaign\|piece]` | The questions of each brief |
+| `npx opentcy campaign new / brief / plan / status / list` | Campaigns |
+| `npx opentcy brand list / use / new / import <url> / check` | Brands |
+| `npx opentcy new <slug> --layouts cover-type,steps,closer` | New piece (`--campaign`, `--from`, `--format`) |
+| `npx opentcy render <piece>` | PNG, JPG, contact sheet, captions and report (`--pdf`, `--scale 2`) |
+| `npx opentcy dev <piece>` | Live preview with editable text |
+| `npx opentcy version <piece> save / list / diff / restore` | Versions, without relying on git |
+| `npx opentcy motion <piece> --slides all --audio track.mp3` | MP4 video |
+| `npx opentcy assets add / stock / stock-import / analyze / veto / list` | Images |
+| `npx opentcy stock status / connect unsplash / disconnect unsplash` | Stock providers |
+| `npx opentcy feed` · `results` | Feed rhythm · what performed best |
 
-Todos aceptan `--brand <slug>`. El workspace es la carpeta con `brands/`, o la que indique `OPENTCY_HOME`.
+All of them accept `--brand <slug>`. The workspace is the folder that contains `brands/`, or the one `OPENTCY_HOME` points to.
 
-## Límites conocidos
+## Known limits
 
-- **Publicación:** opentcy no publica en redes. Deja todo listo en `render/`, o usa el MCP de publicación que conectes (Buffer, Metricool, Postiz…), con tu confirmación en cada envío.
-- **Generación de imágenes:** no incluye un modelo. Trabaja con tus fotos, bancos de imágenes y tipografía.
-- **Pexels y Unsplash:** implementados según su API, pero las pruebas automáticas solo cubren Openverse (no requiere clave).
-- **Fotos con personas:** el control de recortes de caras depende de que el agente marque bien las regiones.
-- **Video:** sin subtítulos automáticos ni locución.
-- **Idioma:** las instrucciones y el linter de copy están en español. Las piezas pueden estar en cualquier idioma; los chequeos de copy son más finos en español.
+- **Publishing:** opentcy does not publish to social networks. It leaves everything ready in `render/`, or uses the publishing MCP you connect (Buffer, Metricool, Postiz…), with your confirmation on every send.
+- **Image generation:** no model is included. It works with your photos, stock providers and typography.
+- **Unsplash:** implemented against its API, but the automated tests only cover Openverse (no key required).
+- **Photos with people:** the face-crop check depends on the agent marking the regions correctly.
+- **Video:** no automatic subtitles or voice-over.
+- **Copy linter:** the cliché phrase lists target Spanish-language copy. Structural checks (figures without a source, limits, alt text, repeated subheads) apply to any language.
+- **Demo brand:** `brands/_demo` and the sample copy in the layouts are in Spanish.
 
-## Desarrollo
+## Development
 
 ```bash
 npm install
-npm test                          # motor + servidor MCP
-OPENTCY_TEST_NETWORK=1 npm test   # suma la prueba de stock en vivo
+npm test                          # engine + MCP server
+OPENTCY_TEST_NETWORK=1 npm test   # adds the live stock test
 ```
 
-La landing está en [`web/`](web) (TanStack Start). Guía para contribuir: [CONTRIBUTING.md](CONTRIBUTING.md).
+The landing page lives in [`web/`](web) (TanStack Start). Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Licencia
+## License
 
 [MIT](LICENSE).

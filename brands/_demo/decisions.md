@@ -1,18 +1,18 @@
-# Decisiones aprendidas
+# Learned decisions
 
-El criterio de la marca. El agente lo lee antes de diseñar y lo actualiza según AGENTS.md §14.
+The brand's judgment. The agent reads it before designing and updates it according to `references/learning.md`.
 
-- **Una corrección puntual no es una regla:** va al `feedback` de esa pieza.
-- **Una corrección se vuelve regla** si la persona dice que es para siempre, o si se repite en 2 piezas distintas.
-- **"Me gusta" es una referencia** (pieza + versión), no una regla global.
-- **Descargar o publicar no es aprobación.**
-- **Si una regla nueva contradice una vieja,** se reemplaza la vieja.
+- **A one-off correction is not a rule:** it goes into that piece's `feedback`.
+- **A correction becomes a rule** if the person says it is for good, or if it comes up in 2 different pieces.
+- **"I like it" is a reference** (piece + version), not a global rule.
+- **Downloading or publishing is not approval.**
+- **If a new rule contradicts an old one,** the old one is replaced.
 
-## Reglas
-<!-- - 2026-11-20 · Nunca fondo de acento a pantalla completa. — "muy chillón, no lo usemos más" -->
+## Rules
+<!-- - 2026-11-20 · Never a full-bleed accent background. — "too loud, let's not use it again" -->
 
-## Referencias aprobadas
-<!-- - 2026-11-20 · pieces/2026-11-18-errores-comunes v3 · portada con número grande y una idea por slide -->
+## Approved references
+<!-- - 2026-11-20 · pieces/2026-11-18-common-mistakes v3 · cover with a big number and one idea per slide -->
 
-## Descartado
-<!-- - 2026-11-20 · Stock genérico de oficina (asset vetado: stock-oficina-1). Preferir fotos propias o tipografía. -->
+## Discarded
+<!-- - 2026-11-20 · Generic office stock (vetoed asset: stock-office-1). Prefer the brand's own photos or typography. -->

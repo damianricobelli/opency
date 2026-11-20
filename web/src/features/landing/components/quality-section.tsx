@@ -16,7 +16,7 @@ function MeasuredSlide() {
   return (
     <div
       aria-hidden
-      className="relative mx-auto aspect-[4/5] w-full max-w-[17rem] overflow-hidden rounded-xl bg-foreground text-background"
+      className="relative mx-auto aspect-[4/5] w-full max-w-[13rem] overflow-hidden rounded-xl bg-foreground text-background sm:w-[15rem] sm:max-w-none"
     >
       <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_70%_20%,color-mix(in_oklch,var(--brand)_55%,transparent),transparent_60%)]" />
       {/* Safe zone. */}
@@ -41,7 +41,7 @@ function MeasuredSlide() {
 export function QualitySection() {
   return (
     <Section.Root id="quality">
-      <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+      <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-8 sm:gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <Section.Header>
           <Section.Eyebrow>{m.quality_eyebrow()}</Section.Eyebrow>
           <Section.Title>{m.quality_title()}</Section.Title>
@@ -49,7 +49,7 @@ export function QualitySection() {
         </Section.Header>
         <Reveal
           delay={80}
-          className="grid items-center gap-6 rounded-2xl border bg-card p-5 sm:grid-cols-[auto_1fr] sm:p-6"
+          className="grid items-center gap-5 rounded-2xl border bg-card p-4 sm:grid-cols-[auto_1fr] sm:gap-6 sm:p-6"
         >
           <MeasuredSlide />
           <div className="min-w-0">

@@ -11,7 +11,7 @@ export function BriefSection() {
         <Section.Title>{m.brief_title()}</Section.Title>
         <Section.Lead>{m.brief_lead()}</Section.Lead>
       </Section.Header>
-      <Reveal delay={80} className="mt-12">
+      <Reveal delay={80} className="mt-8 sm:mt-12">
         <BriefDemo />
       </Reveal>
     </Section.Root>

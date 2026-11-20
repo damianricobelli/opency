@@ -27,7 +27,7 @@ function Root({
     <CodeContext value={code}>
       <div
         className={cn(
-          "flex items-start gap-2 rounded-xl border bg-card py-2 pr-2 pl-4 font-mono text-[13px] leading-6",
+          "flex items-start gap-1 rounded-xl border bg-card py-1.5 pr-1.5 pl-4 font-mono text-xs leading-6 sm:text-[13px]",
           className,
         )}
         {...props}
@@ -42,7 +42,8 @@ function Command({ className, ...props }: ComponentProps<"code">) {
   return (
     <code
       className={cn(
-        "flex min-w-0 flex-1 items-center gap-2 overflow-x-auto overscroll-x-contain py-1.5 whitespace-nowrap [scrollbar-width:none]",
+        // Long commands scroll inside the block; the fade says there is more.
+        "flex min-w-0 flex-1 items-center gap-2 overflow-x-auto overscroll-x-contain py-2.5 pr-5 whitespace-nowrap [mask-image:linear-gradient(to_right,black_calc(100%-1.5rem),transparent)] [scrollbar-width:none]",
         className,
       )}
       {...props}
@@ -61,7 +62,7 @@ function Snippet({ className, ...props }: ComponentProps<"pre">) {
   return (
     <pre
       className={cn(
-        "min-w-0 flex-1 overflow-x-auto overscroll-x-contain py-1.5 [scrollbar-width:none]",
+        "min-w-0 flex-1 overflow-x-auto overscroll-x-contain py-2.5 pr-5 [mask-image:linear-gradient(to_right,black_calc(100%-1.5rem),transparent)] [scrollbar-width:none]",
         className,
       )}
       {...props}
@@ -93,7 +94,7 @@ function Copy({ className, ...props }: ComponentProps<"button">) {
         );
       }}
       className={cn(
-        "group/copy relative grid size-9 shrink-0 place-items-center rounded-lg text-muted-foreground outline-none transition-[background-color,color,scale] duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-[0.97] motion-reduce:active:scale-100",
+        "group/copy relative grid size-11 shrink-0 place-items-center rounded-lg text-muted-foreground outline-none transition-[background-color,color,scale] duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-[0.97] motion-reduce:active:scale-100",
         className,
       )}
       {...props}

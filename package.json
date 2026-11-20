@@ -1,7 +1,7 @@
 {
   "name": "opentcy",
   "version": "0.1.0",
-  "description": "Skill y servidor MCP open source: tu agente como equipo de contenido de una agencia. Brief interactivo, marcas, campañas, stock y control de calidad a nivel píxel.",
+  "description": "Open-source skill and MCP server that turns your agent into an agency content team: interactive briefs, brand kits, campaigns, stock photos and pixel-level quality checks.",
   "type": "module",
   "license": "MIT",
   "author": "Damián Ricobelli",
@@ -20,7 +20,6 @@
     "content",
     "agency",
     "unsplash",
-    "pexels",
     "openverse"
   ],
   "bin": {

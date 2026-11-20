@@ -1,36 +1,37 @@
-# opentcy · guía para trabajar en este repo
+# opentcy · working in this repo
 
-Este repositorio es el código de **opentcy**: un skill y un servidor MCP que convierten a un agente en el equipo de contenido de una agencia.
+This repository is the source of **opentcy**: a skill and an MCP server that turn an agent into an agency content team.
 
-- **¿Venís a hacer piezas o campañas?** Las instrucciones están en `skills/opentcy/SKILL.md` (el repo también funciona como workspace: tiene `brands/` y `templates/`). Usá `node bin/opentcy.mjs <comando>` en lugar de `npx opentcy`.
-- **¿Venís a cambiar opentcy?** Seguí leyendo.
+- **Here to make pieces or campaigns?** The instructions are in `skills/opentcy/SKILL.md` (the repo doubles as a workspace: it has `brands/` and `templates/`). Use `node bin/opentcy.mjs <command>` instead of `npx opentcy`.
+- **Here to change opentcy?** Keep reading.
 
-## Mapa
+## Map
 
 ```
-bin/opentcy.mjs              CLI: despacha a scripts/ y arranca el MCP
-scripts/                     el motor (cada archivo es un comando)
-  lib/project.mjs            rutas (PKG vs workspace), formatos, marcas, navegador
-  lib/brief.mjs              las preguntas del brief: fuente única para CLI, MCP y docs
-  lib/stock.mjs              Pexels, Unsplash, Openverse y descarga segura
-  lib/copy-lint.mjs          linter de copy
+bin/opentcy.mjs              CLI: dispatches to scripts/ and starts the MCP server
+scripts/                     the engine (each file is a command)
+  lib/project.mjs            paths (PKG vs workspace), formats, brands, browser
+  lib/brief.mjs              the brief questions: single source for CLI, MCP and docs
+  lib/stock.mjs              Openverse, Unsplash and safe downloads
+  lib/copy-lint.mjs          copy linter
   test/                      node --test
-mcp/server.mjs               servidor MCP (stdio): cada herramienta ejecuta un script del motor
-skills/opentcy/              SKILL.md + references/: lo que lee el agente
-agents/revisor-visual.md     subagente de revisión en frío
-templates/                   base.css y los 14 layouts
-brands/_demo/                marca de ejemplo (la única que se versiona)
-.claude-plugin/              manifiesto de plugin y marketplace de Claude Code
-web/                         landing (TanStack Start); proyecto aparte, con su propio package.json
+mcp/server.mjs               MCP server (stdio): every tool runs an engine script
+skills/opentcy/              SKILL.md + references/: what the agent reads
+agents/visual-reviewer.md    cold-review subagent
+templates/                   base.css and the 14 layouts
+brands/_demo/                demo brand (the only one versioned)
+.claude-plugin/              Claude Code plugin and marketplace manifests
+web/                         landing page (TanStack Start); separate project with its own package.json
 ```
 
-## Reglas
+## Rules
 
-- **Una sola implementación.** El MCP no reimplementa nada: llama al mismo script que el CLI. Si agregás una capacidad, va primero en `scripts/` y después se expone en `mcp/server.mjs` y se documenta en `skills/opentcy/`.
-- **Las preguntas del brief viven en `scripts/lib/brief.mjs`.** No las dupliques en la documentación: `references/brief.md` explica cómo preguntar, no qué.
-- **PKG vs ROOT.** `PKG` es donde está instalado opentcy; `ROOT` es el workspace de la persona (`OPENTCY_HOME` o la carpeta con `brands/`). Lo que la persona edita se lee de `ROOT`.
-- **Nada que publique en redes** ni automatizaciones no oficiales contra ellas.
-- **Toda descarga pasa por `fetchBuffer`** de `lib/stock.mjs`, que rechaza direcciones privadas.
-- Mensajes al usuario en español rioplatense, como el resto del motor.
-- `npm test` antes de terminar. `OPENTCY_TEST_NETWORK=1 npm test` suma la prueba de stock en vivo.
-- `brands/*` está en `.gitignore` salvo `_demo`: no subas marcas reales.
+- **English first.** Code, comments, CLI output, tool descriptions, docs and metadata are written in English. Brand content (copy, voice samples, captions) is written in the brand's language.
+- **One implementation.** The MCP server reimplements nothing: it calls the same script as the CLI. A new capability goes into `scripts/` first, then it is exposed in `mcp/server.mjs` and documented in `skills/opentcy/`.
+- **The brief questions live in `scripts/lib/brief.mjs`.** Do not duplicate them in the docs: `references/brief.md` explains how to ask, not what.
+- **PKG vs ROOT.** `PKG` is where opentcy is installed; `ROOT` is the user's workspace (`OPENTCY_HOME` or the folder that contains `brands/`). Anything the user edits is read from `ROOT`.
+- **Nothing that publishes to social networks**, and no unofficial automation against them.
+- **Every download goes through `fetchBuffer`** in `lib/stock.mjs`, which rejects private addresses.
+- **The copy linter's phrase lists target Spanish-language copy.** Adding another language means adding lists, not translating the existing ones.
+- Run `npm test` before finishing. `OPENTCY_TEST_NETWORK=1 npm test` adds the live stock test.
+- `brands/*` is git-ignored except `_demo`: never commit real brands.

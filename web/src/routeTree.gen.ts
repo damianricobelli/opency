@@ -10,33 +10,82 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './features/landing/routes/index'
+import { Route as featuresSeoRoutesLlmsRouteImport } from './features/seo/routes/llms'
+import { Route as featuresSeoRoutesRobotsRouteImport } from './features/seo/routes/robots'
+import { Route as featuresSeoRoutesSitemapRouteImport } from './features/seo/routes/sitemap'
+import { Route as featuresSeoRoutesApiDotogImageRouteImport } from './features/seo/routes/api.og-image'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const featuresSeoRoutesLlmsRoute = featuresSeoRoutesLlmsRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const featuresSeoRoutesRobotsRoute = featuresSeoRoutesRobotsRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const featuresSeoRoutesSitemapRoute =
+  featuresSeoRoutesSitemapRouteImport.update({
+    id: '/sitemap.xml',
+    path: '/sitemap.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const featuresSeoRoutesApiDotogImageRoute =
+  featuresSeoRoutesApiDotogImageRouteImport.update({
+    id: '/api/og-image',
+    path: '/api/og-image',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/llms.txt': typeof featuresSeoRoutesLlmsRoute
+  '/robots.txt': typeof featuresSeoRoutesRobotsRoute
+  '/sitemap.xml': typeof featuresSeoRoutesSitemapRoute
+  '/api/og-image': typeof featuresSeoRoutesApiDotogImageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/llms.txt': typeof featuresSeoRoutesLlmsRoute
+  '/robots.txt': typeof featuresSeoRoutesRobotsRoute
+  '/sitemap.xml': typeof featuresSeoRoutesSitemapRoute
+  '/api/og-image': typeof featuresSeoRoutesApiDotogImageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/llms.txt': typeof featuresSeoRoutesLlmsRoute
+  '/robots.txt': typeof featuresSeoRoutesRobotsRoute
+  '/sitemap.xml': typeof featuresSeoRoutesSitemapRoute
+  '/api/og-image': typeof featuresSeoRoutesApiDotogImageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/llms.txt' | '/robots.txt' | '/sitemap.xml' | '/api/og-image'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/llms.txt' | '/robots.txt' | '/sitemap.xml' | '/api/og-image'
+  id:
+    | '__root__'
+    | '/'
+    | '/llms.txt'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/api/og-image'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  featuresSeoRoutesLlmsRoute: typeof featuresSeoRoutesLlmsRoute
+  featuresSeoRoutesRobotsRoute: typeof featuresSeoRoutesRobotsRoute
+  featuresSeoRoutesSitemapRoute: typeof featuresSeoRoutesSitemapRoute
+  featuresSeoRoutesApiDotogImageRoute: typeof featuresSeoRoutesApiDotogImageRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +97,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof featuresSeoRoutesLlmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof featuresSeoRoutesRobotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof featuresSeoRoutesSitemapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/og-image': {
+      id: '/api/og-image'
+      path: '/api/og-image'
+      fullPath: '/api/og-image'
+      preLoaderRoute: typeof featuresSeoRoutesApiDotogImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  featuresSeoRoutesLlmsRoute: featuresSeoRoutesLlmsRoute,
+  featuresSeoRoutesRobotsRoute: featuresSeoRoutesRobotsRoute,
+  featuresSeoRoutesSitemapRoute: featuresSeoRoutesSitemapRoute,
+  featuresSeoRoutesApiDotogImageRoute: featuresSeoRoutesApiDotogImageRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,74 +1,74 @@
-# Brief: preguntar antes de diseñar
+# Brief: ask before you design
 
-Leé esto antes de cargar una marca, armar una campaña o hacer una pieza cuyo pedido no diga qué se quiere transmitir.
+Read this before setting up a brand, building a campaign or making a piece whose request does not say what it should convey.
 
-Una pieza linda que dice lo que nadie pidió se rehace entera. El brief es la parte barata del trabajo: cinco minutos de preguntas ahorran tres rondas de correcciones.
+A good-looking piece that says what nobody asked for gets redone from scratch. The brief is the cheap part of the job: five minutes of questions save three rounds of corrections.
 
-## Cuándo preguntar y cuándo no
+## When to ask and when not to
 
-| Pedido | Qué hacés |
+| Request | What you do |
 |---|---|
-| Marca nueva | Brief `brand`. Si hay web, leela primero (`npx opentcy brand import <url>`) y preguntá solo lo que no encontraste. |
-| Campaña (varias piezas, un lanzamiento, una fecha) | Brief `campaign` completo. No se diseña hasta tener las obligatorias. |
-| Pieza suelta con pedido claro ("carrusel sobre X para el jueves") | No preguntes: decidí y decí qué supusiste. |
-| Pieza suelta ambigua ("hacé algo para Instagram") | Brief `piece`: una o dos preguntas, no más. |
-| Ajuste a una pieza existente | Nunca. Hacé el cambio. |
+| New brand | `brand` brief. If there is a website, read it first (`npx opentcy brand import <url>`) and ask only what you did not find. |
+| Campaign (several pieces, a launch, a date) | Full `campaign` brief. No design until the required answers are in. |
+| Single piece with a clear request ("carousel about X for Thursday") | Do not ask: decide, and say what you assumed. |
+| Ambiguous single piece ("make something for Instagram") | `piece` brief: one or two questions, no more. |
+| Tweak to an existing piece | Never. Make the change. |
 
-`npx opentcy brief questions [brand|campaign|piece]` lista las preguntas, cuáles son obligatorias (●) y de dónde se puede deducir cada una.
+`npx opentcy brief questions [brand|campaign|piece]` lists the questions, which ones are required (●) and where each one can be deduced from.
 
-## Cómo preguntar
+## How to ask
 
-1. **Primero deducí.** Antes de la primera pregunta leé el pedido, `brand.json`, `brand-kit.md`, `decisions.md` y, si existe, `import/report.json`. Lo que ya está respondido no se pregunta: se confirma en una línea ("Asumo que le hablamos a dueños de PyMEs, como siempre").
-2. **De a tandas cortas.** De 2 a 4 preguntas por turno. Nunca el formulario entero de una.
-3. **Usá la herramienta de preguntas que tengas.** Con el MCP de opentcy, `brief_interview` le muestra un formulario a la persona si el cliente lo soporta. En Claude Code, `AskUserQuestion`. Si no hay ninguna, preguntá en el chat con opciones concretas para elegir.
-4. **En palabras de la persona.** "¿Qué querés que sienta alguien al verlo?", no "¿Cuál es el tono de comunicación deseado?".
-5. **Ofrecé opciones, aceptá otra cosa.** Las opciones son para destrabar, no para encasillar.
-6. **Si no sabe, proponé.** "No sé cuántas piezas" se responde con un plan concreto para que diga sí o no.
-7. **Cortá cuando alcanza.** Con las obligatorias respondidas se puede diseñar. Las opcionales que falten se anotan como supuestos.
+1. **Deduce first.** Before the first question, read the request, `brand.json`, `brand-kit.md`, `decisions.md` and, if it exists, `import/report.json`. What is already answered is not asked: confirm it in one line ("I'm assuming we're talking to small-business owners, as usual").
+2. **In short rounds.** 2 to 4 questions per turn. Never the whole form at once.
+3. **Use whatever question tool you have.** With the opentcy MCP, `brief_interview` shows the user a form if the client supports it. In Claude Code, `AskUserQuestion`. If there is none, ask in the chat with concrete options to choose from.
+4. **In the user's words.** "What do you want someone to feel when they see it?", not "What is the desired communication tone?".
+5. **Offer options, accept something else.** The options are there to get things moving, not to box the user in.
+6. **If the user doesn't know, propose.** "I don't know how many pieces" is answered with a concrete plan they can say yes or no to.
+7. **Stop when you have enough.** With the required questions answered, you can design. Any optional ones still missing are recorded as assumptions.
 
-## La pregunta que más importa
+## The question that matters most
 
-**¿Qué querés transmitir?** Si alguien recuerda una sola cosa de la campaña, ¿cuál tiene que ser?
+**What do you want to get across?** If someone remembers just one thing from the campaign, what should it be?
 
-Esa respuesta es la tesis. Devolvésela en una frase antes de seguir ("Entonces: *ordenar tus datos te hace decidir a tiempo*. ¿Es eso?"). Si no la puede confirmar, no hay campaña todavía: hay un tema.
+That answer is the thesis. Play it back in one sentence before going on ("So: *organizing your data lets you decide in time*. Is that it?"). If the user cannot confirm it, there is no campaign yet: there is a topic.
 
-Cada pieza del plan prueba la tesis desde un ángulo distinto. Si un ángulo no la prueba, es otra campaña.
+Each piece in the plan proves the thesis from a different angle. If an angle does not prove it, it belongs to another campaign.
 
-## De las respuestas a las decisiones
+## From answers to decisions
 
-| Respuesta | Decide |
+| Answer | Decides |
 |---|---|
-| `message` | `direction.thesis` de cada pieza. |
-| `objective` | La intención dominante del plan (`references/planificacion.md`): conocer → opinar y enseñar; consultas → caso y vender; ventas → mostrar producto y vender; guardados → enseñar. |
-| `audience` | Vocabulario, ejemplos y qué objeción se resuelve. |
-| `offer` y `proof` | Qué se puede afirmar. Lo confirmado va a `piece.sources`; lo que falte, `[A CONFIRMAR]`. |
-| `feeling` | Modo dominante (foto o tipografía), densidad, textura. Urgente → tipográfico, alto contraste, poco texto. Cálido → foto propia, más aire. Técnico → datos, grillas, mono. |
-| `channels` | Formatos y adaptaciones: feed 4:5, stories 9:16, LinkedIn 4:5 + PDF. |
-| `visuals` | Orden de imágenes (`references/assets.md`). "Solo tipografía" prohíbe el stock. |
-| `cta` | El único CTA, en el cierre de las piezas que venden. |
-| `dates` | Fechas del plan y del calendario. |
+| `message` | Each piece's `direction.thesis`. |
+| `objective` | The plan's dominant intent (`references/planning.md`): awareness → give an opinion and teach; inquiries → case study and sell; sales → show the product and sell; saves → teach. |
+| `audience` | Vocabulary, examples and which objection gets resolved. |
+| `offer` and `proof` | What can be claimed. What is confirmed goes in `piece.sources`; what is missing, `[TO CONFIRM]`. |
+| `feeling` | Dominant mode (photo or typography), density, texture. Urgent → typographic, high contrast, little text. Warm → the brand's own photos, more room to breathe. Technical → data, grids, mono. |
+| `channels` | Formats and adaptations: feed 4:5, stories 9:16, LinkedIn 4:5 + PDF. |
+| `visuals` | Order of image sources (`references/assets.md`). "Typography only" rules out stock. |
+| `cta` | The single CTA, on the closing slide of the pieces that sell. |
+| `dates` | Dates for the plan and the calendar. |
 
-## Guardar la campaña
+## Saving the campaign
 
 ```bash
-npx opentcy campaign new <slug> --name "Nombre" --set message="…" --set objective="…"
-npx opentcy campaign brief <slug> --set cta="…"          # completar o corregir
-npx opentcy campaign plan <slug> --file plan.json        # el plan aprobado
-npx opentcy campaign status <slug>                       # qué falta y cómo va
-npx opentcy new <pieza> --campaign <slug> --layouts …    # cada pieza queda vinculada
+npx opentcy campaign new <slug> --name "Name" --set message="…" --set objective="…"
+npx opentcy campaign brief <slug> --set cta="…"          # fill in or correct
+npx opentcy campaign plan <slug> --file plan.json        # the approved plan
+npx opentcy campaign status <slug>                       # what is missing and how it is going
+npx opentcy new <piece> --campaign <slug> --layouts …    # each piece gets linked
 ```
 
-El brief queda en `brands/<marca>/campaigns/<slug>/brief.json` y, legible, en `brief.md`.
+The brief is stored in `brands/<brand>/campaigns/<slug>/brief.json` and, in readable form, in `brief.md`.
 
-**El plan** es una lista de piezas, cada una con `slug`, `angle` (una frase), `intent`, `format`, `channel` y `date`. Mostralo en texto y esperá el sí antes de guardarlo. Reglas del plan:
+**The plan** is a list of pieces, each with `slug`, `angle` (one sentence), `intent`, `format`, `channel` and `date`. Show it as text and wait for a yes before saving it. Rules for the plan:
 
-- Abrí con la pieza que explica el porqué; cerrá con la que pide la acción.
-- No más de una pieza que vende cada tres.
-- Cada canal recibe una pieza pensada para ese canal o una adaptación recompuesta, nunca el mismo archivo estirado.
-- Cruzá las fechas con `calendar.md` y con `npx opentcy feed`.
+- Open with the piece that explains the why; close with the one that asks for the action.
+- No more than one selling piece in every three.
+- Each channel gets a piece designed for that channel or a recomposed adaptation, never the same file stretched.
+- Cross-check the dates against `calendar.md` and `npx opentcy feed`.
 
-## Durante la campaña
+## During the campaign
 
-- Antes de cada pieza: `npx opentcy campaign status <slug>`.
-- Todas las piezas comparten material (textura, tratamiento de foto) y un gesto distintivo que las hace reconocibles como serie.
-- Si una respuesta del brief cambia a mitad de camino, actualizala con `campaign brief` y decile a la persona qué piezas ya hechas quedan afectadas.
+- Before each piece: `npx opentcy campaign status <slug>`.
+- All the pieces share a material (texture, photo treatment) and a distinctive gesture that makes them recognizable as a series.
+- If a brief answer changes midway, update it with `campaign brief` and tell the user which finished pieces are affected.

@@ -1,49 +1,49 @@
-# Cargar una marca
+# Setting up a brand
 
-Leé esto cuando `brand.json` no existe o tiene marcadores `{{…}}`, o cuando la persona pide cambiar la marca.
+Read this when `brand.json` does not exist or contains `{{…}}` placeholders, or when the user asks to change the brand.
 
-Pedí lo mínimo y deducí el resto: web, Instagram, manual de marca, logo, posts anteriores, Figma.
+Ask for the minimum and deduce the rest: website, Instagram, brand manual, logo, previous posts, Figma.
 
-**Primero proponé y después escribí.** Mostrá en texto la paleta con sus roles, las tipografías, la voz y 2–3 reglas duras. Escribí `brand.json`, `brand-kit.md` y `tokens.css` solo cuando la persona diga que sí. Antes de cambiar una marca ya cargada, copiá `tokens.css` y `brand.json` a `brands/<marca>/history/AAAA-MM-DD/` para poder deshacer.
+**Propose first, write afterwards.** Show as text the palette with its roles, the typefaces, the voice and 2–3 hard rules. Write `brand.json`, `brand-kit.md` and `tokens.css` only once the user says yes. Before changing a brand that is already set up, copy `tokens.css` and `brand.json` to `brands/<brand>/history/YYYY-MM-DD/` so the change can be undone.
 
-**Pasos**
+**Steps**
 
-1. `npx opentcy brand new <slug> --name "Nombre"` crea `brands/<slug>/` con tokens neutros.
-2. Si hay web: `npx opentcy brand import <url> --brand <slug>`. Deja en `import/report.json` los colores por superficie, las tintas, las tipografías, el logo y los textos. Mirá también `import/home.png`.
-3. Proponé los 7 roles, las 3 familias, la voz y los datos verificados. Esperá el sí.
-4. Escribí los archivos. Las fuentes van en `assets/fonts/` (variables o por peso) y los logos en `assets/logos/`, declarados en `brand.json → logos`.
-5. `npx opentcy brand check --brand <slug>`: tiene que terminar sin problemas. Te dice qué combinaciones sirven para texto y cuál debe ser `--on-accent`.
-6. Hacé una pieza de prueba y renderizala.
+1. `npx opentcy brand new <slug> --name "Name"` creates `brands/<slug>/` with neutral tokens.
+2. If there is a website: `npx opentcy brand import <url> --brand <slug>`. It leaves the colors by surface, the inks, the typefaces, the logo and the texts in `import/report.json`. Look at `import/home.png` too.
+3. Propose the 7 roles, the 3 families, the voice and the verified data. Wait for the yes.
+4. Write the files. Fonts go in `assets/fonts/` (variable or per weight) and logos in `assets/logos/`, declared in `brand.json → logos`.
+5. `npx opentcy brand check --brand <slug>`: it has to finish with no problems. It tells you which combinations work for text and what `--on-accent` should be.
+6. Make a test piece and render it.
 
-**Dónde va cada cosa**
+**Where each thing goes**
 
-- `brand.json`: lo que leen los scripts. Nombre, handle, idioma, país, trato (`address`), si usa emoji o guiones largos, pilares, logos, valores por defecto (textura, tratamiento de foto) y `verified` (datos con fuente y fecha).
-- `brand-kit.md`: lo que leés vos. Voz con reglas duras, roles de color explicados, perfil creativo, instrucciones vigentes y los supuestos que faltan confirmar.
-- `tokens.css`: los valores reales.
-- `voice-samples.md`: textos reales de la marca.
+- `brand.json`: what the scripts read. Name, handle, language, country, form of address (`address`), whether it uses emoji or em dashes, pillars, logos, defaults (texture, photo treatment) and `verified` (data with source and date).
+- `brand-kit.md`: what you read. Voice with hard rules, color roles explained, creative profile, standing instructions and the assumptions still to be confirmed.
+- `tokens.css`: the actual values.
+- `voice-samples.md`: real texts from the brand.
 
-**Qué tiene que quedar cargado**
+**What has to end up on file**
 
-- **Identidad:** nombre, qué hace, para quién, objetivo de las redes, oferta, idioma y país (para el calendario comercial).
-- **Pilares de contenido:** 3–5 temas recurrentes. El plan semanal rota entre ellos.
-- **Voz:** reglas duras en vez de adjetivos ("frases de menos de 12 palabras", "nunca signos de exclamación", "trato de vos"). La voz manda sobre tus preferencias en tono, largo y puntuación.
-- **Muestras de voz:** hasta 5 textos reales de la marca, de hasta 600 caracteres cada uno, copiados textuales. Nunca inventados ni parafraseados.
-- **7 roles de color:** `primary`, `secondary`, `accent`, `bg`, `bg-alt`, `ink` e `ink-inverse`.
-  - `ink` va sobre `bg`.
-  - `ink-inverse` va sobre fotos, sobre `primary` y sobre paneles oscuros.
-  - `accent` se usa una vez por slide y cubre menos del 10 % de la superficie.
-  - Verificá el contraste AA de cada combinación de texto sobre fondo antes de proponerla.
-- **3 familias tipográficas:** `display` (titulares), `body` (texto) y `mono` (etiquetas chicas en mayúscula).
-  - Pedí los archivos `.woff2` y guardalos en `assets/fonts/`.
-  - Declarás solo los pesos que tienen archivo. Un peso o una itálica sintética no es la fuente original, y nunca lo presentás como tal.
-- **Logo:** pedilo en SVG, con variantes primaria, isotipo y wordmark, y versión clara y oscura.
-- **Instrucciones vigentes**, en tres alcances:
-  - `general`: siempre aplica.
-  - `campaña`: con fecha de vencimiento.
-  - `próximas`: lanzamientos y fechas que vienen.
-  - Solo se guardan cuando la persona pide explícitamente recordar, cambiar o borrar una regla. Un deseo puntual para una pieza no es una instrucción.
-- **Datos verificados** (`brand.json → verified`): precios, resultados, clientes y testimonios con permiso, cada uno con fuente y fecha. Nombrar a un cliente requiere su permiso, aunque figure en la web.
-- **Marcas monocromas:** si el acento es el mismo color que `primary`, definí `--accent-inverse` (el acento sobre paneles oscuros) y `--on-accent`.
-- **Supuestos:** todo lo que dedujiste sin confirmación va listado al final de `brand-kit.md`, y se lo decís a la persona.
+- **Identity:** name, what it does, for whom, the goal of its social channels, offer, language and country (for the commercial calendar).
+- **Content pillars:** 3–5 recurring themes. The weekly plan rotates among them.
+- **Voice:** hard rules instead of adjectives ("sentences under 12 words", "never exclamation marks", "addresses the reader as `vos`" — the informal Rioplatense Spanish "you"). The voice overrides your preferences on tone, length and punctuation.
+- **Voice samples:** up to 5 real texts from the brand, up to 600 characters each, copied verbatim. Never invented or paraphrased.
+- **7 color roles:** `primary`, `secondary`, `accent`, `bg`, `bg-alt`, `ink` and `ink-inverse`.
+  - `ink` goes on `bg`.
+  - `ink-inverse` goes on photos, on `primary` and on dark panels.
+  - `accent` is used once per slide and covers less than 10% of the surface.
+  - Verify AA contrast for every text-on-background combination before proposing it.
+- **3 type families:** `display` (headlines), `body` (text) and `mono` (small uppercase labels).
+  - Ask for the `.woff2` files and save them in `assets/fonts/`.
+  - Declare only the weights that have a file. A synthetic weight or italic is not the original font, and you never present it as such.
+- **Logo:** ask for it in SVG, with primary, logo mark and wordmark variants, and light and dark versions.
+- **Standing instructions**, in three scopes:
+  - `general`: always applies.
+  - `campaña` (campaign): with an expiry date.
+  - `próximas` (upcoming): launches and dates that are coming up.
+  - They are saved only when the user explicitly asks to remember, change or delete a rule. A one-off wish for a piece is not an instruction.
+- **Verified data** (`brand.json → verified`): prices, results, customers and testimonials with permission, each with source and date. Naming a customer requires their permission, even if they appear on the website.
+- **Monochrome brands:** if the accent is the same color as `primary`, define `--accent-inverse` (the accent on dark panels) and `--on-accent`.
+- **Assumptions:** everything you deduced without confirmation is listed at the end of `brand-kit.md`, and you tell the user.
 
-Cerrá el onboarding con una pieza de prueba renderizada.
+Close the onboarding with a rendered test piece.

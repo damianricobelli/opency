@@ -1,11 +1,10 @@
 import instrumentSerifLatin from "@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url";
 import geistLatin from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { THEME_INIT_SCRIPT } from "@/hooks/use-theme-mode";
+import { GITHUB_OWNER, SITE_NAME } from "@/lib/site";
 import { getLocale } from "@/paraglide/runtime";
 import appCss from "../styles.css?url";
-
-/** The page background per scheme (`--background` in `styles.css`). */
-const THEME_COLORS = { light: "#faf9f7", dark: "#0f0e0d" } as const;
 
 export const Route = createRootRoute({
   beforeLoad: () => {
@@ -22,18 +21,15 @@ export const Route = createRootRoute({
         // header and footer pad themselves with `env(safe-area-inset-*)`.
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
-      // The page follows the system's scheme, so one tag per scheme.
-      {
-        name: "theme-color",
-        media: "(prefers-color-scheme: light)",
-        content: THEME_COLORS.light,
-      },
-      {
-        name: "theme-color",
-        media: "(prefers-color-scheme: dark)",
-        content: THEME_COLORS.dark,
-      },
+      // theme-color is added by THEME_INIT_SCRIPT, not here: it follows the
+      // page's own theme, which can differ from the system's, so one tag is
+      // kept in sync (useThemeMode) instead of a light/dark media pair.
       { name: "color-scheme", content: "light dark" },
+      { name: "application-name", content: SITE_NAME },
+      { name: "apple-mobile-web-app-title", content: SITE_NAME },
+      { name: "author", content: GITHUB_OWNER },
+      // Phones must not turn the commands' digits into call links.
+      { name: "format-detection", content: "telephone=no" },
     ],
     links: [
       // Found only once the stylesheet is parsed, the fonts would arrive
@@ -54,6 +50,19 @@ export const Route = createRootRoute({
       },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "96x96",
+        href: "/favicon-96x96.png",
+      },
+      { rel: "shortcut icon", href: "/favicon.ico" },
+      {
+        rel: "apple-touch-icon",
+        sizes: "180x180",
+        href: "/apple-touch-icon.png",
+      },
+      { rel: "manifest", href: "/site.webmanifest" },
     ],
   }),
   shellComponent: RootDocument,
@@ -61,8 +70,9 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={getLocale()}>
+    <html lang={getLocale()} suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
       <body className="antialiased">

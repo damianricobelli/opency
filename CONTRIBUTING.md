@@ -1,32 +1,33 @@
-# Contribuir
+# Contributing
 
-Gracias por sumar. opentcy quiere ser el skill y el MCP de referencia para equipos de contenido: cualquier mejora que acerque una pieza a "lista para publicar" es bienvenida.
+Thanks for helping. opentcy aims to be the reference skill and MCP server for content teams: any change that gets a piece closer to "ready to publish" is welcome.
 
-## Preparar el entorno
+## Setup
 
 ```bash
 git clone https://github.com/damianricobelli/opentcy
 cd opentcy
 npm install
-node bin/opentcy.mjs setup     # navegador para el render
+node bin/opentcy.mjs setup     # browser used by the renderer
 npm test
 ```
 
-El repo es a la vez el paquete y un workspace de prueba: `node bin/opentcy.mjs new prueba --brand _demo --layouts cover-type,closer`.
+The repo is both the package and a test workspace: `node bin/opentcy.mjs new test --brand _demo --layouts cover-type,closer`.
 
-## Qué aportar
+## What to contribute
 
-| Aporte | Dónde |
+| Contribution | Where |
 |---|---|
-| Un layout nuevo | `templates/layouts/` (slide + entrada en `piece.json` + fila en el README). Tiene que pasar `node bin/opentcy.mjs layouts` con 0 errores y 0 advertencias. |
-| Un chequeo de calidad | `scripts/render.mjs` o `scripts/lib/copy-lint.mjs`, con su caso en `scripts/test/`. |
-| Un banco de imágenes | Un proveedor más en `scripts/lib/stock.mjs` (`search` y `get`). Solo licencias que permitan uso comercial y modificación. |
-| Una herramienta MCP | Primero el comando en `scripts/`; después se expone en `mcp/server.mjs` y se documenta en `skills/opentcy/SKILL.md`. |
-| Otro idioma para el skill o el linter | Abrí un issue antes: hay que decidir cómo se organiza. |
+| A new layout | `templates/layouts/` (slide + entry in `piece.json` + row in the README). It must pass `node bin/opentcy.mjs layouts` with 0 errors and 0 warnings. |
+| A quality check | `scripts/render.mjs` or `scripts/lib/copy-lint.mjs`, with a case in `scripts/test/`. |
+| A stock provider | One more provider in `scripts/lib/stock.mjs` (`search` and `get`). Only licenses that allow commercial use and modification. |
+| An MCP tool | The command in `scripts/` first; then expose it in `mcp/server.mjs` and document it in `skills/opentcy/SKILL.md`. |
+| Copy-lint rules for another language | Open an issue first so we can agree on how the lists are organized. |
 
-## Antes del PR
+## Before the PR
 
-- `npm test` pasa.
-- Si tocaste `base.css` o un layout: `node bin/opentcy.mjs layouts` y mirá la hoja de contacto.
-- No incluyas marcas reales, claves ni fotos sin licencia.
-- Un PR, un tema.
+- `npm test` passes.
+- If you touched `base.css` or a layout: run `node bin/opentcy.mjs layouts` and look at the contact sheet.
+- No real brands, keys or unlicensed photos.
+- One PR, one topic.
+- Everything in English (see `AGENTS.md`).

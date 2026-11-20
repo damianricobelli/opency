@@ -4,9 +4,9 @@ node_modules/
 **/render/.frames-*/
 **/.check.html
 
-# Las marcas reales son de cada persona: solo la de ejemplo va al repo.
+# Real brands belong to each user: only the demo brand is versioned.
 brands/*
 !brands/_demo/
 
-# Del render de los layouts solo se versiona la hoja de contacto.
+# Only the contact sheet of the layout renders is versioned.
 templates/layouts/render/slide-*

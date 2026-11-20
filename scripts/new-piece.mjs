@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-// Crea una pieza nueva en brands/<marca>/pieces/.
+// Creates a new piece in brands/<brand>/pieces/.
 //
-//   npx opentcy new <slug> --layouts cover-type,steps,big-number,closer     combina layouts de la librería
-//   npx opentcy new <slug> --template <nombre>                               parte de una plantilla guardada de la marca
-//   npx opentcy new <slug> --from <id de pieza> [--format 9:16]              duplica o adapta una pieza existente
-//   npx opentcy new <slug> [--slides 6]                                      slides en blanco
-//   opciones: --brand slug  --campaign slug  --format 4:5|1:1|9:16|16:9  --date AAAA-MM-DD  --intent …  --category …
+//   npx opentcy new <slug> --layouts cover-type,steps,big-number,closer     combines layouts from the library
+//   npx opentcy new <slug> --template <name>                                 starts from one of the brand's saved templates
+//   npx opentcy new <slug> --from <piece id> [--format 9:16]                 duplicates or adapts an existing piece
+//   npx opentcy new <slug> [--slides 6]                                      blank slides
+//   options: --brand slug  --campaign slug  --format 4:5|1:1|9:16|16:9  --date YYYY-MM-DD  --intent …  --category …
 //
-// Al copiar un layout: ajusta las rutas a la marca, pone su nombre y su logo en la barra inferior
-// (versión clara u oscura según la superficie del slide) y numera el paginador.
+// When copying a layout: rewrites paths for the brand, puts its name and logo in the bottom bar
+// (light or dark version depending on the slide surface) and numbers the pager.
 
 import { mkdir, readFile, writeFile, readdir, access } from "node:fs/promises";
 import path from "node:path";
@@ -17,7 +17,7 @@ import { ROOT, FORMATS, parseArgs, readJSON, writeJSON, resolveBrand, brandDir, 
 const args = parseArgs(process.argv.slice(2));
 const fail = (m) => { console.error(`✗ ${m}`); process.exit(1); };
 const rawSlug = args._[0];
-if (!rawSlug) fail("Uso: npx opentcy new <slug> [--layouts a,b,c | --template nombre | --from pieza | --slides N] [--format 4:5] [--brand slug]");
+if (!rawSlug) fail("Usage: npx opentcy new <slug> [--layouts a,b,c | --template name | --from piece | --slides N] [--format 4:5] [--brand slug]");
 
 let brandSlug; try { brandSlug = await resolveBrand(args); } catch (e) { fail(e.message); }
 const brand = await loadBrand(brandSlug);
@@ -26,32 +26,32 @@ const bdir = brandDir(brandSlug);
 const date = args.date ?? today();
 const id = `${date}-${slugify(rawSlug)}`;
 const dir = path.join(bdir, "pieces", id);
-try { await access(dir); fail(`Ya existe brands/${brandSlug}/pieces/${id}.`); } catch {}
+try { await access(dir); fail(`brands/${brandSlug}/pieces/${id} already exists.`); } catch {}
 
-// ---- Fuentes de slides ----
+// ---- Slide sources ----
 let sources = [], inherited = null;
 if (args.layouts) {
   const lib = await readJSON(path.join(ROOT, "templates/layouts/piece.json"), { slides: [] });
   const byName = Object.fromEntries(lib.slides.map((s) => [s.layout, `slide-${String(s.n).padStart(2, "0")}.html`]));
   for (const name of String(args.layouts).split(",").map((s) => s.trim()).filter(Boolean)) {
-    if (!byName[name]) fail(`Layout desconocido "${name}". Disponibles: ${Object.keys(byName).join(", ")}`);
+    if (!byName[name]) fail(`Unknown layout "${name}". Available: ${Object.keys(byName).join(", ")}`);
     sources.push({ path: path.join(ROOT, "templates/layouts", byName[name]), layout: name });
   }
 } else if (args.template || args.from) {
   const src = args.template ? path.join(bdir, "templates", args.template) : path.join(bdir, "pieces", String(args.from).replace(/^pieces\//, ""));
   const files = (await readdir(src).catch(() => [])).filter((f) => /^slide-\d+\.html$/.test(f)).sort();
-  if (!files.length) fail(`${path.relative(ROOT, src)} no tiene slide-NN.html`);
+  if (!files.length) fail(`${path.relative(ROOT, src)} has no slide-NN.html files`);
   inherited = await readJSON(path.join(src, "piece.json"), null);
   sources = files.map((f, i) => ({ path: path.join(src, f), layout: inherited?.slides?.[i]?.layout ?? (args.template ? `template:${args.template}` : "copia") }));
 } else {
   const n = Number(args.slides ?? 1);
-  if (!Number.isInteger(n) || n < 1 || n > 20) fail("--slides debe ser 1–20");
+  if (!Number.isInteger(n) || n < 1 || n > 20) fail("--slides must be 1–20");
   sources = Array.from({ length: n }, () => ({ path: path.join(ROOT, "templates/base/slide.html"), layout: "base" }));
 }
-if (sources.length > 20) fail("Máximo 20 slides.");
+if (sources.length > 20) fail("Maximum 20 slides.");
 
 const format = args.format ?? inherited?.format ?? "4:5";
-if (!FORMATS[format]) fail(`Formato inválido "${format}". Opciones: ${Object.keys(FORMATS).join(", ")}`);
+if (!FORMATS[format]) fail(`Invalid format "${format}". Options: ${Object.keys(FORMATS).join(", ")}`);
 
 await mkdir(dir, { recursive: true });
 const total = sources.length;
@@ -72,7 +72,7 @@ for (const [i, src] of sources.entries()) {
     .replace(/src="(?:\.\.\/)+(?:brands\/[^/]+\/)?assets\//g, 'src="../../assets/')
     .replace(/(<span id="pager">)[^<]*(<\/span>)/, `$1${pad(n)}/${pad(total)}$2`)
     .replaceAll("{{FORMAT}}", format).replaceAll("{{PIECE_ID}}", id).replaceAll("{{N}}", pad(n)).replaceAll("{{TOTAL}}", pad(total));
-  // Un material por pieza: la textura es la de la marca, no la del layout de origen
+  // One material per piece: the texture is the brand's, not the source layout's
   if (brand.loaded && !args.from && !args.template && brand.raw?.defaults && "texture" in brand.raw.defaults) {
     const tex = brand.raw.defaults.texture;
     html = html.replace(/(<main class="canvas[^"]*")([^>]*)>/, (m, head, rest) => {
@@ -94,7 +94,7 @@ for (const [i, src] of sources.entries()) {
 
 const piece = {
   id, title: inherited?.title ?? "", status: "draft", category: args.category ?? inherited?.category ?? "", plannedDate: date, format, version: 1,
-  language: inherited?.language ?? brand.language ?? "es",
+  language: inherited?.language ?? brand.language ?? "en",
   ...(args.from ? { adaptedFrom: String(args.from) } : {}),
   ...(typeof args.campaign === "string" ? { campaign: slugify(args.campaign) } : inherited?.campaign && args.from ? { campaign: inherited.campaign } : {}),
   direction: inherited?.direction ?? { intent: args.intent ?? "", thesis: "", dominantMode: brand.raw?.defaults?.dominantMode ?? "", density: "", signatureMove: "", avoid: [] },
@@ -103,9 +103,9 @@ const piece = {
   captions: inherited?.captions ?? { instagram: "", linkedin: "", tiktok: "", x: { thread: [] } },
   sources: inherited?.sources ?? [],
   feedback: [],
-  history: [{ version: 1, date: today(), change: args.from ? `adaptada de ${args.from}${args.format ? ` a ${format}` : ""}` : "creada", by: "agente" }],
+  history: [{ version: 1, date: today(), change: args.from ? `adapted from ${args.from}${args.format ? ` to ${format}` : ""}` : "created", by: "agente" }],
 };
 await writeJSON(path.join(dir, "piece.json"), piece);
 
 console.log(`✓ brands/${brandSlug}/pieces/${id} · ${format} · ${total} slide(s)${args.layouts ? ` · ${sources.map((s) => s.layout).join(" → ")}` : ""}`);
-console.log(`  Siguiente: completar piece.json, editar los slides y correr: npx opentcy render ${id}${args.brand ? ` --brand ${brandSlug}` : ""}`);
+console.log(`  Next: fill in piece.json, edit the slides and run: npx opentcy render ${id}${args.brand ? ` --brand ${brandSlug}` : ""}`);

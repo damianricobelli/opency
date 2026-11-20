@@ -1,20 +1,20 @@
 #!/usr/bin/env node
-// Render + control de calidad de una pieza.
+// Render + quality control for a piece.
 //
-// Uso: npx opentcy render pieces/<id> [--scale 2] [--only 3] [--pdf] [--strict]
+// Usage: npx opentcy render pieces/<id> [--scale 2] [--only 3] [--pdf] [--strict]
 //
-// Genera en pieces/<id>/render/:
-//   slide-NN.png        PNG sRGB al tamaño del formato (× scale)
-//   slide-NN.jpg        JPG 95, croma 4:4:4 (texto nítido tras la recompresión de Instagram)
-//   contact-sheet.png   todos los slides al tamaño real de un teléfono: es lo que el agente inspecciona
-//   carousel.pdf        con --pdf (carrusel para LinkedIn: una página por slide)
-//   report.json / .md   hallazgos de calidad
+// Writes to pieces/<id>/render/:
+//   slide-NN.png        sRGB PNG at the format size (× scale)
+//   slide-NN.jpg        JPG 95, 4:4:4 chroma (crisp text after Instagram's recompression)
+//   contact-sheet.png   every slide at real phone size: this is what the agent inspects
+//   carousel.pdf        with --pdf (LinkedIn carousel: one page per slide)
+//   report.json / .md   quality findings
 //
-// Chequeos (mecánicos, composición, fotos y copy), medidos sobre el render real:
-//   contraste píxel a píxel incluso sobre fotos y degradados · viudas en titulares · zona segura y franja crítica
-//   superposición de bloques · texto recortado · tamaño ilegible en el teléfono · masa de acento
-//   fotos agrandadas (pixeladas) · caras/sujetos cortados por el recorte · texto sobre el sujeto · assets vetados
-//   fuentes que no cargaron · colores literales fuera de tokens · marcadores sin completar · copy (lib/copy-lint)
+// Checks (mechanical, composition, photos and copy), measured on the actual render:
+//   pixel-level contrast, even over photos and gradients · headline orphans · safe area and critical strip
+//   block overlap · clipped text · illegible size on a phone · accent mass
+//   upscaled (pixelated) photos · faces/subjects cut by the crop · text over the subject · vetoed assets
+//   fonts that failed to load · literal colors outside tokens · unfilled placeholders · copy (lib/copy-lint)
 
 import { readdir, writeFile, mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
@@ -26,21 +26,21 @@ import { lintCopy } from "./lib/copy-lint.mjs";
 const args = parseArgs(process.argv.slice(2));
 let pieceDir;
 try { pieceDir = await resolvePiece(args._[0], args); }
-catch (e) { console.error(`✗ ${e.message}\nUso: npx opentcy render <id de pieza | ruta> [--brand slug] [--scale 2] [--only N] [--pdf] [--strict]`); process.exit(1); }
+catch (e) { console.error(`✗ ${e.message}\nUsage: npx opentcy render <piece id | path> [--brand slug] [--scale 2] [--only N] [--pdf] [--strict]`); process.exit(1); }
 const scale = Number(args.scale ?? 1);
-if (![1, 2, 3, 4].includes(scale)) { console.error("--scale debe ser 1, 2, 3 o 4"); process.exit(1); }
+if (![1, 2, 3, 4].includes(scale)) { console.error("--scale must be 1, 2, 3 or 4"); process.exit(1); }
 
 const piece = await readJSON(path.join(pieceDir, "piece.json"), {});
 const format = piece.format ?? "4:5";
 const spec = FORMATS[format];
-if (!spec) { console.error(`Formato desconocido "${format}"`); process.exit(1); }
+if (!spec) { console.error(`Unknown format "${format}"`); process.exit(1); }
 const brandSlug = brandOf(pieceDir);
 const brand = await loadBrand(brandSlug);
 const assets = await loadAssets(brandSlug);
 
 let files = (await readdir(pieceDir)).filter((f) => /^slide-\d+\.html$/.test(f)).sort();
 if (args.only) files = files.filter((f) => Number(f.match(/\d+/)[0]) === Number(args.only));
-if (!files.length) { console.error("No hay slide-NN.html para renderizar."); process.exit(1); }
+if (!files.length) { console.error("No slide-NN.html files to render."); process.exit(1); }
 
 const outDir = path.join(pieceDir, "render");
 await mkdir(outDir, { recursive: true });
@@ -49,7 +49,7 @@ const launch = () => launchBrowser().catch((e) => { console.error(`✗ ${e.messa
 const browser = await launch();
 const context = await browser.newContext({ viewport: { width: spec.w, height: spec.h }, deviceScaleFactor: scale });
 
-// ---------- Inspección del DOM (corre dentro de la página) ----------
+// ---------- DOM inspection (runs inside the page) ----------
 function inspect({ spec, assets }) {
   const W = spec.w, H = spec.h, S = spec.safe;
   const issues = [];
@@ -60,7 +60,7 @@ function inspect({ spec, assets }) {
   const visible = (el) => { const cs = getComputedStyle(el); return cs.visibility !== "hidden" && cs.display !== "none" && Number(cs.opacity) > 0.02; };
   const ownText = (el) => [...el.childNodes].filter((n) => n.nodeType === 3 && n.textContent.trim());
 
-  // color computado → rgba real (resuelve color-mix, oklab, etc.)
+  // computed color → actual rgba (resolves color-mix, oklab, etc.)
   const cv = document.createElement("canvas"); cv.width = cv.height = 1;
   const cx = cv.getContext("2d", { willReadFrequently: true });
   const toRGBA = (c) => { cx.clearRect(0, 0, 1, 1); cx.fillStyle = "#000"; cx.fillStyle = c; cx.fillRect(0, 0, 1, 1); const d = cx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
@@ -77,7 +77,7 @@ function inspect({ spec, assets }) {
     return box;
   };
 
-  // ---- Bloques de texto ----
+  // ---- Text blocks ----
   const textEls = [...document.body.querySelectorAll("*")].filter((el) => ownText(el).length && visible(el) && !el.closest("script,style,title"));
   const blocks = textEls.filter((el) => !textEls.some((o) => o !== el && o.contains(el)));
   const headlineSel = "h1,h2,h3,.t-hero,.t-cover,.t-closer,.t-title,.t-subtitle,[data-role=headline]";
@@ -94,17 +94,17 @@ function inspect({ spec, assets }) {
     contrastTargets.push({ where: label(el), rect: tr, color: toRGBA(cs.color), large, fs });
     const small = isChrome(el) || el.closest(".label,.t-label,.chip,[data-role=label]");
     const minPx = small ? 9 : 10.5;
-    if (displayPx < minPx) add("illegible_text_size", el, `${fs.toFixed(0)} px en canvas = ${displayPx.toFixed(1)} pt en el teléfono (mín. ${minPx}${small ? " para etiquetas" : ""})`);
+    if (displayPx < minPx) add("illegible_text_size", el, `${fs.toFixed(0)} px on canvas = ${displayPx.toFixed(1)} pt on a phone (min. ${minPx}${small ? " for labels" : ""})`);
     if (inBleed(el) || el.closest("[aria-hidden=true]")) continue;
-    // límites (tolerancia: el área de glifo excede la caja de línea ~0.15em arriba y abajo)
+    // bounds (tolerance: the glyph area exceeds the line box by ~0.15em above and below)
     const tol = fs * 0.16;
-    if (tr.l < -tol || tr.t < -tol || tr.r > W + tol || tr.b > H + tol) add("layer_out_of_bounds", el, "texto fuera del canvas", "error");
-    else if (tr.l < S.left - 2 || tr.t < S.top - tol || tr.r > W - S.right + 2 || tr.b > H - S.bottom + tol) add("outside_safe_area", el, "texto fuera de la zona segura");
-    else if (!isChrome(el) && tr.b > H - spec.critical + tol && spec.critical > S.bottom) add("critical_zone", el, `texto de contenido en los ${spec.critical} px inferiores (los tapa la interfaz); solo chrome ahí`);
-    // desborde respecto de su propia caja
+    if (tr.l < -tol || tr.t < -tol || tr.r > W + tol || tr.b > H + tol) add("layer_out_of_bounds", el, "text outside the canvas", "error");
+    else if (tr.l < S.left - 2 || tr.t < S.top - tol || tr.r > W - S.right + 2 || tr.b > H - S.bottom + tol) add("outside_safe_area", el, "text outside the safe area");
+    else if (!isChrome(el) && tr.b > H - spec.critical + tol && spec.critical > S.bottom) add("critical_zone", el, `content text in the bottom ${spec.critical} px (covered by the app UI); chrome only there`);
+    // overflow relative to its own box
     const er = el.getBoundingClientRect();
-    if (tr.r > er.right + 2 || tr.l < er.left - 2) add("text_overflow", el, "el texto se sale de su caja (palabra demasiado larga para el ancho)");
-    if (cs.overflow !== "visible" && (el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1)) add("text_overflow", el, "texto recortado por overflow", "error");
+    if (tr.r > er.right + 2 || tr.l < er.left - 2) add("text_overflow", el, "text overflows its box (word too long for the width)");
+    if (cs.overflow !== "visible" && (el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1)) add("text_overflow", el, "text clipped by overflow", "error");
   }
 
   for (const el of blocks) {
@@ -112,7 +112,7 @@ function inspect({ spec, assets }) {
     texts.push({ id: el.id || label(el), role: roleOf(el), text, chrome: isChrome(el) });
   }
 
-  // ---- Viudas en titulares: última línea de una sola palabra ----
+  // ---- Headline orphans: last line with a single word ----
   for (const el of blocks.filter((b) => b.matches(headlineSel) || b.querySelector(headlineSel))) {
     const r = document.createRange(); const words = [];
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
@@ -123,19 +123,19 @@ function inspect({ spec, assets }) {
     if (words.length < 3) continue;
     const lines = [];
     for (const w of words) { const L = lines.find((l) => Math.abs(l.top - w.top) < w.h * 0.5); L ? L.words.push(w.w) : lines.push({ top: w.top, words: [w.w] }); }
-    if (lines.length >= 2 && lines[lines.length - 1].words.length === 1) add("headline_orphan", el, `última línea con una sola palabra: "${lines[lines.length - 1].words[0]}"`, "error");
+    if (lines.length >= 2 && lines[lines.length - 1].words.length === 1) add("headline_orphan", el, `last line has a single word: "${lines[lines.length - 1].words[0]}"`, "error");
   }
 
-  // ---- Superposición crítica entre bloques de texto ----
+  // ---- Critical overlap between text blocks ----
   const rects = blocks.map((el) => ({ el, r: textRect(el) })).filter((x) => x.r && !inBleed(x.el) && !x.el.closest("[aria-hidden=true]"));
   for (let i = 0; i < rects.length; i++) for (let j = i + 1; j < rects.length; j++) {
     const a = rects[i].r, b = rects[j].r;
     const ix = Math.max(0, Math.min(a.r, b.r) - Math.max(a.l, b.l)), iy = Math.max(0, Math.min(a.b, b.b) - Math.max(a.t, b.t));
     const minA = Math.min((a.r - a.l) * (a.b - a.t), (b.r - b.l) * (b.b - b.t));
-    if (ix * iy > minA * 0.04) add("critical_overlap", rects[i].el, `se superpone con ${label(rects[j].el)}`, "error");
+    if (ix * iy > minA * 0.04) add("critical_overlap", rects[i].el, `overlaps ${label(rects[j].el)}`, "error");
   }
 
-  // ---- Espacio muerto: franjas verticales vacías dentro de la zona de contenido ----
+  // ---- Dead space: empty vertical bands inside the content area ----
   {
     const area = W * H;
     const big = [...document.querySelectorAll("img,.photo,video")].some((e) => { const q = e.getBoundingClientRect(); return q.width * q.height > area * 0.5; });
@@ -155,45 +155,45 @@ function inspect({ spec, assets }) {
       for (const [a, b] of segs) { if (topGap === null) topGap = a - top; else middle = Math.max(middle, a - cursor); cursor = Math.max(cursor, b); }
       const bottomGap = bottom - cursor;
       const T = (topGap ?? 0) / zone, B = bottomGap / zone, M = middle / zone, pct = (x) => `${Math.round(x * 100)} %`;
-      const hint = "repartí el contenido, agrandá la jerarquía o sumá un elemento con función";
+      const hint = "spread the content out, scale up the hierarchy or add an element with a purpose";
       if (!segs.length) {}
-      else if (B > 0.3 && B - T > 0.15) add("top_stack", null, `contenido amontonado arriba: ${pct(B)} de la zona vacía abajo; ${hint}`);
-      else if (T > 0.35 && T - B > 0.15) add("dead_space", null, `contenido hundido: ${pct(T)} vacío arriba; ${hint}`);
-      else if (M > 0.4) add("dead_space", null, `hueco de ${pct(M)} en el medio; ${hint}`);
-      else if (T > 0.38 && B > 0.38) add("dead_space", null, `contenido chico para el slide (${pct(T)} arriba y ${pct(B)} abajo vacíos); ${hint}`);
+      else if (B > 0.3 && B - T > 0.15) add("top_stack", null, `content stacked at the top: ${pct(B)} of the area is empty below; ${hint}`);
+      else if (T > 0.35 && T - B > 0.15) add("dead_space", null, `content sunk to the bottom: ${pct(T)} empty above; ${hint}`);
+      else if (M > 0.4) add("dead_space", null, `${pct(M)} gap in the middle; ${hint}`);
+      else if (T > 0.38 && B > 0.38) add("dead_space", null, `content too small for the slide (${pct(T)} empty above and ${pct(B)} below); ${hint}`);
     }
   }
 
   // ---- Logo ----
   for (const el of document.querySelectorAll("[data-role=logo], .logo, #logo")) {
     const q = el.getBoundingClientRect();
-    if (q.left < S.left - 1 || q.top < S.top - 1 || q.right > W - S.right + 1 || q.bottom > H - S.bottom + 1) add("outside_safe_area", el, "logo fuera de la zona segura");
+    if (q.left < S.left - 1 || q.top < S.top - 1 || q.right > W - S.right + 1 || q.bottom > H - S.bottom + 1) add("outside_safe_area", el, "logo outside the safe area");
   }
 
-  // ---- Imágenes: faltantes, externas, agrandadas, recortes de sujeto, texto sobre el sujeto ----
+  // ---- Images: missing, external, upscaled, subject crops, text over the subject ----
   const byId = Object.fromEntries(assets.map((a) => [a.id, a]));
   const dpr = window.devicePixelRatio;
   const imgs = [], logos = [];
   for (const img of document.querySelectorAll("img")) {
     const q = img.getBoundingClientRect();
     const src = img.getAttribute("src") || "";
-    if (/^https?:/i.test(src)) add("external_image", img, "imagen externa: descargala a assets/ y registrala (npx opentcy assets add)", "error");
-    if (!img.complete || !img.naturalWidth) { add("missing_asset", img, `no cargó ${src}`, "error"); continue; }
+    if (/^https?:/i.test(src)) add("external_image", img, "external image: download it into assets/ and register it (npx opentcy assets add)", "error");
+    if (!img.complete || !img.naturalWidth) { add("missing_asset", img, `failed to load ${src}`, "error"); continue; }
     const fit = getComputedStyle(img).objectFit;
     const nw = img.naturalWidth, nh = img.naturalHeight;
     const s = fit === "contain" ? Math.min(q.width / nw, q.height / nh) : fit === "fill" ? Math.max(q.width / nw, q.height / nh) : Math.max(q.width / nw, q.height / nh);
     const need = s * dpr;
-    if (!/\.svg(\?|$)/i.test(src) && need > 1.02 && q.width * q.height > 40000) add("image_upscaled", img, `se muestra al ${(need * 100).toFixed(0)} % de su tamaño real (${nw}×${nh}) → se va a ver blanda/pixelada`, need > 1.3 ? "error" : "warn");
+    if (!/\.svg(\?|$)/i.test(src) && need > 1.02 && q.width * q.height > 40000) add("image_upscaled", img, `shown at ${(need * 100).toFixed(0)} % of its real size (${nw}×${nh}) → it will look soft/pixelated`, need > 1.3 ? "error" : "warn");
     const id = img.dataset.asset;
     const meta = id ? byId[id] : null;
     const isLogo = img.matches("[data-role=logo], .logo, #logo") || /\/logos\//.test(src);
-    if (isLogo) { /* los logos se declaran en brand.json, no en el registro de fotos */ }
-    else if (!id) add("asset_untracked", img, "imagen sin data-asset: no se puede controlar repetición ni recorte");
-    else if (!isLogo && !meta) add("asset_unregistered", img, `data-asset="${id}" no está en assets/assets.json`);
-    if (meta?.vetoed) add("vetoed_asset", img, `asset vetado por la persona: ${id}`, "error");
+    if (isLogo) { /* logos are declared in brand.json, not in the photo registry */ }
+    else if (!id) add("asset_untracked", img, "image without data-asset: reuse and cropping cannot be checked");
+    else if (!isLogo && !meta) add("asset_unregistered", img, `data-asset="${id}" is not in assets/assets.json`);
+    if (meta?.vetoed) add("vetoed_asset", img, `asset vetoed by the user: ${id}`, "error");
     if (isLogo && !img.closest("[data-bleed]") && !img.matches("[data-bleed]")) logos.push({ where: label(img), src: img.src, rect: { l: q.left, t: q.top, w: q.width, h: q.height } });
     if (!isLogo) imgs.push({ id, rect: { l: q.left, t: q.top, r: q.right, b: q.bottom } });
-    // regiones protegidas (coordenadas normalizadas 0–1 sobre la imagen original)
+    // protected regions (normalized 0–1 coordinates on the original image)
     if (meta?.analysis?.protectedRegions?.length && (fit === "cover" || fit === "")) {
       const pos = getComputedStyle(img).objectPosition.split(" ").map((v) => parseFloat(v) / 100);
       const dw = nw * s, dh = nh * s;
@@ -203,16 +203,16 @@ function inspect({ spec, assets }) {
       for (const pr of meta.analysis.protectedRegions) {
         const R = { l: ox + pr.x * dw, t: oy + pr.y * dh, r: ox + (pr.x + pr.w) * dw, b: oy + (pr.y + pr.h) * dh };
         const cut = R.l < clip.l - 2 || R.t < clip.t - 2 || R.r > clip.r + 2 || R.b > clip.b + 2;
-        if (cut) add("subject_cropped", img, `el recorte corta ${pr.kind} (${id}); ajustá --fx/--fy o el formato`, pr.kind === "face" ? "error" : "warn");
+        if (cut) add("subject_cropped", img, `the crop cuts off the ${pr.kind} (${id}); adjust --fx/--fy or the format`, pr.kind === "face" ? "error" : "warn");
         for (const { el, r } of rects) {
           const ix = Math.max(0, Math.min(R.r, r.r) - Math.max(R.l, r.l)), iy = Math.max(0, Math.min(R.b, r.b) - Math.max(R.t, r.t));
-          if (ix * iy > (R.r - R.l) * (R.b - R.t) * 0.08) add("text_over_subject", el, `el texto tapa ${pr.kind} de ${id}`, pr.kind === "face" ? "error" : "warn");
+          if (ix * iy > (R.r - R.l) * (R.b - R.t) * 0.08) add("text_over_subject", el, `text covers the ${pr.kind} of ${id}`, pr.kind === "face" ? "error" : "warn");
         }
       }
     }
   }
 
-  // ---- Fuentes ----
+  // ---- Fonts ----
   const generic = /^(system-ui|sans-serif|serif|monospace|ui-monospace|ui-sans-serif|cursive|fantasy|-apple-system|arial|helvetica)$/i;
   const loaded = new Set([...document.fonts].filter((f) => f.status === "loaded").map((f) => f.family.replace(/["']/g, "").toLowerCase()));
   const missing = new Set();
@@ -220,24 +220,24 @@ function inspect({ spec, assets }) {
     const fam = getComputedStyle(el).fontFamily.split(",")[0].replace(/["']/g, "").trim();
     if (!generic.test(fam) && !loaded.has(fam.toLowerCase())) missing.add(fam);
   }
-  if (missing.size) add("font_not_loaded", null, `no cargaron: ${[...missing].join(", ")} → se ve con una fuente de reemplazo. Preferí fuentes locales en assets/fonts/`, "error");
+  if (missing.size) add("font_not_loaded", null, `failed to load: ${[...missing].join(", ")} → rendered with a fallback font. Prefer local fonts in assets/fonts/`, "error");
 
-  // ---- Marcadores y datos pendientes ----
-  if (/\{\{[^}]+\}\}/.test(document.body.innerText)) add("placeholder_left", null, "quedan marcadores {{…}}", "error");
-  if (document.querySelector(".tbd")) add("data_tbd", null, "hay datos marcados como a confirmar (.tbd)", "error");
+  // ---- Placeholders and pending data ----
+  if (/\{\{[^}]+\}\}/.test(document.body.innerText)) add("placeholder_left", null, "{{…}} placeholders left unfilled", "error");
+  if (document.querySelector(".tbd")) add("data_tbd", null, "data still marked as to be confirmed (.tbd)", "error");
 
-  // ---- Modo de fondo (para el ritmo del feed) y acento ----
+  // ---- Background mode (for feed rhythm) and accent ----
   const mode = document.querySelector(".photo img") ? "photo" : "flat";
   const canvasEl = document.querySelector(".canvas") ?? document.body;
   const accent = toRGBA(getComputedStyle(canvasEl).getPropertyValue("--accent").trim() || "transparent");
 
-  // ---- Presupuesto de caracteres declarado por el layout (data-max) ----
+  // ---- Character budget declared by the layout (data-max) ----
   for (const el of document.querySelectorAll("[data-max]")) {
     const max = Number(el.dataset.max), len = el.innerText.replace(/\s+/g, " ").trim().length;
-    if (max && len > max * 1.2) add("over_budget", el, `${len} caracteres; este layout está dibujado para ~${max}. Acortá o cambiá de layout (no achiques la letra)`);
+    if (max && len > max * 1.2) add("over_budget", el, `${len} characters; this layout is designed for ~${max}. Shorten the text or switch layouts (do not shrink the type)`);
   }
 
-  // ---- Datos para la coherencia entre slides ----
+  // ---- Data for cross-slide consistency ----
   const chrome = {};
   for (const el of document.querySelectorAll("[data-chrome] [id], [data-chrome][id]")) { const q = el.getBoundingClientRect(); chrome[el.id] = { l: Math.round(q.left), r: Math.round(q.right), b: Math.round(q.bottom), size: getComputedStyle(el).fontSize }; }
   const material = { texture: canvasEl.dataset?.texture ?? "", grade: document.querySelector(".photo")?.dataset.grade ?? "" };
@@ -245,7 +245,7 @@ function inspect({ spec, assets }) {
   return { issues, texts, contrastTargets, mode, accent, images: imgs, logos, chrome, material };
 }
 
-// ---------- Mediciones sobre píxeles ----------
+// ---------- Pixel measurements ----------
 const lum = (r, g, b) => { const f = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
 const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 
@@ -276,7 +276,7 @@ async function measureContrast(bgPng, targets) {
   return out;
 }
 
-// Logo contra su fondo real: porcentaje de píxeles opacos del logo que casi no se distinguen
+// Logo against its actual background: share of the logo's opaque pixels that are barely distinguishable
 async function logoVisibility(flatPng, logo) {
   const w = Math.round(logo.rect.w * scale), h = Math.round(logo.rect.h * scale);
   const left = Math.round(logo.rect.l * scale), top = Math.round(logo.rect.t * scale);
@@ -306,7 +306,7 @@ async function accentMass(png, accent) {
   return hit / total;
 }
 
-// Colores literales en el HTML del slide (fuera de tokens)
+// Literal colors in the slide HTML (outside tokens)
 function literalColors(html) {
   const css = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join("\n") + "\n" + [...html.matchAll(/style="([^"]*)"/gi)].map((m) => m[1]).join(";\n");
   const found = new Set();
@@ -318,7 +318,7 @@ function literalColors(html) {
   return [...found];
 }
 
-// ---------- Loop de slides ----------
+// ---------- Slide loop ----------
 const report = { piece: piece.id ?? path.basename(pieceDir), format, scale, renderedAt: new Date().toISOString(), slides: [], copy: [] };
 const pngs = [];
 
@@ -330,7 +330,7 @@ for (const file of files) {
   page.on("pageerror", (e) => netErrors.push(`JS: ${e.message}`));
   await page.goto(pathToFileURL(path.join(pieceDir, file)).href, { waitUntil: "networkidle" });
   await page.evaluate(async () => { await document.fonts.ready; await Promise.all([...document.images].map((i) => i.decode().catch(() => {}))); });
-  // Congela animaciones en su estado final para el still
+  // Freeze animations at their final state for the still
   await page.evaluate(async () => {
     document.getAnimations().forEach((a) => { try { a.finish(); } catch { a.pause(); } });
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -339,31 +339,31 @@ for (const file of files) {
   const dom = await page.evaluate(inspect, { spec, assets });
   const png = await page.screenshot({ clip: { x: 0, y: 0, width: spec.w, height: spec.h }, type: "png" });
 
-  // Fondo sin texto para medir contraste real
+  // Background without text, to measure real contrast
   await page.addStyleTag({ content: "*{color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important;text-decoration-color:transparent!important}" });
   const bgPng = await page.screenshot({ clip: { x: 0, y: 0, width: spec.w, height: spec.h }, type: "png" });
-  // Sin fotos: para medir la masa de acento sin que una foto de tonos parecidos la infle
+  // Without photos: to measure accent mass without a similarly toned photo inflating it
   await page.addStyleTag({ content: "img,.photo,video{visibility:hidden!important}" });
   const flatPng = await page.screenshot({ clip: { x: 0, y: 0, width: spec.w, height: spec.h }, type: "png" });
   await page.close();
 
   const issues = [...dom.issues];
-  for (const u of netErrors) issues.push({ code: "request_failed", where: "", msg: `no cargó ${u}`, severity: /fonts\.(googleapis|gstatic)/.test(u) ? "warn" : "error" });
+  for (const u of netErrors) issues.push({ code: "request_failed", where: "", msg: `failed to load ${u}`, severity: /fonts\.(googleapis|gstatic)/.test(u) ? "warn" : "error" });
 
   for (const c of await measureContrast(bgPng, dom.contrastTargets)) {
     const min = c.large ? 3 : 4.5;
     if (c.p10 < min) issues.push({ code: "unreadable_contrast", where: c.where, severity: c.p10 < min * 0.8 ? "error" : "warn",
-      msg: `contraste ${c.p10.toFixed(2)}:1 (mín. ${min}:1${c.large ? ", texto grande" : ""})${c.busy ? " sobre fondo con textura/foto → velo, scrim o mover el bloque" : ""}` });
+      msg: `contrast ${c.p10.toFixed(2)}:1 (min. ${min}:1${c.large ? ", large text" : ""})${c.busy ? " over a textured/photo background → add a veil or scrim, or move the block" : ""}` });
   }
   for (const lg of dom.logos) {
     const lost = await logoVisibility(flatPng, lg);
-    if (lost !== null && lost > 0.12) issues.push({ code: "logo_low_contrast", where: lg.where, severity: "error", msg: `${Math.round(lost * 100)} % del logo no se distingue de su fondo: usá la variante para esta superficie (brand.json → logos)` });
+    if (lost !== null && lost > 0.12) issues.push({ code: "logo_low_contrast", where: lg.where, severity: "error", msg: `${Math.round(lost * 100)} % of the logo is indistinguishable from its background: use the variant for this surface (brand.json → logos)` });
   }
   const mass = await accentMass(flatPng, dom.accent);
-  if (mass > 0.1) issues.push({ code: "accent_mass", where: "", msg: `el acento cubre ${(mass * 100).toFixed(0)} % del slide (máx. ~10 %)`, severity: "warn" });
+  if (mass > 0.1) issues.push({ code: "accent_mass", where: "", msg: `the accent covers ${(mass * 100).toFixed(0)} % of the slide (max. ~10 %)`, severity: "warn" });
 
   const lits = literalColors(await readFile(path.join(pieceDir, file), "utf8"));
-  if (lits.length) issues.push({ code: "brand_literal_color", where: "", msg: `colores fuera de tokens: ${lits.slice(0, 5).join(", ")}`, severity: "warn" });
+  if (lits.length) issues.push({ code: "brand_literal_color", where: "", msg: `colors outside tokens: ${lits.slice(0, 5).join(", ")}`, severity: "warn" });
 
   const base = file.replace(/\.html$/, "");
   await sharp(png).withIccProfile("srgb").png({ compressionLevel: 9 }).toFile(path.join(outDir, `${base}.png`));
@@ -374,7 +374,7 @@ for (const file of files) {
 }
 await browser.close();
 
-// ---------- Coherencia entre slides ----------
+// ---------- Cross-slide consistency ----------
 if (!args.only && report.slides.length > 1 && piece.status !== "reference") {
   const first = report.slides[0];
   const drift = new Set(), mat = new Set();
@@ -383,17 +383,17 @@ if (!args.only && report.slides.length > 1 && piece.status !== "reference") {
       const ref = first.chrome[id]; if (!ref) continue;
       if (Math.abs(c.b - ref.b) > 2 || c.size !== ref.size || (Math.abs(c.l - ref.l) > 2 && Math.abs(c.r - ref.r) > 2)) drift.add(s.n);
     }
-    if (s.material.texture !== first.material.texture) mat.add(`slide ${s.n}: textura "${s.material.texture || "ninguna"}"`);
+    if (s.material.texture !== first.material.texture) mat.add(`slide ${s.n}: texture "${s.material.texture || "none"}"`);
   }
   const grades = new Set(report.slides.map((s) => s.material.grade).filter(Boolean));
-  if (drift.size) first.issues.push({ code: "alignment_drift", where: "", msg: `la marca o el paginador cambian de posición o tamaño en los slides ${[...drift].join(", ")} respecto del 1`, severity: "warn" });
-  if (mat.size) first.issues.push({ code: "material_drift", where: "", msg: `textura distinta a la del slide 1 ("${first.material.texture || "ninguna"}") en ${[...mat].join("; ")}. Un material por pieza`, severity: "warn" });
-  if (grades.size > 1) first.issues.push({ code: "material_drift", where: "", msg: `tratamientos de foto mezclados: ${[...grades].join(", ")}. Uno por pieza`, severity: "warn" });
+  if (drift.size) first.issues.push({ code: "alignment_drift", where: "", msg: `the brand mark or the pager changes position or size on slides ${[...drift].join(", ")} compared to slide 1`, severity: "warn" });
+  if (mat.size) first.issues.push({ code: "material_drift", where: "", msg: `texture differs from slide 1 ("${first.material.texture || "none"}") on ${[...mat].join("; ")}. One material per piece`, severity: "warn" });
+  if (grades.size > 1) first.issues.push({ code: "material_drift", where: "", msg: `mixed photo treatments: ${[...grades].join(", ")}. One per piece`, severity: "warn" });
   const layouts = (piece.slides ?? []).map((x) => x.layout).filter(Boolean);
-  if (layouts.length >= 4 && new Set(layouts).size === 1) first.issues.push({ code: "template_rhythm", where: "", msg: `los ${layouts.length} slides usan el mismo layout (${layouts[0]}): variá la estructura`, severity: "warn" });
+  if (layouts.length >= 4 && new Set(layouts).size === 1) first.issues.push({ code: "template_rhythm", where: "", msg: `all ${layouts.length} slides use the same layout (${layouts[0]}): vary the structure`, severity: "warn" });
 }
 
-// ---------- Copy (todos los slides + captions) ----------
+// ---------- Copy (all slides + captions) ----------
 if (!args.only) {
   report.copy = lintCopy({
     slides: report.slides.map((s) => ({ n: s.n, texts: s.texts })),
@@ -403,10 +403,10 @@ if (!args.only) {
     verified: brand.verified, sources: piece.sources ?? [],
   });
   const missingAlt = (piece.slides ?? []).filter((s) => !s.alt).map((s) => s.n);
-  if (missingAlt.length) report.copy.push({ code: "missing_alt_text", where: `slides ${missingAlt.join(",")}`, msg: "falta texto alternativo (accesibilidad; Instagram y LinkedIn lo aceptan)", severity: "warn" });
+  if (missingAlt.length) report.copy.push({ code: "missing_alt_text", where: `slides ${missingAlt.join(",")}`, msg: "missing alt text (accessibility; Instagram and LinkedIn support it)", severity: "warn" });
 }
 
-// ---------- Captions y alt text como archivos listos para pegar ----------
+// ---------- Captions and alt text as paste-ready files ----------
 if (!args.only) {
   for (const [net, c] of Object.entries(piece.captions ?? {})) {
     const text = typeof c === "string" ? c : (c?.thread ?? []).map((t, i) => `${i + 1}/ ${t}`).join("\n\n");
@@ -416,7 +416,7 @@ if (!args.only) {
   if (alts) await writeFile(path.join(outDir, "alt-text.txt"), alts + "\n");
 }
 
-// ---------- Hoja de contacto al tamaño de un teléfono ----------
+// ---------- Contact sheet at phone size ----------
 if (!args.only) {
   const tw = spec.display, th = Math.round(spec.h * tw / spec.w), gap = 24, cols = Math.min(pngs.length, 5);
   const rows = Math.ceil(pngs.length / cols);
@@ -438,29 +438,29 @@ if (args.pdf && !args.only) {
   await b2.close();
 }
 
-// ---------- Reporte ----------
+// ---------- Report ----------
 const all = [...report.slides.flatMap((s) => s.issues.map((i) => ({ ...i, slide: s.n }))), ...report.copy.map((i) => ({ ...i, slide: "copy" }))];
 report.summary = { errors: all.filter((i) => i.severity === "error").length, warnings: all.filter((i) => i.severity !== "error").length, mode: report.slides[0]?.mode };
 report.cover = { hook: report.slides.find((s) => s.n === 1)?.texts.find((t) => t.role === "headline")?.text ?? "", images: report.slides.find((s) => s.n === 1)?.images ?? [] };
 await writeJSON(path.join(outDir, "report.json"), report);
 
-const md = [`# Reporte de calidad — ${report.piece}`, "", `${format} · ${files.length} slide(s) · ×${scale} · ${report.summary.errors} errores · ${report.summary.warnings} advertencias`, ""];
+const md = [`# Quality report — ${report.piece}`, "", `${format} · ${files.length} slide(s) · ×${scale} · ${report.summary.errors} errors · ${report.summary.warnings} warnings`, ""];
 for (const s of report.slides) {
   md.push(`## Slide ${s.n} (${s.mode})`);
-  md.push(s.issues.length ? s.issues.map((i) => `- ${i.severity === "error" ? "**ERROR**" : "aviso"} \`${i.code}\` ${i.where} — ${i.msg}`).join("\n") : "- sin hallazgos");
+  md.push(s.issues.length ? s.issues.map((i) => `- ${i.severity === "error" ? "**ERROR**" : "warning"} \`${i.code}\` ${i.where} — ${i.msg}`).join("\n") : "- no findings");
   md.push("");
 }
-md.push("## Copy y captions", report.copy.length ? report.copy.map((i) => `- ${i.severity === "error" ? "**ERROR**" : "aviso"} \`${i.code}\` ${i.where} — ${i.msg}`).join("\n") : "- sin hallazgos");
+md.push("## Copy and captions", report.copy.length ? report.copy.map((i) => `- ${i.severity === "error" ? "**ERROR**" : "warning"} \`${i.code}\` ${i.where} — ${i.msg}`).join("\n") : "- no findings");
 await writeFile(path.join(outDir, "report.md"), md.join("\n") + "\n");
 
-// ---------- Consola ----------
+// ---------- Console ----------
 const rel = (p) => path.relative(process.cwd(), p);
 for (const s of report.slides) {
   const e = s.issues.filter((i) => i.severity === "error").length;
   console.log(`${e ? "✗" : s.issues.length ? "⚠" : "✓"} slide ${String(s.n).padStart(2, "0")} (${s.mode})`);
-  for (const i of s.issues) console.log(`    ${i.severity === "error" ? "ERROR" : "aviso"} ${i.code} ${i.where} — ${i.msg}`);
+  for (const i of s.issues) console.log(`    ${i.severity === "error" ? "ERROR" : "warning"} ${i.code} ${i.where} — ${i.msg}`);
 }
-if (report.copy.length) { console.log("copy:"); for (const i of report.copy) console.log(`    ${i.severity === "error" ? "ERROR" : "aviso"} ${i.code} ${i.where} — ${i.msg}`); }
+if (report.copy.length) { console.log("copy:"); for (const i of report.copy) console.log(`    ${i.severity === "error" ? "ERROR" : "warning"} ${i.code} ${i.where} — ${i.msg}`); }
 console.log(`\n→ ${rel(outDir)}/ (png, jpg${args.pdf ? ", carousel.pdf" : ""}, contact-sheet.png, report.md)`);
-console.log(`${report.summary.errors} errores · ${report.summary.warnings} advertencias. Mirá contact-sheet.png antes de entregar.`);
+console.log(`${report.summary.errors} errors · ${report.summary.warnings} warnings. Look at contact-sheet.png before delivering.`);
 if (args.strict && report.summary.errors) process.exit(2);

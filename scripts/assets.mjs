@@ -1,19 +1,19 @@
 #!/usr/bin/env node
-// Biblioteca de assets con control de calidad.
+// Asset library with quality control.
 //
-//   npx opentcy assets add <archivo|url> --kind photo|logo|texture|stock --desc "…" [--id x] [--credit "…"] [--license "…"]
-//   npx opentcy assets stock "<búsqueda en inglés>" [--provider auto|pexels|unsplash|openverse] [--orientation portrait|landscape|square] [--n 12] [--page 2] [--json]
-//   npx opentcy assets stock-import <pexels|unsplash|openverse>:<id> --desc "…"
+//   npx opentcy assets add <file|url> --kind photo|logo|texture|stock --desc "…" [--id x] [--credit "…"] [--license "…"]
+//   npx opentcy assets stock "<search query in English>" [--provider auto|unsplash|openverse] [--orientation portrait|landscape|square] [--n 12] [--page 2] [--json]
+//   npx opentcy assets stock-import <unsplash|openverse>:<id> --desc "…"
 //   npx opentcy assets analyze <id> [--focal 0.5,0.35] [--protect "face:0.42,0.18,0.16,0.2"]… [--crop-safe 0,0.1,1,0.8] [--done]
 //   npx opentcy assets veto <id> [--reason "…"]   ·   npx opentcy assets unveto <id>
 //   npx opentcy assets info <id>   ·   npx opentcy assets list [--kind photo]
-//   En todos: --brand <slug> (por defecto, la marca activa).
+//   All commands: --brand <slug> (defaults to the active brand).
 //
-// Al importar: corrige la orientación EXIF, convierte a sRGB, quita metadatos (incluida la ubicación GPS),
-// conserva la resolución original y calcula: tamaño, brillo, colores dominantes y hasta qué formato
-// alcanza sin agrandarse (full-bleed 4:5 a 1080 y a 2K).
-// Stock: Openverse funciona sin clave. PEXELS_API_KEY / UNSPLASH_ACCESS_KEY (gratis) suman esos bancos.
-// "auto" consulta todos los disponibles en paralelo e intercala los resultados.
+// On import: fixes EXIF orientation, converts to sRGB, strips metadata (including GPS location),
+// keeps the original resolution and computes: size, brightness, dominant colors and the largest format
+// it covers without upscaling (full-bleed 4:5 at 1080 and at 2K).
+// Stock: Openverse works without a key. Unsplash is added when the user connects their own key: npx opentcy stock connect unsplash.
+// "auto" queries every available library in parallel and interleaves the results.
 
 import { mkdir, writeFile, readFile, copyFile, access } from "node:fs/promises";
 import path from "node:path";
@@ -30,7 +30,7 @@ const DIRS = { photo: "photos", logo: "logos", texture: "textures", stock: "stoc
 const today = () => new Date().toISOString().slice(0, 10);
 const slugify = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48);
 
-// Hasta qué tamaño se puede mostrar sin agrandar (full-bleed = cubrir todo el canvas)
+// Largest size it can be shown at without upscaling (full-bleed = covering the whole canvas)
 function coverage(w, h) {
   const fits = (fw, fh) => w >= fw && h >= fh;
   const out = {};
@@ -47,10 +47,10 @@ async function analyzeImage(buf) {
   const { width, height } = await oriented.clone().toBuffer({ resolveWithObject: true }).then((r) => r.info);
   const stats = await oriented.clone().stats();
   const small = await oriented.clone().resize(64, 64, { fit: "inside" }).removeAlpha().raw().toBuffer();
-  // brillo medio (luminancia relativa simple)
+  // mean brightness (simple relative luminance)
   let sum = 0; for (let i = 0; i < small.length; i += 3) sum += 0.2126 * small[i] + 0.7152 * small[i + 1] + 0.0722 * small[i + 2];
   const brightness = sum / (small.length / 3) / 255;
-  // paleta: cuantización simple por cubos de 32
+  // palette: simple quantization into buckets of 32
   const buckets = new Map();
   for (let i = 0; i < small.length; i += 3) {
     const k = [small[i], small[i + 1], small[i + 2]].map((c) => Math.min(255, Math.round(c / 32) * 32));
@@ -81,15 +81,15 @@ async function normalizeAndSave(buf, kind, id) {
 function warnQuality(a) {
   const w = [];
   if (a.kind === "photo" || a.kind === "stock") {
-    if (!["1080", "2K"].includes(a.quality.coverage["4:5"])) w.push(`no alcanza para fondo completo 4:5 (${a.quality.coverage["4:5"]}): usala en un bloque más chico`);
-    if (a.quality.sharpness && a.quality.sharpness < 0.3) w.push(`imagen blanda (nitidez ${a.quality.sharpness}; una foto nítida da ~1 o más): foto movida, desenfocada o muy comprimida`);
+    if (!["1080", "2K"].includes(a.quality.coverage["4:5"])) w.push(`not large enough for a full 4:5 background (${a.quality.coverage["4:5"]}): use it in a smaller block`);
+    if (a.quality.sharpness && a.quality.sharpness < 0.3) w.push(`soft image (sharpness ${a.quality.sharpness}; a sharp photo scores ~1 or more): motion blur, out of focus or heavily compressed`);
   }
-  if (a.kind === "logo" && !a.file.endsWith(".svg") && a.quality.width < 1000) w.push("logo en bitmap chico: pedí el SVG");
+  if (a.kind === "logo" && !a.file.endsWith(".svg") && a.quality.width < 1000) w.push("small bitmap logo: ask for the SVG");
   return w;
 }
 
 async function register({ buf, kind, desc, id, credit, license, source }) {
-  if (!desc) throw new Error("--desc es obligatorio: describí qué se ve (lo usa el agente para elegir)");
+  if (!desc) throw new Error("--desc is required: describe what the image shows (the agent uses it to choose)");
   const assets = await loadAssets();
   id = id ? slugify(id) : slugify(`${kind}-${desc}`);
   let unique = id, i = 2; while (assets.some((a) => a.id === unique)) unique = `${id}-${i++}`;
@@ -105,44 +105,44 @@ async function register({ buf, kind, desc, id, credit, license, source }) {
   assets.push(entry);
   await saveAssets(assets);
   console.log(`✓ ${entry.id} → brands/${BRAND}/assets/${entry.file}`);
-  if (quality.width) console.log(`  ${quality.width}×${quality.height} · ${quality.tone} · paleta ${quality.palette.join(" ")} · 4:5 full-bleed: ${quality.coverage["4:5"]}`);
+  if (quality.width) console.log(`  ${quality.width}×${quality.height} · ${quality.tone} · palette ${quality.palette.join(" ")} · 4:5 full-bleed: ${quality.coverage["4:5"]}`);
   for (const w of warnQuality(entry)) console.log(`  ⚠ ${w}`);
-  if (kind === "photo" || kind === "stock") console.log(`  → Mirá la imagen y completá el análisis: npx opentcy assets analyze ${entry.id} --focal x,y --protect "face:x,y,w,h" --done`);
+  if (kind === "photo" || kind === "stock") console.log(`  → Look at the image and complete the analysis: npx opentcy assets analyze ${entry.id} --focal x,y --protect "face:x,y,w,h" --done`);
   return entry;
 }
 
 // ---------- Stock ----------
 async function stockImport(ref) {
   const f = await fetchStock(ref);
-  if (f.attributionRequired) console.log("  ⚠ Licencia CC BY: el crédito es obligatorio al publicar (queda en assets.json → credit).");
+  if (f.attributionRequired) console.log("  ⚠ CC BY license: credit is required when publishing (stored in assets.json → credit).");
   return register({ buf: f.buf, kind: "stock", desc: typeof args.desc === "string" ? args.desc : f.desc, id: args.id, credit: f.credit, license: f.license, source: f.source });
 }
 
-// ---------- Comandos ----------
-const find = (assets, id) => { const a = assets.find((x) => x.id === id); if (!a) throw new Error(`No existe el asset "${id}"`); return a; };
+// ---------- Commands ----------
+const find = (assets, id) => { const a = assets.find((x) => x.id === id); if (!a) throw new Error(`Asset "${id}" does not exist`); return a; };
 const parseRect = (s) => s.split(",").map(Number);
 
 try {
   if (cmd === "add") {
-    if (!target) throw new Error("Falta archivo o URL");
+    if (!target) throw new Error("Missing file or URL");
     const kind = args.kind ?? "photo";
-    if (!DIRS[kind]) throw new Error(`--kind debe ser ${Object.keys(DIRS).join(" | ")}`);
+    if (!DIRS[kind]) throw new Error(`--kind must be ${Object.keys(DIRS).join(" | ")}`);
     let buf;
     if (/^https?:\/\//.test(target)) buf = (await fetchBuffer(target)).buf;
     else { await access(path.resolve(target)); buf = await readFile(path.resolve(target)); }
     await register({ buf, kind, desc: args.desc, id: args.id, credit: args.credit, license: args.license, source: /^https?:/.test(target) ? target : undefined });
   } else if (cmd === "stock") {
-    if (!target) throw new Error('Falta la búsqueda: npx opentcy assets stock "runner track morning"');
+    if (!target) throw new Error('Missing search query: npx opentcy assets stock "runner track morning"');
     const { results, providers, errors } = await searchStock(target, { provider: args.provider ?? "auto", orientation: args.orientation, n: Number(args.n ?? 12), page: Number(args.page ?? 1) });
     const res = results.map((r) => ({ ...r, coverage: coverage(r.w, r.h) }));
     if (args.json) { console.log(JSON.stringify({ query: target, providers, errors, missingKeys: missingKeys(), results: res }, null, 2)); }
     else {
-      console.log(`Bancos consultados: ${providers.join(", ")}`);
+      console.log(`Libraries queried: ${providers.join(", ")}`);
       for (const e of errors) console.log(`  ⚠ ${e.provider}: ${e.error}`);
       for (const r of res) console.log(`${r.ref.padEnd(46)} ${String(r.w).padStart(5)}×${String(r.h).padEnd(5)} ${r.coverage["4:5"].padEnd(5)} ${r.license} · ${r.by} — ${r.alt ?? ""}\n${"".padEnd(4)}${r.preview}`);
-      if (!res.length) console.log("(sin resultados: probá otra búsqueda, en inglés y más concreta)");
-      for (const k of missingKeys()) console.log(`  · Para sumar ${k.provider}: definí ${k.env} (gratis en ${k.signup})`);
-      console.log("\nMirá las previews, elegí una e importala: npx opentcy assets stock-import <ref> --desc \"…\"");
+      if (!res.length) console.log("(no results: try another search, in English and more specific)");
+      for (const k of missingKeys()) console.log(`  · To add ${k.provider}: set ${k.env} (free at ${k.signup})`);
+      console.log("\nLook at the previews, pick one and import it: npx opentcy assets stock-import <ref> --desc \"…\"");
     }
   } else if (cmd === "stock-import") {
     await stockImport(target);
@@ -157,17 +157,17 @@ try {
     a.analysis.updatedAt = today();
     await saveAssets(assets);
     const f = a.analysis.focalPoint;
-    console.log(`✓ ${a.id}: ${a.analysis.protectedRegions.length} región(es) protegida(s)${f ? ` · foco ${f.x},${f.y} → style="--fx:${Math.round(f.x * 100)}%;--fy:${Math.round(f.y * 100)}%"` : ""}`);
+    console.log(`✓ ${a.id}: ${a.analysis.protectedRegions.length} protected region(s)${f ? ` · focal point ${f.x},${f.y} → style="--fx:${Math.round(f.x * 100)}%;--fy:${Math.round(f.y * 100)}%"` : ""}`);
   } else if (cmd === "veto" || cmd === "unveto") {
     const assets = await loadAssets(); const a = find(assets, target);
     a.vetoed = cmd === "veto"; a.vetoReason = cmd === "veto" ? (args.reason ?? null) : undefined;
-    await saveAssets(assets); console.log(`✓ ${a.id} ${a.vetoed ? "vetado" : "habilitado"}`);
+    await saveAssets(assets); console.log(`✓ ${a.id} ${a.vetoed ? "vetoed" : "enabled"}`);
   } else if (cmd === "info") {
     console.log(JSON.stringify(find(await loadAssets(), target), null, 2));
   } else if (cmd === "list") {
     const assets = (await loadAssets()).filter((a) => !args.kind || a.kind === args.kind);
     for (const a of assets) console.log(`${a.vetoed ? "✗" : a.analysis?.complete ? "✓" : "·"} ${a.id.padEnd(32)} ${a.kind.padEnd(8)} ${(a.quality?.width ? `${a.quality.width}×${a.quality.height}` : "svg").padEnd(11)} ${(a.quality?.coverage?.["4:5"] ?? "").padEnd(5)} ${a.description}`);
-    if (!assets.length) console.log("(sin assets)");
+    if (!assets.length) console.log("(no assets)");
   } else {
     console.log(await readFile(new URL(import.meta.url), "utf8").then((s) => s.split("\n").filter((l) => l.startsWith("//")).map((l) => l.slice(3)).join("\n")));
   }

@@ -1,12 +1,12 @@
-// Utilidades compartidas: rutas, formatos, marcas, registro de assets, navegador.
+// Shared utilities: paths, formats, brands, asset registry, browser.
 import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-// PKG = donde está instalado opentcy (scripts, plantillas de fábrica, skill).
-// ROOT = el workspace de la persona: la carpeta que tiene brands/ y templates/.
-//   Se resuelve con OPENTCY_HOME, o subiendo desde el directorio actual hasta encontrar brands/.
+// PKG = where opentcy is installed (scripts, stock templates, skill).
+// ROOT = the user's workspace: the folder that holds brands/ and templates/.
+//   Resolved from OPENTCY_HOME, or by walking up from the current directory until brands/ is found.
 export const PKG = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 function findWorkspace() {
   if (process.env.OPENTCY_HOME) return path.resolve(process.env.OPENTCY_HOME);
@@ -19,11 +19,19 @@ function findWorkspace() {
   }
 }
 export const ROOT = findWorkspace();
+// Keys the user saved for this workspace (e.g. their own Unsplash Access Key) live in ROOT/.env.
+// Real environment variables win; nothing is ever written back from here.
+try {
+  for (const line of readFileSync(path.join(ROOT, ".env"), "utf8").split("\n")) {
+    const m = line.match(/^\s*([A-Z][A-Z0-9_]*)\s*=\s*(.*?)\s*$/);
+    if (m && m[2] && process.env[m[1]] === undefined) process.env[m[1]] = m[2].replace(/^(["'])(.*)\1$/, "$2");
+  }
+} catch { /* no .env: fine */ }
 export const hasWorkspace = () => existsSync(path.join(ROOT, "brands")) && existsSync(path.join(ROOT, "templates/base/base.css"));
 export const BRANDS = path.join(ROOT, "brands");
 
-// critical = franja inferior donde solo va chrome (marca, paginador).
-// display = ancho en pt al que se ve el post en un teléfono actual (390 = iPhone 12–16). 16:9 se mide más ancho.
+// critical = bottom strip reserved for chrome (brand mark, pager).
+// display = width in pt at which the post is seen on a current phone (390 = iPhone 12–16). 16:9 is measured wider.
 export const FORMATS = {
   "4:5":  { w: 1080, h: 1350, safe: { top: 80, right: 80, bottom: 80, left: 80 }, critical: 250, display: 390 },
   "1:1":  { w: 1080, h: 1080, safe: { top: 80, right: 80, bottom: 80, left: 80 }, critical: 80, display: 390 },
@@ -58,42 +66,42 @@ export async function readText(file) {
 export const today = () => new Date().toISOString().slice(0, 10);
 export const slugify = (s) => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-// ---------- Marcas ----------
+// ---------- Brands ----------
 export async function listBrands({ includeDemo = false } = {}) {
   const dirs = await readdir(BRANDS, { withFileTypes: true }).catch(() => []);
   return dirs.filter((d) => d.isDirectory() && (includeDemo || !d.name.startsWith("_"))).map((d) => d.name);
 }
 
-/** Marca activa: --brand, variable BRAND, brands/.active, o la única marca que exista. */
+/** Active brand: --brand, the BRAND env var, brands/.active, or the only brand that exists. */
 export async function resolveBrand(args = {}) {
   let slug = typeof args.brand === "string" ? args.brand : process.env.BRAND;
   if (!slug && existsSync(path.join(BRANDS, ".active"))) slug = readFileSync(path.join(BRANDS, ".active"), "utf8").trim();
   if (!slug) { const all = await listBrands(); if (all.length === 1) slug = all[0]; }
-  if (!slug) throw new Error("No sé con qué marca trabajar. Usá --brand <slug> o `npx opentcy brand use <slug>`. Marcas: " + ((await listBrands()).join(", ") || "(ninguna: npx opentcy brand new <slug>)"));
-  if (!existsSync(path.join(BRANDS, slug))) throw new Error(`No existe brands/${slug}. Marcas: ${(await listBrands({ includeDemo: true })).join(", ")}`);
+  if (!slug) throw new Error("No brand selected. Use --brand <slug> or `npx opentcy brand use <slug>`. Brands: " + ((await listBrands()).join(", ") || "(none: npx opentcy brand new <slug>)"));
+  if (!existsSync(path.join(BRANDS, slug))) throw new Error(`brands/${slug} does not exist. Brands: ${(await listBrands({ includeDemo: true })).join(", ")}`);
   return slug;
 }
 export const brandDir = (slug) => path.join(BRANDS, slug);
 
-/** Marca a la que pertenece una ruta (brands/<slug>/…). Las plantillas compartidas usan _demo. */
+/** Brand a path belongs to (brands/<slug>/…). Shared templates use _demo. */
 export function brandOf(p) {
   const rel = path.relative(BRANDS, path.resolve(p)).split(path.sep);
   return rel[0] && !rel[0].startsWith("..") ? rel[0] : "_demo";
 }
 
-/** Acepta "pieces/<id>", "<id>", o una ruta completa; devuelve la carpeta de la pieza. */
+/** Accepts "pieces/<id>", "<id>", or a full path; returns the piece folder. */
 export async function resolvePiece(arg, args = {}) {
-  if (!arg) throw new Error("Falta la pieza.");
+  if (!arg) throw new Error("Missing piece.");
   const direct = path.resolve(arg);
   if (existsSync(path.join(direct, "piece.json"))) return direct;
   const slug = await resolveBrand(args);
   const id = arg.replace(/^pieces\//, "").replace(/\/$/, "");
   const inBrand = path.join(brandDir(slug), "pieces", id);
   if (existsSync(inBrand)) return inBrand;
-  throw new Error(`No encontré la pieza "${arg}" (busqué en ${path.relative(ROOT, direct)} y brands/${slug}/pieces/${id}).`);
+  throw new Error(`Piece "${arg}" not found (looked in ${path.relative(ROOT, direct)} and brands/${slug}/pieces/${id}).`);
 }
 
-// Datos estructurados de la marca (brand.json). La prosa (voz, reglas) vive en brand-kit.md.
+// Structured brand data (brand.json). The prose (voice, rules) lives in brand-kit.md.
 export async function loadBrand(slug) {
   const dir = brandDir(slug);
   const b = await readJSON(path.join(dir, "brand.json"), null);
@@ -101,7 +109,7 @@ export async function loadBrand(slug) {
   if (!b) return { slug, dir, loaded: false, name: "", address: null, usesEmoji: false, usesDashes: false, voiceSamples: voice, verified: [], pillars: [] };
   return {
     slug, dir, loaded: !!b.name && !/\{\{/.test(b.name),
-    name: b.name ?? "", handle: b.handle ?? "", language: b.language ?? "es", country: b.country ?? "",
+    name: b.name ?? "", handle: b.handle ?? "", language: b.language ?? "en", country: b.country ?? "",
     address: ["vos", "tú", "usted"].includes(b.address) ? b.address : null,
     usesEmoji: !!b.usesEmoji, usesDashes: !!b.usesDashes,
     voiceSamples: voice, verified: b.verified ?? [], pillars: b.pillars ?? [], raw: b,
@@ -117,15 +125,15 @@ export async function saveAssets(slug, assets) {
   await writeJSON(assetsFile(slug), { assets });
 }
 
-// ---------- Navegador ----------
+// ---------- Browser ----------
 export async function launchBrowser() {
   let chromium;
   try { ({ chromium } = await import("playwright")); }
-  catch { throw new Error("Falta Playwright. Corré: npx opentcy setup"); }
+  catch { throw new Error("Playwright is missing. Run: npx opentcy setup"); }
   if (process.env.CHROME_PATH) return chromium.launch({ executablePath: process.env.CHROME_PATH });
   try { return await chromium.launch(); }
   catch {
     try { return await chromium.launch({ channel: "chrome" }); }
-    catch { throw new Error("No encontré navegador: `npx opentcy setup`, instalá Google Chrome o definí CHROME_PATH."); }
+    catch { throw new Error("No browser found: run `npx opentcy setup`, install Google Chrome or set CHROME_PATH."); }
   }
 }

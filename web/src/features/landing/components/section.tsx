@@ -6,7 +6,7 @@ function Root({ className, ...props }: ComponentProps<"section">) {
   return (
     <section
       className={cn(
-        "mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28",
+        "mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-28",
         className,
       )}
       {...props}
@@ -15,7 +15,12 @@ function Root({ className, ...props }: ComponentProps<"section">) {
 }
 
 function Header({ className, ...props }: ComponentProps<"div">) {
-  return <Reveal className={cn("max-w-2xl space-y-4", className)} {...props} />;
+  return (
+    <Reveal
+      className={cn("max-w-2xl space-y-3 sm:space-y-4", className)}
+      {...props}
+    />
+  );
 }
 
 function Eyebrow({ className, children, ...props }: ComponentProps<"p">) {
@@ -37,7 +42,7 @@ function Title({ className, ...props }: ComponentProps<"h2">) {
   return (
     <h2
       className={cn(
-        "font-display text-4xl leading-[1.05] tracking-tight text-balance sm:text-5xl",
+        "font-display text-[2.125rem] leading-[1.05] tracking-tight text-balance sm:text-5xl",
         className,
       )}
       {...props}

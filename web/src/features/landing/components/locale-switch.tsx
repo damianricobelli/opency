@@ -3,8 +3,8 @@ import { m } from "@/paraglide/messages";
 import { getLocale, locales, localizeHref } from "@/paraglide/runtime";
 
 /**
- * Plain links, one per locale: the URL carries the language (`/` Spanish,
- * `/en` English), so a full navigation is the switch and crawlers can
+ * Plain links, one per locale: the URL carries the language (`/` English,
+ * `/es` Spanish), so a full navigation is the switch and crawlers can
  * follow it. `reloadDocument`-style anchors keep Paraglide's cookie in sync
  * through the server middleware.
  */
@@ -25,7 +25,7 @@ export function LocaleSwitch({ className }: { className?: string }) {
           hrefLang={locale}
           lang={locale}
           aria-current={locale === current ? "true" : undefined}
-          className="rounded-full px-2.5 py-1 text-muted-foreground uppercase outline-none transition-[background-color,color] duration-150 ease-out hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-[current]:bg-foreground aria-[current]:text-background"
+          className="relative grid h-8 min-w-9 place-items-center rounded-full px-2.5 text-muted-foreground uppercase pointer-coarse:after:absolute pointer-coarse:after:inset-x-0 pointer-coarse:after:-inset-y-1.5 outline-none transition-[background-color,color] duration-150 ease-out hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-[current]:bg-foreground aria-[current]:text-background"
         >
           {locale}
         </a>

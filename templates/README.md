@@ -1,10 +1,10 @@
-# Plantillas compartidas
+# Shared templates
 
-- **`base/`:** la infraestructura común a todas las marcas.
-  - `base.css` define el canvas, las zonas por formato, la escala tipográfica por rol, los materiales (texturas, fotos, velos, scrim, glass, chips) y el movimiento.
-  - `slide.html` es el slide en blanco.
-- **`layouts/`:** 14 arquetipos de slide probados con el control de calidad. Ver su README.
+- **`base/`:** the infrastructure common to all brands.
+  - `base.css` defines the canvas, the zones per format, the type scale by role, the materials (textures, photos, veils, scrim, glass, chips) and motion.
+  - `slide.html` is the blank slide.
+- **`layouts/`:** 14 slide archetypes tested against quality control. See its README.
 
-Las plantillas propias de cada marca (piezas aprobadas) viven en `brands/<marca>/templates/<nombre>/`.
+Each brand's own templates (approved pieces) live in `brands/<brand>/templates/<name>/`.
 
-`npx opentcy new` copia los slides a `brands/<marca>/pieces/<id>/` y ajusta las rutas a los tokens, los assets y el logo de esa marca. Los layouts se renderizan con la marca `_demo`.
+`npx opentcy new` copies the slides to `brands/<brand>/pieces/<id>/` and adjusts the paths to that brand's tokens, assets and logo. The layouts are rendered with the `_demo` brand.

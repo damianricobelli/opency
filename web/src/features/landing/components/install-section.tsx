@@ -8,7 +8,7 @@ import { Section } from "./section";
 export function InstallSection() {
   return (
     <Section.Root id="install">
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-start">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-8 sm:gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-start">
         <Section.Header>
           <Section.Eyebrow>{m.install_eyebrow()}</Section.Eyebrow>
           <Section.Title>{m.install_title()}</Section.Title>
@@ -16,7 +16,8 @@ export function InstallSection() {
         </Section.Header>
         <Reveal delay={80} className="min-w-0">
           <Tabs defaultValue="skill" className="min-w-0 gap-4">
-            <TabsList>
+            {/* A full-width segmented control on phones: three targets 44px tall. */}
+            <TabsList className="w-full group-data-horizontal/tabs:h-13 sm:w-fit sm:group-data-horizontal/tabs:h-9">
               <TabsTrigger value="skill" className="px-4">
                 {m.install_tab_skill()}
               </TabsTrigger>

@@ -23,7 +23,7 @@
   "brief_eyebrow": "Interactive brief",
   "brief_title": "It asks before it designs.",
   "brief_lead": "What you want to convey, goal, audience, offer, tone, channels and dates. It builds the brief from that; only then does it compose.",
-  "demo_label": "Demo with a fictional brand",
+  "demo_label": "Demo · fictional brand",
   "demo_replay": "Replay",
   "demo_user_request": "I need a campaign for the winter blend launch.",
   "demo_q_message": "Before I design: what do you want to convey?",
@@ -58,7 +58,7 @@
   "flow_3_title": "Campaign",
   "flow_3_body": "Carousels, posts and stories in 4:5, 1:1, 9:16 and 16:9. Captions per network, alt text, a PDF for LinkedIn and MP4 video.",
   "flow_4_title": "Images",
-  "flow_4_body": "Your photos first; then stock from Pexels, Unsplash and Openverse with credit and license recorded, focal point and protected regions.",
+  "flow_4_body": "Your photos first; then stock from Openverse and Unsplash with credit and license recorded, focal point and protected regions.",
   "flow_5_title": "Quality control",
   "flow_5_body": "Measured on the render: contrast, safe zones, widows, crops that cut faces, unsourced figures and phrases that sound like AI.",
   "flow_6_title": "Review",
@@ -109,5 +109,14 @@
   "cta_title": "Your next campaign, in your repository.",
   "cta_lead": "Install it in a minute and ask for the first piece.",
   "footer_license": "MIT license",
-  "footer_tagline": "Open source skill and MCP for content teams."
+  "footer_tagline": "Open source skill and MCP for content teams.",
+  "og_title_line_1": "Your agency's content team,",
+  "og_title_line_2": "inside your agent.",
+  "og_description": "Open source skill and MCP server: interactive brief, on-brand campaigns and pixel-level quality control. Runs locally.",
+  "og_image_alt": "opentcy: your agency's content team, inside your agent.",
+  "hero_lead_short": "A skill and an MCP server that turn your agent into an art director, designer and copywriter. It runs on your machine.",
+  "theme_toggle_label": "Theme: {mode}",
+  "theme_mode_light": "light",
+  "theme_mode_dark": "dark",
+  "theme_mode_auto": "system"
 }

@@ -1,53 +1,53 @@
-# Imágenes y calidad de assets
+# Images and asset quality
 
-Leé esto antes de usar una foto, un logo o buscar stock.
+Read this before using a photo or a logo, or searching for stock.
 
-**Solo se usan imágenes registradas en `brands/<marca>/assets/assets.json`**, referenciadas con `<img data-asset="id" src="../../assets/…">`. Las URLs externas no se renderizan.
+**Only use images registered in `brands/<brand>/assets/assets.json`**, referenced with `<img data-asset="id" src="../../assets/…">`. External URLs are not rendered.
 
-**Orden de preferencia:**
-1. Fotos propias de la marca.
-2. Texturas de la casa (`data-texture`: no necesitan archivo ni crédito).
-3. Banco de imágenes: `npx opentcy assets stock "<búsqueda en inglés>"` consulta Pexels, Unsplash y Openverse a la vez (los que tengan clave; Openverse no la necesita). Después `stock-import <ref>`. El crédito y la licencia se registran solos.
-4. Una URL que pasó la persona: `npx opentcy assets add <url>`.
+**Order of preference:**
+1. The brand's own photos.
+2. House textures (`data-texture`: they need no file and no credit).
+3. Stock libraries: `npx opentcy assets stock "<search in English>"` queries Openverse (no key needed) and, if the user connected their own account with `npx opentcy stock connect unsplash`, Unsplash too. Then `stock-import <ref>`. Credit and license are recorded automatically.
+4. A URL the user gave you: `npx opentcy assets add <url>`.
 
-**Buscar bien en un banco:**
-- En inglés y concreto: sujeto, acción, encuadre y luz (`"barista pouring latte art close up natural light"`), no un sustantivo suelto.
-- Con `--orientation portrait` para 4:5 y 9:16.
-- Mirá las previews antes de elegir (`stock_search` las devuelve). Descartá lo que parezca foto de banco: sonrisas a cámara, apretones de manos, oficinas genéricas.
-- Elegí por la columna de cobertura: `1080` o `2K` en el formato de la pieza. Menos que eso va en `photo-card`, no a sangre.
-- Si la licencia es **CC BY** (Openverse), la atribución es obligatoria: copiá el `credit` de `assets.json` al final del caption.
-- Dos búsquedas sin nada bueno: pedí una foto propia o resolvé con tipografía. Una foto mediocre empeora la pieza.
+**Searching a stock library well:**
+- In English and specific: subject, action, framing and light (`"barista pouring latte art close up natural light"`), not a lone noun.
+- With `--orientation portrait` for 4:5 and 9:16.
+- Look at the previews before choosing (`stock_search` returns them). Discard anything that looks like a stock photo: smiles at the camera, handshakes, generic offices.
+- Choose by the coverage column: `1080` or `2K` in the piece's format. Anything less goes in `photo-card`, not full bleed.
+- If the license is **CC BY** (Openverse), attribution is mandatory: copy the `credit` from `assets.json` to the end of the caption.
+- Two searches with nothing good: ask for one of the brand's own photos or solve it with typography. A mediocre photo makes the piece worse.
 
-Importá solo la foto elegida, no la búsqueda entera. Si la persona pide fotos, eso manda sobre la preferencia por tipografía.
+Import only the chosen photo, not the whole search. If the user asks for photos, that overrides the preference for typography.
 
-**Calidad al importar.** El script corrige la orientación, convierte a sRGB, quita metadatos (incluido el GPS), conserva la resolución completa e informa:
-- **cobertura:** si alcanza para fondo completo 4:5 a 1080 o a 2K;
-- **brillo:** clara, media u oscura (decide `ink` o `ink-inverse` y el velo);
-- **paleta dominante.**
+**Quality on import.** The script fixes orientation, converts to sRGB, strips metadata (including GPS), keeps the full resolution and reports:
+- **coverage:** whether it is enough for a full 4:5 background at 1080 or at 2K;
+- **brightness:** `clara` (light), `media` (medium) or `oscura` (dark); it decides `ink` or `ink-inverse` and the veil;
+- **dominant palette.**
 
-Si una foto no alcanza para fondo completo, va en un bloque más chico (`photo-card`), nunca agrandada: el render la marca como `image_upscaled`. Si un logo llega en bitmap chico, pedí el SVG.
+If a photo is not big enough for a full background, it goes in a smaller block (`photo-card`), never enlarged: the render flags it as `image_upscaled`. If a logo arrives as a small bitmap, ask for the SVG.
 
-**Logos.** No van al registro de fotos: se declaran en `brand.json → logos` (`onLight`, `onDark`, `onPrimary`, `icon`). `npx opentcy new` pone en cada slide la variante que corresponde a su superficie, y el render marca `logo_low_contrast` si el logo no se distingue de su fondo.
+**Logos.** They do not go in the photo registry: they are declared in `brand.json → logos` (`onLight`, `onDark`, `onPrimary`, `icon`). `npx opentcy new` puts the variant that matches each slide's surface on that slide, and the render flags `logo_low_contrast` if the logo cannot be told apart from its background.
 
-**Análisis obligatorio antes de usar una foto.**
-1. Mirala.
-2. Registrá el foco y las regiones protegidas, en coordenadas de 0 a 1 sobre la imagen original:
+**Mandatory analysis before using a photo.**
+1. Look at it.
+2. Record the focal point and the protected regions, in 0-to-1 coordinates on the original image:
    ```
    npx opentcy assets analyze <id> --focal 0.52,0.38 --protect "face:0.44,0.2,0.14,0.18" --protect "hand:…" --done
    ```
-   Tipos: `face`, `hand`, `subject`, `text` y `logo`. Una lista vacía con `--done` significa "la miré y no hay nada que proteger".
-3. Usá el foco como `style="--fx:52%;--fy:38%"` en el `<img>`.
+   Types: `face`, `hand`, `subject`, `text` and `logo`. An empty list with `--done` means "I looked at it and there is nothing to protect".
+3. Use the focal point as `style="--fx:52%;--fy:38%"` on the `<img>`.
 
-Con eso, el render avisa si el recorte corta una cara (error) o si un texto la tapa.
+With that in place, the render warns you if the crop cuts a face (error) or if text covers it.
 
-**Repetición.**
-- La foto de portada no se repite nunca.
-- Ninguna foto vuelve antes de 21 días (`npx opentcy feed` lo controla).
-- Una foto que la persona rechazó se veta (`npx opentcy assets veto <id>`) y no vuelve a aparecer.
+**Repetition.**
+- A cover photo is never repeated.
+- No photo comes back within 21 days (`npx opentcy feed` enforces it).
+- A photo the user rejected is vetoed (`npx opentcy assets veto <id>`) and never shows up again.
 
-**Pocos recursos:**
-- Sin foto, la composición es tipográfica, con materiales.
-- Con una sola foto, va en la portada y el resto es tipográfico.
-- Con un recorte o un logo, dejale aire.
+**Few resources:**
+- With no photo, the composition is typographic, with materials.
+- With a single photo, it goes on the cover and the rest is typographic.
+- With a cutout or a logo, give it room to breathe.
 
-**Inspiraciones.** Informan estructura y ritmo. Nunca entran a una pieza, y nunca copiás sus colores, tipografías, logos, fotos ni textos.
+**Inspirations.** They inform structure and rhythm. They never go into a piece, and you never copy their colors, typefaces, logos, photos or text.

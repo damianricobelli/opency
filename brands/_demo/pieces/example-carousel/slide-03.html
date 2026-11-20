@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" data-format="4:5" data-layout="steps">
+<head>
+<meta charset="utf-8">
+<title>example-carousel · slide 3 · steps</title>
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../../../templates/base/base.css">
+<style>
+  .content { gap: 72px; justify-content: center; }
+  #headline { max-width: 15ch; }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 2px solid var(--line); }
+  li { display: grid; grid-template-columns: 96px 1fr; align-items: baseline; padding: 44px 0; border-bottom: 2px solid var(--line); }
+  .n { font-family: var(--font-mono); font-size: calc(var(--size-label) * var(--k) * 1px); color: var(--ink-muted); letter-spacing: var(--tracking-label); }
+</style>
+</head>
+<body>
+<main class="canvas on-bg" data-texture="paper">
+  <div class="safe">
+    <div class="content">
+      <h2 id="headline" class="t-title">One request, four steps</h2>
+      <ol>
+        <li><span class="n label num">01</span><span id="step-1" class="t-body">You ask for the piece by chat.</span></li>
+        <li><span class="n label num">02</span><span id="step-2" class="t-body">It writes the copy in the brand's voice.</span></li>
+        <li><span class="n label num">03</span><span id="step-3" class="t-body">It designs and checks at phone size.</span></li>
+        <li><span class="n label num">04</span><span id="step-4" class="t-body">It hands you the files to approve.</span></li>
+      </ol>
+    </div>
+    <footer class="chrome-bar" data-chrome><span id="brand">Your brand</span><span id="pager">03/05</span></footer>
+  </div>
+</main>
+</body>
+</html>

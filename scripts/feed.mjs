@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-// Revisa el feed completo y arma la vista previa del perfil.
+// Reviews the whole feed and builds the profile preview.
 //
-// Uso: npx opentcy feed [-- --from 2026-11-01] [--candidate pieces/<id>]
+// Usage: npx opentcy feed [-- --from 2026-11-01] [--candidate pieces/<id>]
 //
-// Reglas (sobre las piezas con plannedDate, ordenadas por fecha, excluye carpetas que empiezan con _):
-//   · nunca 3 piezas seguidas con fondo plano, ni 3 seguidas con foto
-//   · un gancho de portada no se repite (ni casi igual) dentro de 30 días
-//   · una foto de portada no se reutiliza nunca; ninguna foto vuelve dentro de 21 días
-//   · no más de 2 piezas seguidas de la misma categoría
-// Necesita que cada pieza esté renderizada (lee render/report.json).
-// Genera feed-preview.png: grilla de 3 columnas con el recorte 3:4 que muestra el perfil de Instagram.
+// Rules (over pieces with a plannedDate, sorted by date; folders starting with _ are excluded):
+//   · never 3 pieces in a row with a flat background, nor 3 in a row with a photo
+//   · a cover hook is not repeated (nor nearly repeated) within 30 days
+//   · a cover photo is never reused; no photo comes back within 21 days
+//   · no more than 2 pieces in a row from the same category
+// Every piece needs to be rendered (it reads render/report.json).
+// Writes feed-preview.png: a 3-column grid with the 3:4 crop the Instagram profile shows.
 
 import { readdir } from "node:fs/promises";
 import path from "node:path";
@@ -41,22 +41,22 @@ const days = (a, b) => Math.abs((new Date(a) - new Date(b)) / 86400000);
 const issues = [];
 const add = (code, ids, msg) => issues.push({ code, ids, msg });
 
-for (const it of items) if (!it.rendered) add("not_rendered", [it.id], "sin render: corré npx opentcy render " + it.id);
+for (const it of items) if (!it.rendered) add("not_rendered", [it.id], "not rendered: run npx opentcy render " + it.id);
 
 for (let i = 2; i < items.length; i++) {
   const w = items.slice(i - 2, i + 1);
-  if (w.every((x) => x.mode && x.mode === w[0].mode)) add("feed_rhythm", w.map((x) => x.id), `3 piezas seguidas con fondo ${w[0].mode === "flat" ? "plano" : "de foto"}: alterná`);
-  if (w.every((x) => x.category && x.category === w[0].category)) add("category_streak", w.map((x) => x.id), `3 piezas seguidas de categoría "${w[0].category}"`);
+  if (w.every((x) => x.mode && x.mode === w[0].mode)) add("feed_rhythm", w.map((x) => x.id), `3 pieces in a row with a ${w[0].mode === "flat" ? "flat" : "photo"} background: alternate`);
+  if (w.every((x) => x.category && x.category === w[0].category)) add("category_streak", w.map((x) => x.id), `3 pieces in a row in category "${w[0].category}"`);
 }
 for (let i = 0; i < items.length; i++) for (let j = i + 1; j < items.length; j++) {
   const a = items[i], b = items[j];
   const d = days(a.date, b.date);
-  if (a.hook && b.hook && d <= 30 && jaccard(a.hook, b.hook) >= 0.5) add("hook_reused", [a.id, b.id], `ganchos casi iguales a ${d} días: "${a.hook}" / "${b.hook}"`);
-  for (const img of b.coverImages) if (a.coverImages.includes(img)) add("cover_photo_reused", [a.id, b.id], `misma foto de portada: ${img}`);
-  if (d < 21) for (const img of b.images) if (a.images.includes(img)) add("photo_too_soon", [a.id, b.id], `${img} vuelve a los ${d} días (mín. 21)`);
+  if (a.hook && b.hook && d <= 30 && jaccard(a.hook, b.hook) >= 0.5) add("hook_reused", [a.id, b.id], `nearly identical hooks ${d} days apart: "${a.hook}" / "${b.hook}"`);
+  for (const img of b.coverImages) if (a.coverImages.includes(img)) add("cover_photo_reused", [a.id, b.id], `same cover photo: ${img}`);
+  if (d < 21) for (const img of b.images) if (a.images.includes(img)) add("photo_too_soon", [a.id, b.id], `${img} comes back after ${d} days (min. 21)`);
 }
 
-// --- Vista previa del perfil (más reciente arriba a la izquierda) ---
+// --- Profile preview (most recent at the top left) ---
 const show = items.filter((x) => x.rendered).slice(-12).reverse();
 if (show.length) {
   const tw = 360, th = 480, gap = 3;
@@ -74,8 +74,8 @@ if (show.length) {
   await sharp({ create: { width: 3 * tw + 2 * gap, height: rows * th + (rows - 1) * gap, channels: 3, background: "#ffffff" } }).composite(tiles).png().toFile(path.join(BDIR, "feed-preview.png"));
 }
 
-console.log(`${BRAND}: ${items.length} pieza(s) con fecha.`);
+console.log(`${BRAND}: ${items.length} dated piece(s).`);
 for (const it of items) console.log(`  ${it.date}  ${(it.mode ?? "—").padEnd(5)}  ${(it.category ?? "").padEnd(14)}  ${it.id}  "${it.hook}"`);
-console.log(issues.length ? "\nHallazgos:" : "\nSin hallazgos de ritmo ni repetición.");
+console.log(issues.length ? "\nFindings:" : "\nNo rhythm or repetition findings.");
 for (const i of issues) console.log(`  ⚠ ${i.code} — ${i.msg} [${i.ids.join(", ")}]`);
-if (show.length) console.log(`\n→ brands/${BRAND}/feed-preview.png (grilla del perfil, recorte 3:4)`);
+if (show.length) console.log(`\n→ brands/${BRAND}/feed-preview.png (profile grid, 3:4 crop)`);

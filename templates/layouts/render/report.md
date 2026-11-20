@@ -1,48 +1,48 @@
-# Reporte de calidad — _layouts
+# Quality report — _layouts
 
-4:5 · 14 slide(s) · ×1 · 0 errores · 0 advertencias
+4:5 · 14 slide(s) · ×1 · 0 errors · 0 warnings
 
 ## Slide 1 (flat)
-- sin hallazgos
+- no findings
 
 ## Slide 2 (photo)
-- sin hallazgos
+- no findings
 
 ## Slide 3 (flat)
-- sin hallazgos
+- no findings
 
 ## Slide 4 (flat)
-- sin hallazgos
+- no findings
 
 ## Slide 5 (flat)
-- sin hallazgos
+- no findings
 
 ## Slide 6 (flat)
-- sin hallazgos
+- no findings
 
 ## Slide 7 (photo)
-- sin hallazgos
+- no findings
 
 ## Slide 8 (flat)
-- sin hallazgos
+- no findings
 
 ## Slide 9 (flat)
-- sin hallazgos
+- no findings
 
 ## Slide 10 (flat)
-- sin hallazgos
+- no findings
 
 ## Slide 11 (flat)
-- sin hallazgos
+- no findings
 
 ## Slide 12 (flat)
-- sin hallazgos
+- no findings
 
 ## Slide 13 (flat)
-- sin hallazgos
+- no findings
 
 ## Slide 14 (photo)
-- sin hallazgos
+- no findings
 
-## Copy y captions
-- sin hallazgos
+## Copy and captions
+- no findings

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// Crea un workspace de opentcy en una carpeta.
+// Creates an opentcy workspace in a folder.
 //
-//   npx opentcy init [carpeta] [--force] [--no-demo]
+//   npx opentcy init [folder] [--force] [--no-demo]
 //
-// Copia: AGENTS.md + references/ (las instrucciones del agente), templates/ (base y layouts),
-// brands/_demo (marca de ejemplo), .claude/agents/ (revisor), .mcp.json y .env.example.
-// No pisa archivos existentes salvo con --force. brands/ de la persona nunca se toca.
+// Copies: AGENTS.md + references/ (the agent's instructions), templates/ (base and layouts),
+// brands/_demo (demo brand), .claude/agents/ (reviewer), .mcp.json and .env.example.
+// Never overwrites existing files unless --force. The user's own brands/ are never touched.
 
 import { cp, mkdir, readFile, writeFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
@@ -34,32 +34,32 @@ async function copyTree(from, rel, filter = () => true) {
 
 await mkdir(dest, { recursive: true });
 
-// Instrucciones del agente: el SKILL.md sin frontmatter es el AGENTS.md del workspace.
+// Agent instructions: SKILL.md without its frontmatter is the workspace AGENTS.md.
 const skill = await readFile(path.join(PKG, "skills/opentcy/SKILL.md"), "utf8");
 await put("AGENTS.md", skill.replace(/^---[\s\S]*?---\s*/, ""));
 await put("CLAUDE.md", "@AGENTS.md\n");
 await copyTree(path.join(PKG, "skills/opentcy/references"), "references");
 await copyTree(path.join(PKG, "templates"), "templates");
-await put(".claude/agents/revisor-visual.md", await readFile(path.join(PKG, "agents/revisor-visual.md"), "utf8"));
+await put(".claude/agents/visual-reviewer.md", await readFile(path.join(PKG, "agents/visual-reviewer.md"), "utf8"));
 if (args.demo !== false && !args["no-demo"]) await copyTree(path.join(PKG, "brands/_demo"), "brands/_demo");
 else await mkdir(path.join(dest, "brands"), { recursive: true });
 
 await put(".mcp.json", JSON.stringify({ mcpServers: { opentcy: { command: "npx", args: ["-y", "opentcy", "mcp"] } } }, null, 2) + "\n");
-await put(".env.example", `# Bancos de imágenes. Openverse funciona sin clave; estas dos suman catálogo (son gratis).
-PEXELS_API_KEY=
+await put(".env.example", `# Unsplash is optional: Openverse works without any key.
+# Use your own Access Key (free): npx opentcy stock connect unsplash
 UNSPLASH_ACCESS_KEY=
-# Opcional: ruta a Chrome si no usás el navegador de Playwright.
+# Optional: path to Chrome if you do not use the Playwright browser.
 # CHROME_PATH=
 `);
 await put(".gitignore", "node_modules/\n.DS_Store\n.env\n**/render/.frames-*/\n**/.check.html\n");
 
 const brands = (await readdir(path.join(dest, "brands"), { withFileTypes: true }).catch(() => [])).filter((d) => d.isDirectory() && !d.name.startsWith("_")).map((d) => d.name);
-console.log(`✓ Workspace de opentcy en ${dest}`);
-if (done.length) console.log(`  creado: ${done.join(", ")}`);
-if (kept.length) console.log(`  sin tocar (ya existía; --force para actualizar): ${kept.join(", ")}`);
+console.log(`✓ opentcy workspace at ${dest}`);
+if (done.length) console.log(`  created: ${done.join(", ")}`);
+if (kept.length) console.log(`  left untouched (already there; --force to update): ${kept.join(", ")}`);
 console.log(`
-Siguiente:
-  1. npx opentcy setup                    navegador para el render
-  2. Abrí esta carpeta con tu agente (Claude Code, Cursor, Codex) y pedile:
-     ${brands.length ? `"Armá una campaña para ${brands[0]}"` : '"Cargá mi marca desde misitio.com"'}
-     El agente te hace el brief antes de diseñar.`);
+Next:
+  1. npx opentcy setup                    browser used by the renderer
+  2. Open this folder with your agent (Claude Code, Cursor, Codex) and ask:
+     ${brands.length ? `"Build a campaign for ${brands[0]}"` : '"Load my brand from mysite.com"'}
+     The agent runs the brief with you before it designs.`);

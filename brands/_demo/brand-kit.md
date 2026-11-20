@@ -1,78 +1,78 @@
-# Brand kit — {{NOMBRE_DE_LA_MARCA}}
+# Brand kit — {{BRAND_NAME}}
 
-> Plantilla. `npm run brand -- new <slug>` la copia a la marca nueva y el agente la completa en el onboarding (`docs/onboarding.md`).
-> Los valores de color y tipografía viven en `tokens.css`; los datos que leen los scripts (trato, logos, pilares, datos verificados), en `brand.json`.
+> Template. `npx opentcy brand new <slug>` copies it into the new brand and the agent fills it in during onboarding (`references/onboarding.md`).
+> Color and type values live in `tokens.css`; the data the scripts read (form of address, logos, pillars, verified facts) lives in `brand.json`.
 
-## 1. Identidad
+## 1. Identity
 
-- **Qué hace:** {{una frase}}
-- **Para quién:** {{público principal}}
-- **Objetivo de las redes:** {{ventas / consultas / comunidad / autoridad}}
-- **Oferta principal:** {{lo que más importa empujar}}
-- **Idioma y país:** {{…}}
+- **What it does:** {{one sentence}}
+- **Who it is for:** {{main audience}}
+- **Goal on social:** {{sales / inquiries / community / authority}}
+- **Main offer:** {{what matters most to push}}
+- **Language and country:** {{…}}
 
-## 2. Pilares de contenido
+## 2. Content pillars
 
-1. {{pilar}}: {{qué entra acá}}
+1. {{pillar}}: {{what belongs here}}
 2. {{…}}
 3. {{…}}
 
-## 3. Voz
+## 3. Voice
 
-Reglas duras (funcionan mejor que adjetivos):
+Hard rules (they work better than adjectives):
 
-- {{ej. Frases de menos de 14 palabras.}}
-- {{ej. Nunca signos de exclamación.}}
-- {{ej. Primero el dato, después la opinión.}}
+- {{e.g. Sentences under 14 words.}}
+- {{e.g. Never exclamation marks.}}
+- {{e.g. The fact first, the opinion after.}}
 
-**Palabras propias:** {{…}}
-**Evitar:** {{…}}
+**Own words:** {{…}}
+**Avoid:** {{…}}
 
 ## 4. Color
 
-| Token | Valor | Rol |
+| Token | Value | Role |
 |---|---|---|
-| `--primary` | {{…}} | {{color dominante; paneles fuertes}} |
-| `--secondary` | {{…}} | {{paneles oscuros o segundo color}} |
-| `--accent` | {{…}} | {{uno por slide, menos del 10 %}} |
-| `--bg` | {{…}} | {{fondo por defecto}} |
-| `--bg-alt` | {{…}} | {{separa bloques}} |
-| `--ink` | {{…}} | {{texto sobre fondos claros}} |
-| `--ink-inverse` | {{…}} | {{texto sobre fotos y paneles oscuros}} |
+| `--primary` | {{…}} | {{dominant color; strong panels}} |
+| `--secondary` | {{…}} | {{dark panels or second color}} |
+| `--accent` | {{…}} | {{one per slide, under 10%}} |
+| `--bg` | {{…}} | {{default background}} |
+| `--bg-alt` | {{…}} | {{separates blocks}} |
+| `--ink` | {{…}} | {{text on light backgrounds}} |
+| `--ink-inverse` | {{…}} | {{text on photos and dark panels}} |
 
-El contraste de cada combinación se verifica con `npm run brand -- check`.
+The contrast of every combination is verified with `npx opentcy brand check`.
 
-## 5. Tipografía
+## 5. Typography
 
-- **Display:** {{familia y pesos con archivo}}
+- **Display:** {{family and the weights that have a file}}
 - **Body:** {{…}}
-- **Mono (etiquetas):** {{…}}
-- **Licencias:** {{…}}
+- **Mono (labels):** {{…}}
+- **Licenses:** {{…}}
 
 ## 6. Logo
 
-- {{qué variante va sobre qué superficie; tamaño; posición; qué no hacer}}
+- {{which variant goes on which surface; size; position; what not to do}}
 
-## 7. Perfil creativo
+## 7. Creative profile
 
-- **Modo dominante:** {{tipográfico / fotográfico / datos / producto}}
-- **Forma y materiales:** {{esquinas, líneas, textura, tratamiento de foto}}
-- **Gesto distintivo:** {{lo que hace reconocible una pieza sin ver el logo}}
-- **Le gusta / no le gusta:** {{…}}
+- **Dominant mode:** {{typographic / photographic / data / product}}
+- **Shape and materials:** {{corners, lines, texture, photo treatment}}
+- **Signature move:** {{what makes a piece recognizable without seeing the logo}}
+- **Likes / dislikes:** {{…}}
 
-## 8. Instrucciones vigentes
+## 8. Standing instructions
 
-Solo se agregan cuando la persona pide explícitamente recordar, cambiar o borrar una regla.
+Only added when the person explicitly asks to remember, change or delete a rule.
 
-### Generales
+### General
 - {{…}}
 
-### Campaña actual (vence {{AAAA-MM-DD}})
+### Current campaign (expires {{YYYY-MM-DD}})
 - {{…}}
 
-### Próximas
-- {{AAAA-MM-DD}}: {{lanzamiento o fecha}}
+### Upcoming
+- {{YYYY-MM-DD}}: {{launch or date}}
 
-## 9. Supuestos a confirmar
+## 9. Assumptions to confirm
 
-- {{todo lo que se dedujo sin confirmación de la persona}}
+- {{anything that was inferred without the person's confirmation}}

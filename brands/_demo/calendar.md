@@ -1,11 +1,11 @@
-# Calendario de contenido
+# Content calendar
 
-**Estados:** `idea` → `draft` → `review` → `approved` → `scheduled` → `published`. El agente actualiza esta tabla. Publicar y programar lo confirma la persona.
+**Statuses:** `idea` → `draft` → `review` → `approved` → `scheduled` → `published`. The agent updates this table. Publishing and scheduling are confirmed by the person.
 
-**Control:** `npm run feed` revisa el ritmo y las repeticiones, y genera `feed-preview.png`.
+**Check:** `npx opentcy feed` reviews the rhythm and the repetitions, and generates `feed-preview.png`.
 
-| fecha | pieza | formato | intención | categoría | gancho de portada | foto de portada | fondo | estado |
+| date | piece | format | intent | category | cover hook | cover photo | background | status |
 |---|---|---|---|---|---|---|---|---|
 
-## Ideas (plan semanal)
-<!-- - [intención] ángulo en una frase · formato · categoría · fecha sugerida · preguntas abiertas -->
+## Ideas (weekly plan)
+<!-- - [intent] angle in one sentence · format · category · suggested date · open questions -->

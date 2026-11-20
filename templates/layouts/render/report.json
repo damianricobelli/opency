@@ -2,7 +2,7 @@
   "piece": "_layouts",
   "format": "4:5",
   "scale": 1,
-  "renderedAt": "2026-11-20T17:11:32.546Z",
+  "renderedAt": "2026-11-20T17:37:09.472Z",
   "slides": [
     {
       "n": 1,
@@ -13,25 +13,25 @@
         {
           "id": "kicker",
           "role": "label",
-          "text": "GUÍA · 5 PASOS",
+          "text": "GUIDE · 5 STEPS",
           "chrome": false
         },
         {
           "id": "headline",
           "role": "headline",
-          "text": "Tres errores que frenan tus ventas",
+          "text": "Three mistakes that stall your sales",
           "chrome": false
         },
         {
           "id": "support",
           "role": "support",
-          "text": "Lo que cambiamos en nuestra cuenta y qué pasó después.",
+          "text": "What we changed on our account and what happened next.",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -66,30 +66,30 @@
       "n": 2,
       "file": "slide-02.html",
       "mode": "photo",
-      "accentMass": 0.008,
+      "accentMass": 0.009,
       "texts": [
         {
           "id": "tag",
           "role": "label",
-          "text": "CASO REAL",
+          "text": "REAL STORY",
           "chrome": false
         },
         {
           "id": "headline",
           "role": "headline",
-          "text": "Salimos a correr antes del amanecer",
+          "text": "Out running before the sun is up",
           "chrome": false
         },
         {
           "id": "support",
           "role": "support",
-          "text": "Seis semanas de entrenamiento contadas desde adentro.",
+          "text": "Six weeks of training, told from the inside.",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -100,7 +100,7 @@
         }
       ],
       "images": [
-        "muestra-atardecer"
+        "sample-sunset"
       ],
       "chrome": {
         "brand": {
@@ -126,24 +126,24 @@
       "n": 3,
       "file": "slide-03.html",
       "mode": "flat",
-      "accentMass": 0,
+      "accentMass": 0.001,
       "texts": [
         {
           "id": "headline",
           "role": "headline",
-          "text": "Publicar todos los días no es una estrategia.",
+          "text": "Posting every day is not a strategy.",
           "chrome": false
         },
         {
           "id": "support",
           "role": "support",
-          "text": "Lo que mueve el alcance es repetir el formato que ya funcionó, con un tema nuevo.",
+          "text": "Reach grows when you repeat the format that already worked, with a new topic.",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -183,7 +183,7 @@
         {
           "id": "kicker",
           "role": "label",
-          "text": "MÉTODO",
+          "text": "METHOD",
           "chrome": false
         },
         {
@@ -195,19 +195,19 @@
         {
           "id": "headline",
           "role": "headline",
-          "text": "pasos para armar un carrusel en una tarde",
+          "text": "steps to build a carousel in one afternoon",
           "chrome": false
         },
         {
           "id": "support",
           "role": "support",
-          "text": "De la idea al archivo listo, sin abrir un editor.",
+          "text": "From the idea to the finished file, without opening an editor.",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -247,7 +247,7 @@
         {
           "id": "headline",
           "role": "headline",
-          "text": "Cómo lo armamos, de punta a punta",
+          "text": "How we build each piece",
           "chrome": false
         },
         {
@@ -259,7 +259,7 @@
         {
           "id": "step-1",
           "role": "body",
-          "text": "Elegimos una sola idea por pieza.",
+          "text": "We pick a single idea per piece.",
           "chrome": false
         },
         {
@@ -271,7 +271,7 @@
         {
           "id": "step-2",
           "role": "body",
-          "text": "Escribimos el copy antes de diseñar.",
+          "text": "We write the copy before designing.",
           "chrome": false
         },
         {
@@ -283,7 +283,7 @@
         {
           "id": "step-3",
           "role": "body",
-          "text": "Revisamos en tamaño teléfono.",
+          "text": "We review at phone size.",
           "chrome": false
         },
         {
@@ -295,13 +295,13 @@
         {
           "id": "step-4",
           "role": "body",
-          "text": "Guardamos lo que funcionó como plantilla.",
+          "text": "We save what worked as a template.",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -341,61 +341,61 @@
         {
           "id": "headline",
           "role": "headline",
-          "text": "Qué cambió en el proceso",
+          "text": "What changed in the process",
           "chrome": false
         },
         {
           "id": "before-label",
           "role": "label",
-          "text": "ANTES",
+          "text": "BEFORE",
           "chrome": false
         },
         {
           "id": "before-1",
           "role": "body",
-          "text": "Un brief por post",
+          "text": "One brief per post",
           "chrome": false
         },
         {
           "id": "before-2",
           "role": "body",
-          "text": "Tres rondas de cambios",
+          "text": "Three rounds of changes",
           "chrome": false
         },
         {
           "id": "before-3",
           "role": "body",
-          "text": "Diseño desde cero",
+          "text": "Design from scratch",
           "chrome": false
         },
         {
           "id": "now-label",
           "role": "label",
-          "text": "AHORA",
+          "text": "NOW",
           "chrome": false
         },
         {
           "id": "now-1",
           "role": "body",
-          "text": "Un pedido por chat",
+          "text": "One request by chat",
           "chrome": false
         },
         {
           "id": "now-2",
           "role": "body",
-          "text": "Una corrección puntual",
+          "text": "One specific fix",
           "chrome": false
         },
         {
           "id": "now-3",
           "role": "body",
-          "text": "Plantillas aprobadas",
+          "text": "Approved templates",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -435,25 +435,25 @@
         {
           "id": "kicker",
           "role": "label",
-          "text": "SEMANA 3",
+          "text": "WEEK 3",
           "chrome": false
         },
         {
           "id": "headline",
           "role": "headline",
-          "text": "El ritmo se arma con salidas cortas y constantes",
+          "text": "Pace is built on short, steady runs",
           "chrome": false
         },
         {
           "id": "support",
           "role": "support",
-          "text": "Cuatro salidas de 30 minutos rindieron más que dos largas.",
+          "text": "Four 30-minute runs did more than two long ones.",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -464,7 +464,7 @@
         }
       ],
       "images": [
-        "muestra-atardecer"
+        "sample-sunset"
       ],
       "chrome": {
         "brand": {
@@ -495,7 +495,7 @@
         {
           "id": "headline",
           "role": "headline",
-          "text": "Dónde se va el tiempo de una pieza",
+          "text": "Where the time on a piece goes",
           "chrome": false
         },
         {
@@ -513,7 +513,7 @@
         {
           "id": "l2",
           "role": "body",
-          "text": "Diseño",
+          "text": "Design",
           "chrome": false
         },
         {
@@ -525,7 +525,7 @@
         {
           "id": "l3",
           "role": "body",
-          "text": "Revisión",
+          "text": "Review",
           "chrome": false
         },
         {
@@ -537,7 +537,7 @@
         {
           "id": "l4",
           "role": "body",
-          "text": "Publicación",
+          "text": "Publishing",
           "chrome": false
         },
         {
@@ -549,13 +549,13 @@
         {
           "id": "source",
           "role": "label",
-          "text": "FUENTE: REGISTRO INTERNO (DATO DE EJEMPLO)",
+          "text": "SOURCE: INTERNAL LOG (SAMPLE DATA)",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -601,25 +601,25 @@
         {
           "id": "quote",
           "role": "headline",
-          "text": "Dejamos de pedir piezas por mail. Ahora las revisamos el lunes y salen el martes.",
+          "text": "We stopped requesting pieces by email. Now we review on Monday and they ship on Tuesday.",
           "chrome": false
         },
         {
           "id": "name",
           "role": "body",
-          "text": "Nombre Apellido",
+          "text": "First Last",
           "chrome": false
         },
         {
           "id": "role",
           "role": "label",
-          "text": "CARGO · EMPRESA",
+          "text": "ROLE · COMPANY",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -659,19 +659,19 @@
         {
           "id": "kicker",
           "role": "label",
-          "text": "PARA CERRAR",
+          "text": "TO WRAP UP",
           "chrome": false
         },
         {
           "id": "headline",
           "role": "headline",
-          "text": "Una idea por pieza. Siempre.",
+          "text": "One idea per piece. Always.",
           "chrome": false
         },
         {
           "id": "cta-text",
           "role": "body",
-          "text": "Escribinos PLAN por DM y te mandamos la plantilla",
+          "text": "DM us PLAN and we'll send you the template",
           "chrome": false
         },
         {
@@ -683,7 +683,7 @@
         {
           "id": "brand",
           "role": "chrome",
-          "text": "@MARCA",
+          "text": "@BRAND",
           "chrome": true
         },
         {
@@ -723,67 +723,67 @@
         {
           "id": "t1",
           "role": "label",
-          "text": "PRODUCTO",
+          "text": "PRODUCT",
           "chrome": false
         },
         {
           "id": "n1",
           "role": "body",
-          "text": "Lanzamos el nuevo panel de reportes",
+          "text": "We launched the new reports dashboard",
           "chrome": false
         },
         {
           "id": "t2",
           "role": "label",
-          "text": "EQUIPO",
+          "text": "TEAM",
           "chrome": false
         },
         {
           "id": "n2",
           "role": "body",
-          "text": "Sumamos dos personas a soporte",
+          "text": "Two new people joined support",
           "chrome": false
         },
         {
           "id": "t3",
           "role": "label",
-          "text": "AGENDA",
+          "text": "EVENTS",
           "chrome": false
         },
         {
           "id": "n3",
           "role": "body",
-          "text": "Charla abierta el jueves a las 18",
+          "text": "Open talk this Thursday at 6 pm",
           "chrome": false
         },
         {
           "id": "t4",
           "role": "label",
-          "text": "GUÍA",
+          "text": "GUIDE",
           "chrome": false
         },
         {
           "id": "n4",
           "role": "body",
-          "text": "Cómo ordenar tu calendario mensual",
+          "text": "How to organize your monthly calendar",
           "chrome": false
         },
         {
           "id": "kicker",
           "role": "label",
-          "text": "EDICIÓN 12",
+          "text": "ISSUE 12",
           "chrome": false
         },
         {
           "id": "headline",
           "role": "headline",
-          "text": "Qué pasó esta semana en la marca",
+          "text": "What happened at the brand this week",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -823,67 +823,67 @@
         {
           "id": "headline",
           "role": "headline",
-          "text": "Todo el contenido del mes en una carpeta",
+          "text": "The whole month's content in one folder",
           "chrome": false
         },
         {
           "id": "win-title",
           "role": "label",
-          "text": "PIEZAS / NOVIEMBRE",
+          "text": "PIECES / NOVEMBER",
           "chrome": false
         },
         {
           "id": "r1",
           "role": "body",
-          "text": "Lanzamiento del plan",
+          "text": "Plan launch",
           "chrome": false
         },
         {
           "id": "s1",
           "role": "label",
-          "text": "APROBADA",
+          "text": "APPROVED",
           "chrome": false
         },
         {
           "id": "r2",
           "role": "body",
-          "text": "Guía de primeros pasos",
+          "text": "Getting started guide",
           "chrome": false
         },
         {
           "id": "s2",
           "role": "label",
-          "text": "EN REVISIÓN",
+          "text": "IN REVIEW",
           "chrome": false
         },
         {
           "id": "r3",
           "role": "body",
-          "text": "Caso de un cliente",
+          "text": "A customer story",
           "chrome": false
         },
         {
           "id": "s3",
           "role": "label",
-          "text": "BORRADOR",
+          "text": "DRAFT",
           "chrome": false
         },
         {
           "id": "r4",
           "role": "body",
-          "text": "Resumen de la semana",
+          "text": "Weekly roundup",
           "chrome": false
         },
         {
           "id": "s4",
           "role": "label",
-          "text": "BORRADOR",
+          "text": "DRAFT",
           "chrome": false
         },
         {
           "id": "r5",
           "role": "body",
-          "text": "Cierre de campaña",
+          "text": "Campaign wrap-up",
           "chrome": false
         },
         {
@@ -895,7 +895,7 @@
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -935,13 +935,13 @@
         {
           "id": "kicker",
           "role": "label",
-          "text": "CON QUIÉNES TRABAJAMOS",
+          "text": "WHO WE WORK WITH",
           "chrome": false
         },
         {
           "id": "headline",
           "role": "headline",
-          "text": "Equipos que ya publican con nosotros",
+          "text": "Teams that already publish with us",
           "chrome": false
         },
         {
@@ -983,7 +983,7 @@
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -1023,7 +1023,7 @@
         {
           "id": "a",
           "role": "body",
-          "text": "Marca",
+          "text": "Brand",
           "chrome": false
         },
         {
@@ -1035,19 +1035,19 @@
         {
           "id": "b",
           "role": "body",
-          "text": "Aliado",
+          "text": "Partner",
           "chrome": false
         },
         {
           "id": "support",
           "role": "support",
-          "text": "Desde diciembre entrenamos juntos todos los sábados.",
+          "text": "Since December we train together every Saturday.",
           "chrome": false
         },
         {
           "id": "brand",
           "role": "chrome",
-          "text": "MARCA",
+          "text": "BRAND",
           "chrome": true
         },
         {
@@ -1058,7 +1058,7 @@
         }
       ],
       "images": [
-        "muestra-atardecer"
+        "sample-sunset"
       ],
       "chrome": {
         "brand": {
@@ -1088,7 +1088,7 @@
     "mode": "flat"
   },
   "cover": {
-    "hook": "Tres errores que frenan tus ventas",
+    "hook": "Three mistakes that stall your sales",
     "images": []
   }
 }

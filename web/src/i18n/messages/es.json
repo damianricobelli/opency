@@ -23,7 +23,7 @@
   "brief_eyebrow": "Brief interactivo",
   "brief_title": "Pregunta antes de diseñar.",
   "brief_lead": "Qué querés transmitir, objetivo, audiencia, oferta, tono, canales y fechas. Con eso arma el brief; recién después compone.",
-  "demo_label": "Demo con una marca ficticia",
+  "demo_label": "Demo · marca ficticia",
   "demo_replay": "Repetir",
   "demo_user_request": "Necesito una campaña para el lanzamiento del blend de invierno.",
   "demo_q_message": "Antes de diseñar: ¿qué querés transmitir?",
@@ -58,7 +58,7 @@
   "flow_3_title": "Campaña",
   "flow_3_body": "Carruseles, posts y stories en 4:5, 1:1, 9:16 y 16:9. Captions por red, alt text, PDF para LinkedIn y video MP4.",
   "flow_4_title": "Imágenes",
-  "flow_4_body": "Primero tus fotos; después stock de Pexels, Unsplash y Openverse con crédito y licencia registrados, foco y regiones protegidas.",
+  "flow_4_body": "Primero tus fotos; después stock de Openverse y Unsplash con crédito y licencia registrados, foco y regiones protegidas.",
   "flow_5_title": "Control de calidad",
   "flow_5_body": "Mide sobre el render: contraste, zonas seguras, viudas, recortes de caras, cifras sin fuente y frases que suenan a IA.",
   "flow_6_title": "Revisión",
@@ -109,5 +109,14 @@
   "cta_title": "Tu próxima campaña, en tu repositorio.",
   "cta_lead": "Instalalo en un minuto y pedile la primera pieza.",
   "footer_license": "Licencia MIT",
-  "footer_tagline": "Skill y MCP open source para equipos de contenido."
+  "footer_tagline": "Skill y MCP open source para equipos de contenido.",
+  "og_title_line_1": "El equipo de contenido de tu agencia,",
+  "og_title_line_2": "dentro de tu agente.",
+  "og_description": "Skill y servidor MCP open source: brief interactivo, campañas con la identidad de la marca y control de calidad a nivel píxel. Corre local.",
+  "og_image_alt": "opentcy: el equipo de contenido de tu agencia, dentro de tu agente.",
+  "hero_lead_short": "Un skill y un servidor MCP que convierten a tu agente en director de arte, diseñador y redactor. Corre en tu máquina.",
+  "theme_toggle_label": "Tema: {mode}",
+  "theme_mode_light": "claro",
+  "theme_mode_dark": "oscuro",
+  "theme_mode_auto": "sistema"
 }

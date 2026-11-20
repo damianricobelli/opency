@@ -45,9 +45,9 @@ export function McpSection() {
         <Section.Title>{m.mcp_title()}</Section.Title>
         <Section.Lead>{m.mcp_lead()}</Section.Lead>
       </Section.Header>
-      <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border bg-border sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid gap-px sm:mt-14 overflow-hidden rounded-2xl border bg-border sm:grid-cols-2 lg:grid-cols-3">
         {GROUPS.map((group, index) => (
-          <div key={index} className="bg-card p-5 sm:p-6">
+          <div key={index} className="bg-card p-4 sm:p-6">
             <Reveal delay={STAGGER[index]}>
               <h3 className="text-sm font-medium">{group.label()}</h3>
               <ul className="mt-4 flex flex-wrap gap-1.5">

@@ -1,92 +1,93 @@
-// El brief: las preguntas que un buen ejecutivo de cuentas hace antes de que alguien abra un archivo.
-// Fuente única para el CLI (`opentcy brief`), el servidor MCP (elicitation) y references/brief.md.
+// The brief: the questions a good account manager asks before anyone opens a file.
+// Single source for the CLI (`opentcy brief`), the MCP server (elicitation) and references/brief.md.
+// The questions are written in English; the agent asks them in the user's language.
 //
-// Cada pregunta tiene:
-//   id        clave donde se guarda la respuesta
-//   ask       la pregunta, en palabras de la persona (no jerga de agencia)
-//   why       para qué la usa el agente (se muestra si la persona duda)
+// Each question has:
+//   id        key the answer is stored under
+//   ask       the question, in the user's words (no agency jargon)
+//   why       what the agent uses it for (shown if the user hesitates)
 //   type      text | choice | multi | date | number | boolean
-//   options   para choice/multi
-//   required  sin esto no se diseña
-//   infer     de dónde puede deducirse antes de preguntar: no se pregunta lo que ya está
+//   options   for choice/multi
+//   required  nothing gets designed without it
+//   infer     where it can be inferred from before asking: never ask what is already known
 
 export const BRIEFS = {
   brand: {
-    title: "Cargar una marca",
-    intro: "Con esto alcanza para que las piezas se vean y suenen como la marca. Si hay web, la leo primero y solo pregunto lo que no encuentre.",
+    title: "Load a brand",
+    intro: "This is enough for pieces to look and sound like the brand. If there is a website I read it first and only ask what I cannot find.",
     questions: [
-      { id: "name", ask: "¿Cómo se llama la marca?", type: "text", required: true },
-      { id: "url", ask: "¿Tiene web o perfil de Instagram? Pasame el link y leo colores, tipografías, logo y textos.", type: "text", why: "Evita preguntarte lo que ya está publicado." },
-      { id: "what", ask: "¿Qué hace y para quién? En una o dos frases, como se lo contarías a alguien en un asado.", type: "text", required: true, infer: "web: título, descripción y titulares" },
-      { id: "goal", ask: "¿Para qué quiere estar en redes?", type: "choice", options: ["Que la conozcan", "Generar consultas o ventas", "Fidelizar a quienes ya compran", "Posicionarse como referente", "Reclutar"], required: true },
-      { id: "audience", ask: "¿A quién le habla? Pensá en una persona concreta: qué hace, qué le preocupa, qué ya probó.", type: "text", required: true },
-      { id: "offer", ask: "¿Qué vende exactamente y cómo se compra o contrata?", type: "text", infer: "web: CTAs y secciones de producto" },
-      { id: "feeling", ask: "¿Qué querés que sienta alguien al ver un post de la marca?", type: "multi", options: ["Confianza", "Cercanía", "Ambición", "Calma", "Urgencia", "Curiosidad", "Humor", "Lujo", "Rigor técnico"], required: true, why: "Decide el modo dominante (foto o tipografía), la densidad y la textura." },
-      { id: "voice", ask: "¿Cómo habla? ¿De vos, de tú o de usted? ¿Usa emoji? Si tenés 3 a 5 textos reales (posts, mails, la web), pegalos tal cual.", type: "text", required: true, infer: "web: textos; Instagram: captions" },
-      { id: "never", ask: "¿Qué no diría ni haría nunca la marca? Palabras, temas, estilos visuales.", type: "text" },
-      { id: "pillars", ask: "¿De qué 3 a 5 temas habla siempre?", type: "text", infer: "web: secciones y servicios" },
-      { id: "references", ask: "¿Hay cuentas o piezas que te gusten o que no soportes? Decime qué de cada una.", type: "text", why: "Informan estructura y ritmo. Nunca se copian." },
-      { id: "assets", ask: "¿Tenés logo en SVG, las tipografías (.woff2) y fotos propias? ¿Puedo usar fotos de banco?", type: "text", required: true },
-      { id: "facts", ask: "¿Qué datos puedo afirmar? Precios, resultados, clientes, testimonios. Cada uno con su fuente; lo que no esté acá no lo escribo.", type: "text", why: "El control de calidad bloquea toda cifra sin fuente." },
-      { id: "frequency", ask: "¿Cuántas piezas por semana y en qué redes?", type: "text", required: true },
-      { id: "country", ask: "¿En qué país está la audiencia?", type: "text", infer: "web: idioma y dominio", why: "Para el calendario comercial." },
+      { id: "name", ask: "What is the brand called?", type: "text", required: true },
+      { id: "url", ask: "Does it have a website or an Instagram profile? Send me the link and I will read colors, typefaces, logo and copy.", type: "text", why: "So I do not ask you what is already published." },
+      { id: "what", ask: "What does it do, and for whom? One or two sentences, the way you would tell a friend.", type: "text", required: true, infer: "website: title, description and headings" },
+      { id: "goal", ask: "What is it on social media for?", type: "choice", options: ["Get known", "Generate leads or sales", "Retain existing customers", "Become a reference in its field", "Recruit"], required: true },
+      { id: "audience", ask: "Who is it talking to? Picture one specific person: what they do, what worries them, what they have already tried.", type: "text", required: true },
+      { id: "offer", ask: "What exactly does it sell, and how do people buy or hire it?", type: "text", infer: "website: CTAs and product sections" },
+      { id: "feeling", ask: "What should someone feel when they see a post from the brand?", type: "multi", options: ["Trust", "Closeness", "Ambition", "Calm", "Urgency", "Curiosity", "Humor", "Luxury", "Technical rigor"], required: true, why: "It decides the dominant mode (photo or type), density and texture." },
+      { id: "voice", ask: "How does it talk? Formal or informal? Does it use emoji? If you have 3 to 5 real texts (posts, emails, the website), paste them as they are.", type: "text", required: true, infer: "website: copy; Instagram: captions" },
+      { id: "never", ask: "What would the brand never say or do? Words, topics, visual styles.", type: "text" },
+      { id: "pillars", ask: "Which 3 to 5 topics does it always talk about?", type: "text", infer: "website: sections and services" },
+      { id: "references", ask: "Any accounts or pieces you love or cannot stand? Tell me what about each one.", type: "text", why: "They inform structure and rhythm. They are never copied." },
+      { id: "assets", ask: "Do you have the logo as SVG, the fonts (.woff2) and photos of your own? May I use stock photos?", type: "text", required: true },
+      { id: "facts", ask: "Which facts can I state? Prices, results, clients, testimonials. Each with its source; I will not write anything that is not here.", type: "text", why: "Quality control blocks every figure without a source." },
+      { id: "frequency", ask: "How many pieces per week, and on which networks?", type: "text", required: true },
+      { id: "country", ask: "Which country is the audience in?", type: "text", infer: "website: language and domain", why: "For the commercial calendar." },
     ],
   },
   campaign: {
-    title: "Brief de campaña",
-    intro: "Una campaña es un mensaje sostenido en varias piezas. Antes de diseñar necesito saber qué tiene que quedar en la cabeza de quien la vea.",
+    title: "Campaign brief",
+    intro: "A campaign is one message carried across several pieces. Before designing I need to know what should stay in the mind of whoever sees it.",
     questions: [
-      { id: "message", ask: "¿Qué querés transmitir? Si alguien se acuerda de una sola cosa de la campaña, ¿cuál tiene que ser?", type: "text", required: true, why: "Es la tesis: cada pieza la prueba desde un ángulo distinto." },
-      { id: "objective", ask: "¿Qué tiene que pasar para que digas que funcionó?", type: "choice", options: ["Que más gente conozca la marca", "Consultas o leads", "Ventas de algo puntual", "Guardados y compartidos (enseñar)", "Asistentes a un evento", "Lanzar algo nuevo"], required: true },
-      { id: "audience", ask: "¿A quién le hablamos esta vez? ¿Es la audiencia de siempre o un grupo puntual?", type: "text", required: true, infer: "brand-kit.md → audiencia" },
-      { id: "offer", ask: "¿Hay una oferta, un producto o una fecha concreta? Precio, condiciones, hasta cuándo.", type: "text", why: "Solo se afirma lo que confirmes acá o figure en los datos verificados." },
-      { id: "proof", ask: "¿Con qué lo probamos? Datos, casos, testimonios con permiso, demostración del producto.", type: "text", why: "Una campaña sin prueba se queda en adjetivos." },
-      { id: "feeling", ask: "¿Qué tono tiene que tener? ¿Igual que siempre o esta vez cambia algo?", type: "multi", options: ["El de siempre", "Más urgente", "Más cálido", "Más técnico", "Más festivo", "Más sobrio"], infer: "brand-kit.md → voz" },
-      { id: "channels", ask: "¿Dónde va a salir?", type: "multi", options: ["Instagram feed", "Instagram stories", "LinkedIn", "TikTok", "X", "YouTube", "Anuncios pagos"], required: true },
-      { id: "pieces", ask: "¿Cuántas piezas y de qué tipo? Si no sabés, te propongo un plan.", type: "text", infer: "objetivo y duración → plan propuesto" },
-      { id: "dates", ask: "¿Desde cuándo y hasta cuándo? ¿Hay una fecha que no se puede mover?", type: "text", required: true },
-      { id: "cta", ask: "¿Qué querés que haga la persona después de verla? Una sola acción.", type: "text", required: true },
-      { id: "visuals", ask: "¿Con qué imágenes contamos?", type: "choice", options: ["Fotos propias (te las paso)", "Fotos de banco", "Solo tipografía y color", "Mezcla: decidí vos"], required: true },
-      { id: "mustInclude", ask: "¿Algo que tenga que aparecer sí o sí? Hashtag, legal, logo de un socio, una frase.", type: "text" },
-      { id: "avoid", ask: "¿Algo que no quieras ver ni leer?", type: "text" },
-      { id: "approver", ask: "¿Quién aprueba y cuándo necesitás ver la primera versión?", type: "text" },
+      { id: "message", ask: "What do you want to get across? If someone remembers one thing from the campaign, what should it be?", type: "text", required: true, why: "It is the thesis: every piece proves it from a different angle." },
+      { id: "objective", ask: "What has to happen for you to call it a success?", type: "choice", options: ["More people know the brand", "Inquiries or leads", "Sales of something specific", "Saves and shares (teaching)", "Event attendance", "Launching something new"], required: true },
+      { id: "audience", ask: "Who are we talking to this time? The usual audience or a specific group?", type: "text", required: true, infer: "brand-kit.md → audience" },
+      { id: "offer", ask: "Is there an offer, a product or a specific date? Price, conditions, until when.", type: "text", why: "Only what you confirm here or what is in the verified facts gets stated." },
+      { id: "proof", ask: "What do we prove it with? Data, cases, testimonials with permission, a product demo.", type: "text", why: "A campaign without proof is just adjectives." },
+      { id: "feeling", ask: "What tone should it have? The usual one, or does something change this time?", type: "multi", options: ["The usual", "More urgent", "Warmer", "More technical", "More festive", "More restrained"], infer: "brand-kit.md → voice" },
+      { id: "channels", ask: "Where will it run?", type: "multi", options: ["Instagram feed", "Instagram stories", "LinkedIn", "TikTok", "X", "YouTube", "Paid ads"], required: true },
+      { id: "pieces", ask: "How many pieces, and of what kind? If you are not sure, I will propose a plan.", type: "text", infer: "objective and duration → proposed plan" },
+      { id: "dates", ask: "From when to when? Is there a date that cannot move?", type: "text", required: true },
+      { id: "cta", ask: "What should people do after seeing it? One single action.", type: "text", required: true },
+      { id: "visuals", ask: "What images do we have?", type: "choice", options: ["Our own photos (I will send them)", "Stock photos", "Type and color only", "A mix: you decide"], required: true },
+      { id: "mustInclude", ask: "Anything that must appear no matter what? A hashtag, legal text, a partner's logo, a phrase.", type: "text" },
+      { id: "avoid", ask: "Anything you do not want to see or read?", type: "text" },
+      { id: "approver", ask: "Who approves, and when do you need to see the first version?", type: "text" },
     ],
   },
   piece: {
-    title: "Brief de una pieza",
-    intro: "Para una pieza suelta alcanza con poco. Si el pedido ya lo dice, no lo pregunto.",
+    title: "Piece brief",
+    intro: "A single piece needs very little. If the request already says it, I do not ask.",
     questions: [
-      { id: "message", ask: "¿Qué querés transmitir con esta pieza? Una idea.", type: "text", required: true },
-      { id: "intent", ask: "¿Qué tiene que lograr?", type: "choice", options: ["Opinar", "Enseñar", "Mostrar producto", "Caso / prueba", "Vender", "Novedad / evento", "Comunidad"], required: true, why: "Elige la receta: cantidad de slides, modo y estructura." },
-      { id: "format", ask: "¿Qué formato?", type: "choice", options: ["Carrusel 4:5", "Post 4:5", "Post 1:1", "Story 9:16", "Horizontal 16:9"], infer: "red de destino" },
-      { id: "facts", ask: "¿Qué datos concretos tiene que llevar? Cifras, precios, fechas, nombres.", type: "text", why: "No invento ninguno." },
-      { id: "visuals", ask: "¿Hay una foto que deba usar o la resuelvo con tipografía o banco?", type: "text" },
-      { id: "date", ask: "¿Para cuándo?", type: "text" },
+      { id: "message", ask: "What do you want to get across with this piece? One idea.", type: "text", required: true },
+      { id: "intent", ask: "What should it achieve?", type: "choice", options: ["Give an opinion", "Teach", "Show the product", "Case / proof", "Sell", "News / event", "Community"], required: true, why: "It picks the recipe: number of slides, mode and structure." },
+      { id: "format", ask: "Which format?", type: "choice", options: ["Carousel 4:5", "Post 4:5", "Post 1:1", "Story 9:16", "Landscape 16:9"], infer: "target network" },
+      { id: "facts", ask: "Which concrete facts must it carry? Figures, prices, dates, names.", type: "text", why: "I do not make any up." },
+      { id: "visuals", ask: "Is there a photo I should use, or do I solve it with type or stock?", type: "text" },
+      { id: "date", ask: "When is it for?", type: "text" },
     ],
   },
 };
 
 export const briefKinds = Object.keys(BRIEFS);
 
-/** Qué falta para poder diseñar. */
+/** What is still missing before design can start. */
 export function missingAnswers(kind, answers = {}) {
   return BRIEFS[kind].questions.filter((q) => q.required && isEmpty(answers[q.id]));
 }
 const isEmpty = (v) => v === undefined || v === null || (typeof v === "string" && !v.trim()) || (Array.isArray(v) && !v.length);
 
-/** Las preguntas que todavía no tienen respuesta, en orden: primero las obligatorias. */
+/** Questions without an answer yet, in order: required ones first. */
 export function nextQuestions(kind, answers = {}, limit = 4) {
   const open = BRIEFS[kind].questions.filter((q) => isEmpty(answers[q.id]));
   return [...open.filter((q) => q.required), ...open.filter((q) => !q.required)].slice(0, limit);
 }
 
-/** Esquema plano para MCP elicitation (solo primitivos: string, enum, boolean, number). */
+/** Flat schema for MCP elicitation (primitives only: string, enum, boolean, number). */
 export function elicitationSchema(questions) {
   const properties = {}, required = [];
   for (const q of questions) {
     const base = { title: q.ask.slice(0, 120), description: q.why ?? undefined };
     if (q.type === "choice") properties[q.id] = { ...base, type: "string", enum: q.options };
-    else if (q.type === "multi") properties[q.id] = { ...base, type: "string", description: `${q.why ? q.why + " " : ""}Opciones (podés combinar o escribir otra): ${q.options.join(" · ")}` };
+    else if (q.type === "multi") properties[q.id] = { ...base, type: "string", description: `${q.why ? q.why + " " : ""}Options (combine them or write your own): ${q.options.join(" · ")}` };
     else if (q.type === "boolean") properties[q.id] = { ...base, type: "boolean" };
     else if (q.type === "number") properties[q.id] = { ...base, type: "number" };
     else properties[q.id] = { ...base, type: "string" };
@@ -100,7 +101,7 @@ export function renderMarkdown(kind, answers = {}) {
   const lines = [`# ${b.title}`, ""];
   for (const q of b.questions) {
     const a = answers[q.id];
-    lines.push(`**${q.ask}**`, isEmpty(a) ? (q.required ? "_Falta (obligatoria)._" : "_Sin respuesta._") : Array.isArray(a) ? a.join(", ") : String(a), "");
+    lines.push(`**${q.ask}**`, isEmpty(a) ? (q.required ? "_Missing (required)._" : "_No answer._") : Array.isArray(a) ? a.join(", ") : String(a), "");
   }
   return lines.join("\n");
 }

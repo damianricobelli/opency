@@ -2,10 +2,10 @@
   "$schema": "./assets.schema.md",
   "assets": [
     {
-      "id": "muestra-atardecer",
+      "id": "sample-sunset",
       "kind": "photo",
-      "file": "photos/muestra-atardecer.jpg",
-      "description": "Muestra: silueta de pie frente a un atardecer, horizonte bajo (imagen generada para probar layouts)",
+      "file": "photos/sample-sunset.jpg",
+      "description": "Sample: a standing silhouette facing a sunset, low horizon (image generated to test layouts)",
       "source": "propio",
       "credit": null,
       "license": "propio",

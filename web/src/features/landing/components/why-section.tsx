@@ -13,7 +13,7 @@ const REASONS = [
 export function WhySection() {
   return (
     <Section.Root id="why">
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-8 sm:gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <Section.Header className="lg:sticky lg:top-28 lg:self-start">
           <Section.Eyebrow>{m.why_eyebrow()}</Section.Eyebrow>
           <Section.Title>{m.why_title()}</Section.Title>
@@ -23,7 +23,7 @@ export function WhySection() {
             <Reveal
               key={index}
               delay={Math.min(index, 2) * 45}
-              className="grid gap-1 border-t py-6 sm:grid-cols-[11rem_1fr] sm:gap-6"
+              className="grid gap-1 border-t py-5 sm:grid-cols-[11rem_1fr] sm:gap-6 sm:py-6"
             >
               <dt className="font-display text-2xl leading-tight">
                 {reason.title()}

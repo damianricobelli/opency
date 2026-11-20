@@ -1,30 +1,30 @@
-# Librería de layouts
+# Layout library
 
-Catorce arquetipos de slide (4:5), probados con el control de calidad: 0 errores y 0 advertencias. Son puntos de partida. Cada pieza los adapta: cambia el copy, el fondo, la textura y el tamaño, sin repetir el mismo layout en todos los slides.
+Fourteen slide archetypes (4:5), tested against quality control: 0 errors and 0 warnings. They are starting points. Each piece adapts them: change the copy, the background, the texture and the size, without repeating the same layout on every slide.
 
-`npx opentcy layouts` los renderiza en `templates/layouts/render/contact-sheet.png`. Para armar una pieza combinándolos:
+`npx opentcy layouts` renders them to `templates/layouts/render/contact-sheet.png`. To build a piece by combining them:
 
 ```bash
-npx opentcy new mi-pieza --layouts cover-type,statement,steps,big-number,closer
+npx opentcy new my-piece --layouts cover-type,statement,steps,big-number,closer
 ```
 
-| # | Nombre | Para qué | Notas |
+| # | Name | What for | Notes |
 |---|---|---|---|
-| 01 | `cover-type` | Portada tipográfica | Sin foto. Un elemento de acento que sangra fuera del canvas. |
-| 02 | `cover-photo` | Portada con foto a sangre | Velo `high` + scrim detrás del texto. Foto con foco (`--fx/--fy`) y análisis hecho. |
-| 03 | `statement` | Opinión / afirmación | Una frase dueña del slide. Fondo `--primary`. |
-| 04 | `big-number` | Cantidad | El número en `--ink`, no en acento: el acento como texto no pasa contraste sobre fondo claro. |
-| 05 | `steps` | Secuencia / método | Hasta 5 pasos. Más que eso, dividir en dos slides. |
-| 06 | `comparison` | Antes/ahora, A contra B | Dos bloques: el de "ahora" va recuadrado en acento. Máx. 3 puntos por columna, de 2–4 palabras. |
-| 07 | `photo-card` | Foto + explicación | La tarjeta pisa el borde de la foto para unir los dos bloques. |
-| 08 | `data-bars` | Comparar cantidades | Datos reales con fuente visible. Barra destacada en acento, el resto en `--ink`. |
-| 09 | `testimonial` | Prueba social | **Solo con un testimonio real, textual y con permiso.** Nunca inventado ni parafraseado. |
-| 10 | `closer` | Cierre + CTA | Un solo CTA que nombra su objeto (qué, dónde, cómo). |
-| 11 | `news-cards` | Resumen de varias novedades | Cuatro tarjetas; la primera destacada. Cada novedad en una línea o dos. |
-| 12 | `app-window` | Mostrar un producto digital | Ventana dibujada con filas. Sin números inventados: nombres y estados reales. |
-| 13 | `logo-grid` | Clientes, aliados, herramientas | **Solo con permiso de cada marca.** Cada casilla lleva un `<img class="logo">`. |
-| 14 | `cobrand` | Anuncio con otra marca | Foto con velo y los dos logos unidos por una cruz. |
+| 01 | `cover-type` | Typographic cover | No photo. One accent element that bleeds off the canvas. |
+| 02 | `cover-photo` | Cover with a full-bleed photo | `high` veil + scrim behind the text. Photo with a focal point (`--fx/--fy`) and its analysis done. |
+| 03 | `statement` | Opinion / statement | One sentence that owns the slide. `--primary` background. |
+| 04 | `big-number` | Quantity | The number in `--ink`, not in the accent: the accent as text does not pass contrast on a light background. |
+| 05 | `steps` | Sequence / method | Up to 5 steps. More than that, split into two slides. |
+| 06 | `comparison` | Before/now, A versus B | Two blocks: the "now" one is boxed in the accent. Max. 3 points per column, 2–4 words each. |
+| 07 | `photo-card` | Photo + explanation | The card overlaps the edge of the photo to tie the two blocks together. |
+| 08 | `data-bars` | Comparing quantities | Real data with a visible source. Highlighted bar in the accent, the rest in `--ink`. |
+| 09 | `testimonial` | Social proof | **Only with a real testimonial, verbatim and with permission.** Never invented or paraphrased. |
+| 10 | `closer` | Close + CTA | A single CTA that names its object (what, where, how). |
+| 11 | `news-cards` | Roundup of several news items | Four cards; the first one featured. Each item in a line or two. |
+| 12 | `app-window` | Showing a digital product | A drawn window with rows. No invented numbers: real names and statuses. |
+| 13 | `logo-grid` | Customers, partners, tools | **Only with each brand's permission.** Each cell holds an `<img class="logo">`. |
+| 14 | `cobrand` | Announcement with another brand | Photo with a veil and the two logos joined by a cross. |
 
-El copy de los layouts es de muestra. Cada layout declara su presupuesto de texto con `data-max`: el render avisa si lo excedés en más de 20 %.
+The copy in the layouts is sample copy. Each layout declares its text budget with `data-max`: the render warns you if you exceed it by more than 20%.
 
-Los datos del 08 y la cita del 09 son ficticios: se reemplazan siempre.
+The data in 08 and the quote in 09 are fictional: always replace them.

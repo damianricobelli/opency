@@ -1,13 +1,13 @@
 /*
- * TOKENS DE MARCA — única fuente de color, tipografía y escala.
- * Los slides usan solo var(--*) de este archivo. Un color literal solo si la persona lo pide por nombre.
- * Cambiar un valor repinta todo lo que se renderice después: el agente propone y espera aprobación.
- * Valores por defecto neutros. Se reemplazan en el onboarding (AGENTS.md §3).
+ * BRAND TOKENS — the single source of color, typography and scale.
+ * Slides use only var(--*) from this file. A literal color only if the person asks for it by name.
+ * Changing a value repaints everything rendered afterwards: the agent proposes and waits for approval.
+ * Neutral default values. They are replaced during onboarding (references/onboarding.md).
  */
 
-/* Fuentes locales (assets/fonts/): el render no depende de la red y es idéntico en cualquier máquina.
-   Para la marca: copiar sus .woff2 a assets/fonts/ y reemplazar estos @font-face. Un peso que no tiene
-   archivo propio NO se declara: el navegador lo sintetizaría y se ve peor (y no es el original). */
+/* Local fonts (assets/fonts/): the render does not depend on the network and is identical on any machine.
+   For the brand: copy its .woff2 files into assets/fonts/ and replace these @font-face rules. A weight without
+   its own file is NOT declared: the browser would synthesize it and it looks worse (and is not the original). */
 @font-face { font-family: "Inter Tight"; font-weight: 400; font-display: block; src: url("./assets/fonts/InterTight-400.woff2") format("woff2"); }
 @font-face { font-family: "Inter Tight"; font-weight: 500; font-display: block; src: url("./assets/fonts/InterTight-500.woff2") format("woff2"); }
 @font-face { font-family: "Inter Tight"; font-weight: 600; font-display: block; src: url("./assets/fonts/InterTight-600.woff2") format("woff2"); }
@@ -20,26 +20,26 @@
 
 :root {
   /* ---- Color: 7 roles ---- */
-  --primary:      #121212;  /* color de marca dominante; paneles fuertes */
-  --secondary:    #2F3B35;  /* segundo color de marca */
-  --accent:       #FF5A1F;  /* uno por slide, < 10 % de la superficie */
+  --primary:      #121212;  /* dominant brand color; strong panels */
+  --secondary:    #2F3B35;  /* second brand color */
+  --accent:       #FF5A1F;  /* one per slide, < 10% of the surface */
   --accent-base:  var(--accent);
-  --on-accent:    var(--ink);       /* texto sobre el acento (chips): ink o ink-inverse, el que pase contraste */
-  /* --accent-inverse: opcional; acento sobre on-primary / on-secondary / fotos */
-  --bg:           #F3EFE6;  /* fondo por defecto */
-  --bg-alt:       #E6E0D3;  /* separa bloques sobre --bg */
-  --ink:          #121212;  /* texto sobre --bg y --bg-alt */
-  --ink-inverse:  #F7F4EE;  /* texto sobre fotos, --primary y paneles oscuros */
+  --on-accent:    var(--ink);       /* text on the accent (chips): ink or ink-inverse, whichever passes contrast */
+  /* --accent-inverse: optional; accent on on-primary / on-secondary / photos */
+  --bg:           #F3EFE6;  /* default background */
+  --bg-alt:       #E6E0D3;  /* separates blocks on --bg */
+  --ink:          #121212;  /* text on --bg and --bg-alt */
+  --ink-inverse:  #F7F4EE;  /* text on photos, --primary and dark panels */
 
-  /* Derivados (no inventar otros: derivar con color-mix desde los roles) */
+  /* Derived (do not invent others: derive them with color-mix from the roles) */
   --ink-muted:          color-mix(in oklab, var(--ink) 62%, var(--bg));
   --ink-inverse-muted:  color-mix(in oklab, var(--ink-inverse) 70%, var(--primary));
   --line:               color-mix(in oklab, var(--ink) 18%, transparent);
 
-  /* ---- Tipografía: 3 familias ---- */
-  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;  /* titulares */
-  --font-body:    "Inter", system-ui, sans-serif;                 /* texto */
-  --font-mono:    "JetBrains Mono", ui-monospace, monospace;      /* etiquetas chicas en mayúscula */
+  /* ---- Typography: 3 families ---- */
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;  /* headlines */
+  --font-body:    "Inter", system-ui, sans-serif;                 /* body text */
+  --font-mono:    "JetBrains Mono", ui-monospace, monospace;      /* small uppercase labels */
 
   --weight-display: 800;
   --weight-title:   700;
@@ -51,23 +51,23 @@
   --tracking-label:    0.12em;
 
   --leading-hero:    0.92;
-  --leading-display: 1.02;  /* mínimo seguro con tildes en mayúscula */
+  --leading-display: 1.02;  /* safe minimum for uppercase letters with accents */
   --leading-body:    1.32;
 
-  /* ---- Escala por rol (px sobre canvas de 1080 de ancho; base.css la ajusta por formato) ---- */
-  --size-hero:    184;  /* una palabra o número que es dueño del slide */
-  --size-cover:   100;  /* titular de portada */
-  --size-closer:   90;  /* frase de cierre */
-  --size-title:    78;  /* titular de slide interno */
+  /* ---- Scale by role (px on a 1080-wide canvas; base.css adjusts it per format) ---- */
+  --size-hero:    184;  /* one word or number that owns the slide */
+  --size-cover:   100;  /* cover headline */
+  --size-closer:   90;  /* closing line */
+  --size-title:    78;  /* inner-slide headline */
   --size-subtitle: 52;
   --size-body:     40;
-  --size-intro:    34;  /* bajada / apoyo bajo titular */
-  --size-cue:      32;  /* indicación de deslizar, CTA corto */
-  --size-label:    28;  /* etiquetas mono, fuente, paginador */
+  --size-intro:    34;  /* supporting line under the headline */
+  --size-cue:      32;  /* swipe cue, short CTA */
+  --size-label:    28;  /* mono labels, source, pager */
 
-  /* ---- Forma y materiales ---- */
+  /* ---- Shape and materials ---- */
   --radius:        28px;
   --radius-chip:   999px;
   --logo-height:   44px;
-  --grain:         0.45;  /* 0.35–0.6 se lee como material; > 0.8 es ruido */
+  --grain:         0.45;  /* 0.35–0.6 reads as material; > 0.8 is noise */
 }

@@ -1,17 +1,17 @@
 #!/usr/bin/env node
-// Campañas: un brief y un plan de piezas que comparten mensaje.
+// Campaigns: a brief and a plan of pieces that share one message.
 //
-//   npx opentcy campaign new <slug> --name "Nombre" [--answers archivo.json] [--set clave="valor"]…
-//   npx opentcy campaign brief <slug> [--set clave="valor"]… [--answers archivo.json]      completa o corrige respuestas
-//   npx opentcy campaign plan <slug> --file plan.json                                        guarda el plan de piezas
-//   npx opentcy campaign status <slug>                                                       qué falta, qué piezas hay y cómo están
+//   npx opentcy campaign new <slug> --name "Name" [--answers file.json] [--set key="value"]…
+//   npx opentcy campaign brief <slug> [--set key="value"]… [--answers file.json]      fill in or correct answers
+//   npx opentcy campaign plan <slug> --file plan.json                                  save the piece plan
+//   npx opentcy campaign status <slug>                                                 what is missing, which pieces exist and how they are
 //   npx opentcy campaign list
-//   npx opentcy brief questions [brand|campaign|piece] [--json]                              las preguntas de cada brief
-//   En todos: --brand <slug>   ·   --json para salida estructurada.
+//   npx opentcy brief questions [brand|campaign|piece] [--json]                        the questions of each brief
+//   All of them: --brand <slug>   ·   --json for structured output.
 //
-// La campaña vive en brands/<marca>/campaigns/<slug>/brief.json. Las piezas se vinculan con
-// `npx opentcy new <pieza> --campaign <slug>` (queda en piece.json → campaign).
-// Un plan es una lista de { slug, intent, format, channel, date, angle, layouts? }.
+// The campaign lives in brands/<brand>/campaigns/<slug>/brief.json. Pieces are linked with
+// `npx opentcy new <piece> --campaign <slug>` (stored in piece.json → campaign).
+// A plan is a list of { slug, intent, format, channel, date, angle, layouts? }.
 
 import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
@@ -24,20 +24,20 @@ const args = parseArgs(argv);
 const fail = (m) => { console.error(`✗ ${m}`); process.exit(1); };
 const out = (data, text) => console.log(args.json ? JSON.stringify(data, null, 2) : text);
 
-// --set se puede repetir: parseArgs se queda con el último, así que se leen todos a mano.
+// --set can repeat: parseArgs keeps only the last one, so all of them are read by hand.
 const sets = argv.flatMap((v, i) => (argv[i - 1] === "--set" ? [v] : []));
 async function collectAnswers() {
   const a = {};
-  if (typeof args.answers === "string") Object.assign(a, await readJSON(path.resolve(args.answers), null) ?? fail(`No pude leer ${args.answers}`));
-  for (const s of sets) { const i = s.indexOf("="); if (i < 1) fail(`--set espera clave=valor (recibí "${s}")`); a[s.slice(0, i)] = s.slice(i + 1); }
+  if (typeof args.answers === "string") Object.assign(a, await readJSON(path.resolve(args.answers), null) ?? fail(`Could not read ${args.answers}`));
+  for (const s of sets) { const i = s.indexOf("="); if (i < 1) fail(`--set expects key=value (got "${s}")`); a[s.slice(0, i)] = s.slice(i + 1); }
   return a;
 }
 
-// ---- brief questions (no necesita marca) ----
+// ---- brief questions (no brand needed) ----
 if (args._[0] === "questions" || (args._[0] === "brief" && args._[1] === "questions")) {
   const kind = args._.find((x) => briefKinds.includes(x)) ?? "campaign";
   const b = BRIEFS[kind];
-  out({ kind, ...b }, [`# ${b.title}`, b.intro, "", ...b.questions.map((q, i) => `${String(i + 1).padStart(2)}. ${q.required ? "●" : "○"} ${q.ask}${q.options ? `\n     opciones: ${q.options.join(" · ")}` : ""}${q.infer ? `\n     se puede deducir de: ${q.infer}` : ""}`), "", "● obligatoria   ○ opcional"].join("\n"));
+  out({ kind, ...b }, [`# ${b.title}`, b.intro, "", ...b.questions.map((q, i) => `${String(i + 1).padStart(2)}. ${q.required ? "●" : "○"} ${q.ask}${q.options ? `\n     options: ${q.options.join(" · ")}` : ""}${q.infer ? `\n     can be inferred from: ${q.infer}` : ""}`), "", "● required   ○ optional"].join("\n"));
   process.exit(0);
 }
 
@@ -45,11 +45,11 @@ const [cmd, target] = args._;
 let brand; try { brand = await resolveBrand(args); } catch (e) { fail(e.message); }
 const CDIR = path.join(brandDir(brand), "campaigns");
 const file = (slug) => path.join(CDIR, slug, "brief.json");
-const load = async (slug) => (await readJSON(file(slug), null)) ?? fail(`No existe la campaña "${slug}" en brands/${brand}/campaigns. Creala: npx opentcy campaign new ${slug} --name "…"`);
+const load = async (slug) => (await readJSON(file(slug), null)) ?? fail(`Campaign "${slug}" does not exist in brands/${brand}/campaigns. Create it: npx opentcy campaign new ${slug} --name "…"`);
 async function save(c) {
   c.updatedAt = today();
   await writeJSON(file(c.slug), c);
-  await writeFile(path.join(CDIR, c.slug, "brief.md"), renderMarkdown("campaign", c.answers).replace("# Brief de campaña", `# ${c.name} · brief`) + "\n");
+  await writeFile(path.join(CDIR, c.slug, "brief.md"), renderMarkdown("campaign", c.answers).replace("# Campaign brief", `# ${c.name} · brief`) + "\n");
 }
 
 async function piecesOf(slug) {
@@ -72,55 +72,55 @@ async function status(slug) {
   const made = new Set(pieces.map((p) => p.id.replace(/^\d{4}-\d{2}-\d{2}-/, "")));
   const pending = (c.plan ?? []).filter((p) => !made.has(slugify(p.slug)));
   const ready = !missing.length;
-  const next = !ready ? "Completar el brief: faltan respuestas obligatorias." : !(c.plan ?? []).length ? "Proponer el plan de piezas y guardarlo con `campaign plan`." : pending.length ? `Crear ${pending.length} pieza(s) pendientes del plan.` : pieces.some((p) => !p.rendered || p.errors) ? "Renderizar y resolver errores." : "Revisión en frío y entrega.";
+  const next = !ready ? "Complete the brief: required answers are missing." : !(c.plan ?? []).length ? "Propose the piece plan and save it with `campaign plan`." : pending.length ? `Create the ${pending.length} piece(s) still pending from the plan.` : pieces.some((p) => !p.rendered || p.errors) ? "Render and fix the errors." : "Cold review and delivery.";
   return { brand, slug, name: c.name, readyToDesign: ready, missing, answers: c.answers, plan: c.plan ?? [], pieces, pendingFromPlan: pending, next };
 }
 
 try {
   if (cmd === "new") {
-    if (!target) fail('Uso: npx opentcy campaign new <slug> --name "Nombre"');
+    if (!target) fail('Usage: npx opentcy campaign new <slug> --name "Name"');
     const slug = slugify(target);
-    if (existsSync(file(slug))) fail(`Ya existe la campaña "${slug}". Para cambiar respuestas: npx opentcy campaign brief ${slug} --set clave="valor"`);
+    if (existsSync(file(slug))) fail(`Campaign "${slug}" already exists. To change answers: npx opentcy campaign brief ${slug} --set key="value"`);
     await mkdir(path.join(CDIR, slug), { recursive: true });
     const c = { slug, name: typeof args.name === "string" ? args.name : target, brand, createdAt: today(), status: "brief", answers: await collectAnswers(), plan: [] };
     await save(c);
     const s = await status(slug);
-    out(s, `✓ brands/${brand}/campaigns/${slug}/brief.json\n${s.missing.length ? `  Faltan ${s.missing.length} respuesta(s) obligatoria(s):\n${s.missing.map((m) => `   · ${m.id}: ${m.ask}`).join("\n")}` : "  Brief completo."}\n  → ${s.next}`);
+    out(s, `✓ brands/${brand}/campaigns/${slug}/brief.json\n${s.missing.length ? `  ${s.missing.length} required answer(s) missing:\n${s.missing.map((m) => `   · ${m.id}: ${m.ask}`).join("\n")}` : "  Brief complete."}\n  → ${s.next}`);
   } else if (cmd === "brief") {
     const c = await load(target);
     const add = await collectAnswers();
     const unknown = Object.keys(add).filter((k) => !BRIEFS.campaign.questions.some((q) => q.id === k));
-    if (unknown.length) fail(`Clave(s) desconocida(s): ${unknown.join(", ")}. Válidas: ${BRIEFS.campaign.questions.map((q) => q.id).join(", ")}`);
+    if (unknown.length) fail(`Unknown key(s): ${unknown.join(", ")}. Valid: ${BRIEFS.campaign.questions.map((q) => q.id).join(", ")}`);
     if (Object.keys(add).length) { Object.assign(c.answers, add); await save(c); }
     const s = await status(target);
     const nq = nextQuestions("campaign", c.answers);
-    out({ ...s, nextQuestions: nq }, `${renderMarkdown("campaign", c.answers)}\n${s.readyToDesign ? "✓ Listo para diseñar." : `Faltan: ${s.missing.map((m) => m.id).join(", ")}`}\n→ ${s.next}`);
+    out({ ...s, nextQuestions: nq }, `${renderMarkdown("campaign", c.answers)}\n${s.readyToDesign ? "✓ Ready to design." : `Missing: ${s.missing.map((m) => m.id).join(", ")}`}\n→ ${s.next}`);
   } else if (cmd === "plan") {
     const c = await load(target);
-    if (typeof args.file !== "string") fail("Uso: npx opentcy campaign plan <slug> --file plan.json   (lista de { slug, intent, format, channel, date, angle })");
+    if (typeof args.file !== "string") fail("Usage: npx opentcy campaign plan <slug> --file plan.json   (a list of { slug, intent, format, channel, date, angle })");
     const plan = await readJSON(path.resolve(args.file), null);
-    if (!Array.isArray(plan) || !plan.length) fail("El plan tiene que ser una lista con al menos una pieza.");
+    if (!Array.isArray(plan) || !plan.length) fail("The plan must be a list with at least one piece.");
     for (const [i, p] of plan.entries()) {
-      if (!p.slug || !p.angle) fail(`Pieza ${i + 1}: faltan slug o angle (el ángulo en una frase).`);
-      if (p.format && !FORMATS[p.format]) fail(`Pieza ${i + 1}: formato inválido "${p.format}". Opciones: ${Object.keys(FORMATS).join(", ")}`);
-      if (p.date && !/^\d{4}-\d{2}-\d{2}$/.test(p.date)) fail(`Pieza ${i + 1}: la fecha va como AAAA-MM-DD.`);
+      if (!p.slug || !p.angle) fail(`Piece ${i + 1}: slug or angle is missing (the angle in one sentence).`);
+      if (p.format && !FORMATS[p.format]) fail(`Piece ${i + 1}: invalid format "${p.format}". Options: ${Object.keys(FORMATS).join(", ")}`);
+      if (p.date && !/^\d{4}-\d{2}-\d{2}$/.test(p.date)) fail(`Piece ${i + 1}: the date must be YYYY-MM-DD.`);
     }
     c.plan = plan.map((p) => ({ slug: slugify(p.slug), intent: p.intent ?? "", format: p.format ?? "4:5", channel: p.channel ?? "", date: p.date ?? "", angle: p.angle, ...(p.layouts ? { layouts: p.layouts } : {}) }));
     c.status = "planned";
     await save(c);
-    out(await status(target), `✓ Plan guardado: ${c.plan.length} pieza(s)\n${c.plan.map((p) => `  ${p.date || "sin fecha "} ${p.format.padEnd(5)} ${p.slug.padEnd(28)} ${p.angle}`).join("\n")}\n  Crear cada una: npx opentcy new <slug> --campaign ${c.slug} --layouts … --date …`);
+    out(await status(target), `✓ Plan saved: ${c.plan.length} piece(s)\n${c.plan.map((p) => `  ${p.date || "no date   "} ${p.format.padEnd(5)} ${p.slug.padEnd(28)} ${p.angle}`).join("\n")}\n  Create each one: npx opentcy new <slug> --campaign ${c.slug} --layouts … --date …`);
   } else if (cmd === "status") {
     const s = await status(target);
-    out(s, [`${s.name} · ${brand}/${s.slug} · ${s.readyToDesign ? "brief completo" : `faltan ${s.missing.length} respuesta(s)`}`,
+    out(s, [`${s.name} · ${brand}/${s.slug} · ${s.readyToDesign ? "brief complete" : `${s.missing.length} answer(s) missing`}`,
       ...s.missing.map((m) => `  ✗ ${m.id}: ${m.ask}`),
-      s.plan.length ? `Plan: ${s.plan.length} pieza(s), ${s.pendingFromPlan.length} sin crear` : "Sin plan todavía.",
-      ...s.pieces.map((p) => `  ${p.rendered ? (p.errors ? "✗" : "✓") : "·"} ${p.id.padEnd(40)} ${String(p.format).padEnd(5)} ${p.status.padEnd(10)} ${p.rendered ? `${p.errors} errores · ${p.warnings} advertencias` : "sin renderizar"}`),
+      s.plan.length ? `Plan: ${s.plan.length} piece(s), ${s.pendingFromPlan.length} not created yet` : "No plan yet.",
+      ...s.pieces.map((p) => `  ${p.rendered ? (p.errors ? "✗" : "✓") : "·"} ${p.id.padEnd(40)} ${String(p.format).padEnd(5)} ${p.status.padEnd(10)} ${p.rendered ? `${p.errors} errors · ${p.warnings} warnings` : "not rendered"}`),
       `→ ${s.next}`].join("\n"));
   } else if (cmd === "list") {
     const dirs = (await readdir(CDIR, { withFileTypes: true }).catch(() => [])).filter((d) => d.isDirectory());
     const rows = [];
     for (const d of dirs) { const c = await readJSON(file(d.name), null); if (c) rows.push({ slug: c.slug, name: c.name, status: c.status, pieces: (await piecesOf(c.slug)).length, planned: c.plan?.length ?? 0, updatedAt: c.updatedAt }); }
-    out(rows, rows.length ? rows.map((r) => `${r.slug.padEnd(28)} ${r.name} · ${r.pieces}/${r.planned} piezas · ${r.status}`).join("\n") : `(${brand} no tiene campañas: npx opentcy campaign new <slug> --name "…")`);
+    out(rows, rows.length ? rows.map((r) => `${r.slug.padEnd(28)} ${r.name} · ${r.pieces}/${r.planned} pieces · ${r.status}`).join("\n") : `(${brand} has no campaigns: npx opentcy campaign new <slug> --name "…")`);
   } else {
     console.log((await readFile(new URL(import.meta.url), "utf8")).split("\n").filter((l) => l.startsWith("//")).map((l) => l.slice(3)).join("\n"));
   }

@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-// Marcas: crear, elegir, importar desde una web y verificar la paleta.
+// Brands: create, select, import from a website and check the palette.
 //
 //   npx opentcy brand list
-//   npx opentcy brand new <slug> --name "Nombre"        crea brands/<slug>/ con el esqueleto
-//   npx opentcy brand use <slug>                         marca activa por defecto (brands/.active)
-//   npx opentcy brand import <url> [--brand slug]        lee colores, tipografías, logo y textos de una web
-//   npx opentcy brand check [--brand slug]               contraste de cada combinación de la paleta + fuentes
+//   npx opentcy brand new <slug> --name "Name"          creates brands/<slug>/ with the skeleton
+//   npx opentcy brand use <slug>                         default active brand (brands/.active)
+//   npx opentcy brand import <url> [--brand slug]        reads colors, typefaces, logo and copy from a website
+//   npx opentcy brand check [--brand slug]               contrast of every palette combination + fonts
 //
-// `import` no escribe tokens: deja un informe en brands/<slug>/import/ para que el agente proponga
-// la paleta y la persona la apruebe. `check` resuelve los colores con el navegador (sirve para hex, oklch, color-mix).
+// `import` does not write tokens: it leaves a report in brands/<slug>/import/ so the agent can propose
+// the palette and the user can approve it. `check` resolves colors in the browser (works for hex, oklch, color-mix).
 
 import { mkdir, writeFile, cp, readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
@@ -20,7 +20,7 @@ const args = parseArgs(process.argv.slice(2));
 const [cmd, target] = args._;
 const fail = (m) => { console.error(`✗ ${m}`); process.exit(1); };
 
-// ---------- Extracción (corre dentro de la página) ----------
+// ---------- Extraction (runs inside the page) ----------
 export function extractBrand() {
   const cs = (el) => getComputedStyle(el);
   const cv = document.createElement("canvas"); cv.width = cv.height = 1;
@@ -30,7 +30,7 @@ export function extractBrand() {
   const q = (sel) => document.querySelector(sel);
   const type = (sel) => { const el = q(sel); if (!el) return null; const s = cs(el); return { family: fam(el), weight: s.fontWeight, size: s.fontSize, lineHeight: s.lineHeight, letterSpacing: s.letterSpacing, transform: s.textTransform, color: hex(s.color) }; };
 
-  // Censo de color ponderado por superficie (fondos) y por cantidad de texto (tintas)
+  // Color census weighted by area (backgrounds) and by amount of text (inks)
   const bg = {}, ink = {}, strong = {};
   for (const el of document.querySelectorAll("body *")) {
     const s = cs(el), r = el.getBoundingClientRect();
@@ -76,35 +76,35 @@ const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)]; return (Math.max(x, y
 try {
   if (cmd === "list") {
     const active = existsSync(path.join(BRANDS, ".active")) ? (await readFile(path.join(BRANDS, ".active"), "utf8")).trim() : "";
-    for (const s of await listBrands()) { const b = await loadBrand(s); console.log(`${s === active ? "●" : " "} ${s.padEnd(20)} ${b.name}${b.loaded ? "" : "  (sin cargar)"}`); }
+    for (const s of await listBrands()) { const b = await loadBrand(s); console.log(`${s === active ? "●" : " "} ${s.padEnd(20)} ${b.name}${b.loaded ? "" : "  (not set up)"}`); }
   } else if (cmd === "use") {
-    if (!target || !existsSync(brandDir(target))) fail(`No existe la marca "${target}". Marcas: ${(await listBrands()).join(", ")}`);
+    if (!target || !existsSync(brandDir(target))) fail(`Brand "${target}" does not exist. Brands: ${(await listBrands()).join(", ")}`);
     await writeFile(path.join(BRANDS, ".active"), target + "\n");
-    console.log(`✓ Marca activa: ${target}`);
+    console.log(`✓ Active brand: ${target}`);
   } else if (cmd === "new") {
-    if (!target) fail('Uso: npx opentcy brand new <slug> --name "Nombre"');
+    if (!target) fail('Usage: npx opentcy brand new <slug> --name "Name"');
     const slug = slugify(target), dir = brandDir(slug), demo = brandDir("_demo");
-    if (existsSync(dir)) fail(`Ya existe brands/${slug}`);
+    if (existsSync(dir)) fail(`brands/${slug} already exists`);
     for (const d of ["assets/logos", "assets/photos", "assets/textures", "assets/stock", "pieces", "templates"]) await mkdir(path.join(dir, d), { recursive: true });
     for (const f of ["brand-kit.md", "voice-samples.md", "tokens.css", "calendar.md", "decisions.md", "inspirations.md"]) await cp(path.join(demo, f), path.join(dir, f));
     await cp(path.join(demo, "assets/fonts"), path.join(dir, "assets/fonts"), { recursive: true });
     await writeJSON(path.join(dir, "assets/assets.json"), { assets: [] });
-    await writeJSON(path.join(dir, "brand.json"), { name: typeof args.name === "string" ? args.name : "{{NOMBRE}}", slug, handle: "", language: "es", country: "", address: null, usesEmoji: false, usesDashes: false, pillars: [], defaults: { texture: "fine", grade: "editorial", dominantMode: "type" }, logos: {}, verified: [] });
+    await writeJSON(path.join(dir, "brand.json"), { name: typeof args.name === "string" ? args.name : "{{NOMBRE}}", slug, handle: "", language: "en", country: "", address: null, usesEmoji: false, usesDashes: false, pillars: [], defaults: { texture: "fine", grade: "editorial", dominantMode: "type" }, logos: {}, verified: [] });
     if ((await listBrands()).length === 1) await writeFile(path.join(BRANDS, ".active"), slug + "\n");
-    console.log(`✓ brands/${slug}/ creada con tokens neutros. Siguiente: onboarding (references/onboarding.md) o npx opentcy brand import <url> --brand ${slug}`);
+    console.log(`✓ brands/${slug}/ created with neutral tokens. Next: onboarding (references/onboarding.md) or npx opentcy brand import <url> --brand ${slug}`);
   } else if (cmd === "import") {
-    if (!target) fail("Uso: npx opentcy brand import <url> [--brand slug]");
+    if (!target) fail("Usage: npx opentcy brand import <url> [--brand slug]");
     const slug = await resolveBrand(args);
     const out = path.join(brandDir(slug), "import");
     await mkdir(out, { recursive: true });
     const browser = await launchBrowser();
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
     const url = /^(https?|file):/.test(target) ? target : existsSync(target) ? pathToFileURL(path.resolve(target)).href : `https://${target}`;
-    await page.goto(url, { waitUntil: "networkidle", timeout: 45000 }).catch((e) => fail(`No pude abrir ${url}: ${e.message.split("\n")[0]}`));
+    await page.goto(url, { waitUntil: "networkidle", timeout: 45000 }).catch((e) => fail(`Could not open ${url}: ${e.message.split("\n")[0]}`));
     await page.evaluate(() => document.fonts.ready);
     const data = await page.evaluate(extractBrand);
     await page.screenshot({ path: path.join(out, "home.png") });
-    // Logo: guardar SVG en línea o descargar el archivo
+    // Logo: save the inline SVG or download the file
     if (data.logo?.svg) { await writeFile(path.join(out, "logo.svg"), data.logo.svg); data.logo.saved = "import/logo.svg"; delete data.logo.svg; }
     else if (data.logo?.src && /^https?:/.test(data.logo.src)) {
       try { const r = await page.request.get(data.logo.src); const ext = (data.logo.src.match(/\.(svg|png|webp|jpg|jpeg)(\?|$)/i) || [, "png"])[1]; await writeFile(path.join(out, `logo.${ext}`), await r.body()); data.logo.saved = `import/logo.${ext}`; } catch {}
@@ -113,12 +113,12 @@ try {
     data.importedAt = today();
     await writeJSON(path.join(out, "report.json"), data);
     console.log(`✓ ${data.title}`);
-    console.log(`  fondo ${data.page.background} · texto ${data.page.text} · botón ${data.button?.background ?? "—"} (radio ${data.button?.radius ?? "—"})`);
-    console.log(`  fondos:  ${data.backgrounds.slice(0, 5).map((c) => c.color).join("  ")}`);
-    console.log(`  tintas:  ${data.inks.slice(0, 5).map((c) => c.color).join("  ")}`);
-    console.log(`  titulares: ${data.type.h1?.family ?? "—"} ${data.type.h1?.weight ?? ""} · texto: ${data.type.body?.family ?? "—"}`);
-    console.log(`  logo: ${data.logo?.saved ?? data.logo?.src ?? "no encontrado"} · redes: ${data.social.length ? data.social.join(", ") : "ninguna en la página"}`);
-    console.log(`→ brands/${slug}/import/report.json y home.png. Con esto, proponé los 7 roles y las tipografías; escribí tokens.css solo con el sí de la persona.`);
+    console.log(`  background ${data.page.background} · text ${data.page.text} · button ${data.button?.background ?? "—"} (radius ${data.button?.radius ?? "—"})`);
+    console.log(`  backgrounds: ${data.backgrounds.slice(0, 5).map((c) => c.color).join("  ")}`);
+    console.log(`  inks:        ${data.inks.slice(0, 5).map((c) => c.color).join("  ")}`);
+    console.log(`  headlines: ${data.type.h1?.family ?? "—"} ${data.type.h1?.weight ?? ""} · body: ${data.type.body?.family ?? "—"}`);
+    console.log(`  logo: ${data.logo?.saved ?? data.logo?.src ?? "not found"} · social: ${data.social.length ? data.social.join(", ") : "none on the page"}`);
+    console.log(`→ brands/${slug}/import/report.json and home.png. From these, propose the 7 roles and the typefaces; write tokens.css only once the user says yes.`);
   } else if (cmd === "check") {
     const slug = await resolveBrand(args), dir = brandDir(slug);
     const browser = await launchBrowser();
@@ -146,29 +146,29 @@ try {
     await browser.close();
     const { unlink } = await import("node:fs/promises"); await unlink(probe).catch(() => {});
     const c = res.colors;
-    console.log(`Paleta de ${slug} (valores resueltos):`);
+    console.log(`Palette for ${slug} (resolved values):`);
     for (const [k, v] of Object.entries(c)) console.log(`  --${k.padEnd(20)} ${v}`);
     const pairs = [["ink", "bg"], ["ink", "bg-alt"], ["ink-muted", "bg"], ["ink-muted", "bg-alt"], ["ink-inverse", "primary"], ["ink-inverse", "secondary"], ["ink-inverse-muted", "primary"], ["ink-inverse-muted", "secondary"],
       ["accent", "bg"], ["accent", "bg-alt"], ["accent-inverse", "primary"], ["accent-inverse", "secondary"], ["ink", "accent"], ["ink-inverse", "accent"]];
-    console.log("\nContraste (texto sobre fondo) · AA: 4,5 texto normal · 3 texto grande o formas");
+    console.log("\nContrast (text on background) · AA: 4.5 normal text · 3 large text or shapes");
     let bad = 0; const rows = [];
     for (const [fg, bg] of pairs) {
       if (!c[fg] || !c[bg] || c[fg] === c[bg]) continue;
       const r = ratio(c[fg], c[bg]);
-      const verdict = r >= 4.5 ? "✓ cualquier texto" : r >= 3 ? "△ solo texto grande y formas" : "✗ no usar como texto";
+      const verdict = r >= 4.5 ? "✓ any text" : r >= 3 ? "△ large text and shapes only" : "✗ do not use as text";
       const required = ["ink/bg", "ink/bg-alt", "ink-inverse/primary", "ink-inverse/secondary", "ink-muted/bg", "ink-inverse-muted/primary"].includes(`${fg}/${bg}`);
       if (required && r < 4.5) bad++;
       rows.push({ fg, bg, ratio: Number(r.toFixed(2)), verdict });
-      console.log(`  ${(fg + " sobre " + bg).padEnd(34)} ${r.toFixed(2).padStart(5)}:1  ${verdict}${required && r < 4.5 ? "  ← corregir: es una combinación base" : ""}`);
+      console.log(`  ${(fg + " on " + bg).padEnd(34)} ${r.toFixed(2).padStart(5)}:1  ${verdict}${required && r < 4.5 ? "  ← fix: this is a base combination" : ""}`);
     }
     if (c.accent && c.ink && c["ink-inverse"]) {
       const best = ratio(c.ink, c.accent) >= ratio(c["ink-inverse"], c.accent) ? "ink" : "ink-inverse";
-      console.log(`\n  Texto sobre el acento (chips): --on-accent debería ser var(--${best}).`);
+      console.log(`\n  Text on the accent (chips): --on-accent should be var(--${best}).`);
     }
-    console.log("\nFuentes:");
-    for (const f of res.fonts) { console.log(`  ${f.role.padEnd(8)} ${f.family.padEnd(22)} ${f.loaded ? "✓ carga" : "✗ NO carga (revisá @font-face y assets/fonts/)"}`); if (!f.loaded) bad++; }
+    console.log("\nFonts:");
+    for (const f of res.fonts) { console.log(`  ${f.role.padEnd(8)} ${f.family.padEnd(22)} ${f.loaded ? "✓ loads" : "✗ does NOT load (check @font-face and assets/fonts/)"}`); if (!f.loaded) bad++; }
     await writeJSON(path.join(dir, "palette-check.json"), { checkedAt: today(), colors: c, pairs: rows, fonts: res.fonts });
-    console.log(bad ? `\n${bad} problema(s) a corregir antes de diseñar.` : "\nPaleta y fuentes en orden.");
+    console.log(bad ? `\n${bad} issue(s) to fix before designing.` : "\nPalette and fonts are in order.");
     if (bad) process.exit(2);
   } else {
     console.log((await readFile(new URL(import.meta.url), "utf8")).split("\n").filter((l) => l.startsWith("//")).map((l) => l.slice(3)).join("\n"));

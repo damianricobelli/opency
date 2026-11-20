@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { GITHUB_URL } from "@/lib/site";
 import { m } from "@/paraglide/messages";
-import { GITHUB_URL, INSTALL_COMMANDS } from "../lib/site";
+import { INSTALL_COMMANDS } from "../lib/site";
 import { CodeBlock } from "./code-block";
 import { GithubMark } from "./github-mark";
 import { Reveal } from "./reveal";
@@ -8,12 +9,14 @@ import { Wordmark } from "./site-header";
 
 export function ClosingSection() {
   return (
-    <section className="border-t px-5 py-24 sm:px-8 sm:py-32">
-      <Reveal className="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
-        <h2 className="font-display text-5xl leading-[1.02] tracking-tight text-balance sm:text-6xl">
+    <section className="border-t px-5 py-16 sm:px-8 sm:py-32">
+      <Reveal className="mx-auto flex max-w-2xl flex-col items-center gap-5 text-center sm:gap-6">
+        <h2 className="font-display text-[2.5rem] leading-[1.02] tracking-tight text-balance sm:text-6xl">
           {m.cta_title()}
         </h2>
-        <p className="text-lg text-muted-foreground">{m.cta_lead()}</p>
+        <p className="text-base text-pretty text-muted-foreground sm:text-lg">
+          {m.cta_lead()}
+        </p>
         <CodeBlock.Root
           code={INSTALL_COMMANDS.skill}
           className="w-full max-w-md text-left"
@@ -38,7 +41,7 @@ export function ClosingSection() {
 export function SiteFooter() {
   return (
     <footer className="border-t pb-[env(safe-area-inset-bottom)]">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <div className="flex items-center gap-4 text-foreground">
           <Wordmark />
         </div>

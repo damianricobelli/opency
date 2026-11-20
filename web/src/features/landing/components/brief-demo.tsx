@@ -36,7 +36,7 @@ function Shown({
 
 function AgentMessage({ at, children }: { at: number; children: ReactNode }) {
   return (
-    <Shown at={at} className="max-w-[85%] space-y-2 self-start">
+    <Shown at={at} className="max-w-[88%] space-y-2 self-start">
       <div className="rounded-2xl rounded-bl-md bg-muted px-3.5 py-2.5 text-sm leading-relaxed">
         {children}
       </div>
@@ -48,7 +48,7 @@ function UserMessage({ at, children }: { at: number; children: ReactNode }) {
   return (
     <Shown
       at={at}
-      className="max-w-[85%] self-end rounded-2xl rounded-br-md bg-foreground px-3.5 py-2.5 text-sm leading-relaxed text-background"
+      className="max-w-[88%] self-end rounded-2xl rounded-br-md bg-foreground px-3.5 py-2.5 text-sm leading-relaxed text-background"
     >
       {children}
     </Shown>
@@ -108,7 +108,7 @@ function Field({
 }) {
   const filled = use(StepContext) >= at;
   return (
-    <div className="grid grid-cols-[6.5rem_1fr] items-baseline gap-3 border-b py-2.5 font-mono text-xs last:border-b-0">
+    <div className="grid grid-cols-[5.5rem_minmax(0,1fr)] items-baseline gap-3 border-b py-2.5 font-mono text-xs last:border-b-0 sm:grid-cols-[6.5rem_minmax(0,1fr)]">
       <dt className="text-muted-foreground">{name}</dt>
       <dd className="grid">
         {/* Both values share one cell, so the row never changes height. */}
@@ -244,15 +244,15 @@ export function BriefDemo({ className }: { className?: string }) {
       )}
     >
       <Run key={run} active={seen}>
-        <div className="flex items-center justify-between gap-3 border-b px-4 py-2.5 sm:px-5">
-          <p className="flex items-center gap-2.5 font-mono text-xs text-muted-foreground">
-            {m.demo_label()}
+        <div className="flex items-center justify-between gap-3 border-b py-2 pr-2 pl-4 sm:pr-3 sm:pl-5">
+          <p className="flex min-w-0 items-center gap-2.5 font-mono text-xs text-muted-foreground">
+            <span className="truncate">{m.demo_label()}</span>
             <TypingDots />
           </p>
           <button
             type="button"
             onClick={() => setRun((current) => current + 1)}
-            className="flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs text-muted-foreground outline-none transition-[background-color,color,scale] duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-[0.97] motion-reduce:active:scale-100"
+            className="relative flex h-8 shrink-0 items-center gap-1.5 rounded-lg px-2.5 text-xs pointer-coarse:after:absolute pointer-coarse:after:inset-x-0 pointer-coarse:after:-inset-y-1.5 text-muted-foreground outline-none transition-[background-color,color,scale] duration-150 ease-out hover:bg-muted hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-[0.97] motion-reduce:active:scale-100"
           >
             <RotateCcw aria-hidden className="size-3.5" />
             {m.demo_replay()}
