@@ -2,7 +2,7 @@
 
 This repository is the source of **opency**: a skill and an MCP server that turn an agent into an agency content team.
 
-- **Here to make pieces or campaigns?** The instructions are in `skills/opency/SKILL.md` (the repo doubles as a workspace: it has `brands/` and `templates/`). Use `node bin/opency.mjs <command>` instead of `npx opency`.
+- **Here to make pieces or campaigns?** The instructions are in `skills/opency/SKILL.md` (the repo doubles as a workspace: it has `brands/` and `templates/`). Use `node bin/opency.mjs <command>` instead of `npx @opency/cli`.
 - **Here to change opency?** Keep reading.
 
 ## Map

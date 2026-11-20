@@ -77,7 +77,7 @@ export async function resolveBrand(args = {}) {
   let slug = typeof args.brand === "string" ? args.brand : process.env.BRAND;
   if (!slug && existsSync(path.join(BRANDS, ".active"))) slug = readFileSync(path.join(BRANDS, ".active"), "utf8").trim();
   if (!slug) { const all = await listBrands(); if (all.length === 1) slug = all[0]; }
-  if (!slug) throw new Error("No brand selected. Use --brand <slug> or `npx opency brand use <slug>`. Brands: " + ((await listBrands()).join(", ") || "(none: npx opency brand new <slug>)"));
+  if (!slug) throw new Error("No brand selected. Use --brand <slug> or `npx @opency/cli brand use <slug>`. Brands: " + ((await listBrands()).join(", ") || "(none: npx @opency/cli brand new <slug>)"));
   if (!existsSync(path.join(BRANDS, slug))) throw new Error(`brands/${slug} does not exist. Brands: ${(await listBrands({ includeDemo: true })).join(", ")}`);
   return slug;
 }
@@ -129,11 +129,11 @@ export async function saveAssets(slug, assets) {
 export async function launchBrowser() {
   let chromium;
   try { ({ chromium } = await import("playwright")); }
-  catch { throw new Error("Playwright is missing. Run: npx opency setup"); }
+  catch { throw new Error("Playwright is missing. Run: npx @opency/cli setup"); }
   if (process.env.CHROME_PATH) return chromium.launch({ executablePath: process.env.CHROME_PATH });
   try { return await chromium.launch(); }
   catch {
     try { return await chromium.launch({ channel: "chrome" }); }
-    catch { throw new Error("No browser found: run `npx opency setup`, install Google Chrome or set CHROME_PATH."); }
+    catch { throw new Error("No browser found: run `npx @opency/cli setup`, install Google Chrome or set CHROME_PATH."); }
   }
 }

@@ -4,7 +4,7 @@ Read this when the render flags something you do not know how to fix, and before
 
 ## Report codes
 
-`npx opency render` measures on the actual render. Open `render/report.md`.
+`npx @opency/cli render` measures on the actual render. Open `render/report.md`.
 
 | Code | What it means | What to do |
 |---|---|---|
@@ -63,4 +63,4 @@ After the render passes, ask for a visual review from someone who did not see th
 
 ## Tests
 
-`npx opency doctor` verifies that the checks still detect what they should (a slide with deliberate defects) and that the layout library passes clean. Run the tests after touching any script or `base.css`.
+`npx @opency/cli doctor` verifies that the checks still detect what they should (a slide with deliberate defects) and that the layout library passes clean. Run the tests after touching any script or `base.css`.

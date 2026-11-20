@@ -7,7 +7,7 @@ The agent prepares; the user publishes or confirms each publication.
 `render/` has everything ready to upload by hand:
 
 - `slide-NN.jpg` (photos) or `slide-NN.png` (typographic), in order.
-- `carousel.pdf` for LinkedIn (`npx opency render <piece> --pdf`).
+- `carousel.pdf` for LinkedIn (`npx @opency/cli render <piece> --pdf`).
 - `caption-instagram.txt`, `caption-linkedin.txt` and `alt-text.txt`, to copy and paste.
 - `slide-NN.mp4` or `reel.mp4` if there is video.
 
@@ -24,4 +24,4 @@ Do not use unofficial automations, scripts against the networks or follower scra
 
 ## After publishing
 
-When the user gives you the numbers, enter them with `npx opency results add <piece> --reach … --saves … --shares … --likes … --comments …`. Do not estimate them.
+When the user gives you the numbers, enter them with `npx @opency/cli results add <piece> --reach … --saves … --shares … --likes … --comments …`. Do not estimate them.

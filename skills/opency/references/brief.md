@@ -8,13 +8,13 @@ A good-looking piece that says what nobody asked for gets redone from scratch. T
 
 | Request | What you do |
 |---|---|
-| New brand | `brand` brief. If there is a website, read it first (`npx opency brand import <url>`) and ask only what you did not find. |
+| New brand | `brand` brief. If there is a website, read it first (`npx @opency/cli brand import <url>`) and ask only what you did not find. |
 | Campaign (several pieces, a launch, a date) | Full `campaign` brief. No design until the required answers are in. |
 | Single piece with a clear request ("carousel about X for Thursday") | Do not ask: decide, and say what you assumed. |
 | Ambiguous single piece ("make something for Instagram") | `piece` brief: one or two questions, no more. |
 | Tweak to an existing piece | Never. Make the change. |
 
-`npx opency brief questions [brand|campaign|piece]` lists the questions, which ones are required (●) and where each one can be deduced from.
+`npx @opency/cli brief questions [brand|campaign|piece]` lists the questions, which ones are required (●) and where each one can be deduced from.
 
 ## How to ask
 
@@ -51,11 +51,11 @@ Each piece in the plan proves the thesis from a different angle. If an angle doe
 ## Saving the campaign
 
 ```bash
-npx opency campaign new <slug> --name "Name" --set message="…" --set objective="…"
-npx opency campaign brief <slug> --set cta="…"          # fill in or correct
-npx opency campaign plan <slug> --file plan.json        # the approved plan
-npx opency campaign status <slug>                       # what is missing and how it is going
-npx opency new <piece> --campaign <slug> --layouts …    # each piece gets linked
+npx @opency/cli campaign new <slug> --name "Name" --set message="…" --set objective="…"
+npx @opency/cli campaign brief <slug> --set cta="…"          # fill in or correct
+npx @opency/cli campaign plan <slug> --file plan.json        # the approved plan
+npx @opency/cli campaign status <slug>                       # what is missing and how it is going
+npx @opency/cli new <piece> --campaign <slug> --layouts …    # each piece gets linked
 ```
 
 The brief is stored in `brands/<brand>/campaigns/<slug>/brief.json` and, in readable form, in `brief.md`.
@@ -65,10 +65,10 @@ The brief is stored in `brands/<brand>/campaigns/<slug>/brief.json` and, in read
 - Open with the piece that explains the why; close with the one that asks for the action.
 - No more than one selling piece in every three.
 - Each channel gets a piece designed for that channel or a recomposed adaptation, never the same file stretched.
-- Cross-check the dates against `calendar.md` and `npx opency feed`.
+- Cross-check the dates against `calendar.md` and `npx @opency/cli feed`.
 
 ## During the campaign
 
-- Before each piece: `npx opency campaign status <slug>`.
+- Before each piece: `npx @opency/cli campaign status <slug>`.
 - All the pieces share a material (texture, photo treatment) and a distinctive gesture that makes them recognizable as a series.
 - If a brief answer changes midway, update it with `campaign brief` and tell the user which finished pieces are affected.

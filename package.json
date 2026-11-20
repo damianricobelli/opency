@@ -1,5 +1,5 @@
 {
-  "name": "opency",
+  "name": "@opency/cli",
   "version": "0.1.0",
   "description": "Open-source skill and MCP server that turns your agent into an agency content team: interactive briefs, brand kits, campaigns, stock photos and pixel-level quality checks.",
   "type": "module",
@@ -54,5 +54,8 @@
   "engines": {
     "node": ">=20.9"
   },
-  "packageManager": "pnpm@12.6.0"
+  "packageManager": "pnpm@12.6.0",
+  "publishConfig": {
+    "access": "public"
+  }
 }

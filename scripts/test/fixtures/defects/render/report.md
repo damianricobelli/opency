@@ -7,7 +7,7 @@
 - warning `illegible_text_size` #tiny — 14 px on canvas = 5.1 pt on a phone (min. 10.5)
 - **ERROR** `headline_orphan` #headline — last line has a single word: "sola"
 - **ERROR** `critical_overlap` #a — overlaps #b
-- **ERROR** `external_image` img — external image: download it into assets/ and register it (npx opency assets add)
+- **ERROR** `external_image` img — external image: download it into assets/ and register it (npx @opency/cli assets add)
 - **ERROR** `missing_asset` img — failed to load https://example.com/foto.jpg
 - **ERROR** `placeholder_left`  — {{…}} placeholders left unfilled
 - warning `over_budget` #headline — 43 characters; this layout is designed for ~20. Shorten the text or switch layouts (do not shrink the type)

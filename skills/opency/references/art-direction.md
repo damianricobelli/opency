@@ -72,7 +72,7 @@ Read this before composing or when a piece looks generic.
 ## What `base.css` gives you
 
 - **Surfaces:** `on-bg`, `on-alt`, `on-primary`, `on-secondary`. On the last two and on photos, the accent becomes `--accent-inverse` if the brand defines it.
-- **Highlight:** `.hl` for **one** word or concept of the headline in the accent color; `.accent-text` for a label. Only if that combination passes contrast (`npx opency brand check`).
+- **Highlight:** `.hl` for **one** word or concept of the headline in the accent color; `.accent-text` for a label. Only if that combination passes contrast (`npx @opency/cli brand check`).
 - **Structure:** `.content` for the content and `.chrome-bar` (with `data-chrome`) for logo and pager. In 1:1 and 9:16, `.content` already leaves room for the bar.
 - **Text budget:** `data-max="N"` on an element declares how many characters it supports. Do not raise it to make a long text fit.
 - **Motion:** `data-motion` on the `<main class="canvas">` (see `references/operations.md`).
@@ -80,4 +80,4 @@ Read this before composing or when a piece looks generic.
 
 ## Layouts
 
-14 archetypes in `templates/layouts/` (`npx opency layouts` shows them): typographic and photo covers, statement, number, steps, comparison, photo with card, data bars, testimonial, closer, news cards, product window, logo grid and co-brand. They are starting points: each brand takes them into its own system (see how `brands/urbs/pieces/` turned out).
+14 archetypes in `templates/layouts/` (`npx @opency/cli layouts` shows them): typographic and photo covers, statement, number, steps, comparison, photo with card, data bars, testimonial, closer, news cards, product window, logo grid and co-brand. They are starting points: each brand takes them into its own system (see how `brands/urbs/pieces/` turned out).

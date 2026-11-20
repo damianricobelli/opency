@@ -8,11 +8,11 @@ Ask for the minimum and deduce the rest: website, Instagram, brand manual, logo,
 
 **Steps**
 
-1. `npx opency brand new <slug> --name "Name"` creates `brands/<slug>/` with neutral tokens.
-2. If there is a website: `npx opency brand import <url> --brand <slug>`. It leaves the colors by surface, the inks, the typefaces, the logo and the texts in `import/report.json`. Look at `import/home.png` too.
+1. `npx @opency/cli brand new <slug> --name "Name"` creates `brands/<slug>/` with neutral tokens.
+2. If there is a website: `npx @opency/cli brand import <url> --brand <slug>`. It leaves the colors by surface, the inks, the typefaces, the logo and the texts in `import/report.json`. Look at `import/home.png` too.
 3. Propose the 7 roles, the 3 families, the voice and the verified data. Wait for the yes.
 4. Write the files. Fonts go in `assets/fonts/` (variable or per weight) and logos in `assets/logos/`, declared in `brand.json → logos`.
-5. `npx opency brand check --brand <slug>`: it has to finish with no problems. It tells you which combinations work for text and what `--on-accent` should be.
+5. `npx @opency/cli brand check --brand <slug>`: it has to finish with no problems. It tells you which combinations work for text and what `--on-accent` should be.
 6. Make a test piece and render it.
 
 **Where each thing goes**

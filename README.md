@@ -37,7 +37,7 @@ Everything runs on your machine and everything is a file you own: HTML/CSS per s
 
 <p align="center">
   <img src=".github/assets/example-carousel.webp" alt="A five-slide carousel produced by opency: cover, statement, steps, comparison and closer" width="100%">
-  <br><sub>A carousel straight out of <code>npx opency render</code>: five slides, one material, zero errors.</sub>
+  <br><sub>A carousel straight out of <code>npx @opency/cli render</code>: five slides, one material, zero errors.</sub>
 </p>
 
 ## Why opency
@@ -62,17 +62,17 @@ npx skills add damianricobelli/opency
 **2. The workspace** — where your brands and pieces live:
 
 ```bash
-npx opency init my-agency
+npx @opency/cli init my-agency
 ```
 
 ```bash
-npx opency setup
+npx @opency/cli setup
 ```
 
 **3. The MCP server** — optional in Claude Code and Cursor, which can already run the commands; required in clients without a terminal, such as Claude Desktop:
 
 ```bash
-claude mcp add opency -- npx -y opency mcp
+claude mcp add opency -- npx -y @opency/cli mcp
 ```
 
 <details>
@@ -83,7 +83,7 @@ claude mcp add opency -- npx -y opency mcp
   "mcpServers": {
     "opency": {
       "command": "npx",
-      "args": ["-y", "opency", "mcp"],
+      "args": ["-y", "@opency/cli", "mcp"],
       "env": { "OPENCY_HOME": "/path/to/my-agency" }
     }
   }
@@ -143,7 +143,7 @@ The one question it never skips: **what do you want to get across?** The answer 
 
 ### 2. It learns your brand
 
-`npx opency brand import mysite.com` reads colors by surface, ink colors, typefaces, logo and copy from a website. The agent proposes 7 color roles, 3 font families, a voice made of hard rules and a list of verified facts, and writes them only when you say yes. Several brands can live in one workspace.
+`npx @opency/cli brand import mysite.com` reads colors by surface, ink colors, typefaces, logo and copy from a website. The agent proposes 7 color roles, 3 font families, a voice made of hard rules and a list of verified facts, and writes them only when you say yes. Several brands can live in one workspace.
 
 ### 3. It plans, then builds
 
@@ -167,7 +167,7 @@ Your own photos come first. Then stock: one search queries the available provide
 Openverse works out of the box. Unsplash is optional and uses **your own** account — opency ships no keys:
 
 ```bash
-npx opency stock connect unsplash
+npx @opency/cli stock connect unsplash
 ```
 
 It walks you through creating a free app in your Unsplash account, asks for the Access Key with hidden input, checks it and saves it to the workspace's git-ignored `.env`. Requests count against your own quota (50 per hour on a demo app).
@@ -273,20 +273,20 @@ Also: the skill's instructions as resources (`opency://guide/…`) and three pro
 
 | Command | What it does |
 |---|---|
-| `npx opency init [folder]` | Creates a workspace |
-| `npx opency setup` · `doctor` | Installs the render browser · checks the environment |
-| `npx opency mcp` | MCP server (stdio) |
-| `npx opency brief questions [brand\|campaign\|piece]` | The questions of each brief |
-| `npx opency campaign new / brief / plan / status / list` | Campaigns |
-| `npx opency brand list / use / new / import <url> / check` | Brands |
-| `npx opency new <slug> --layouts cover-type,steps,closer` | New piece (`--campaign`, `--from`, `--format`) |
-| `npx opency render <piece>` | PNG, JPG, contact sheet, captions and report (`--pdf`, `--scale 2`) |
-| `npx opency dev <piece>` | Live preview with editable text |
-| `npx opency version <piece> save / list / diff / restore` | Versions, without relying on git |
-| `npx opency motion <piece> --slides all --audio track.mp3` | MP4 video |
-| `npx opency assets add / stock / stock-import / analyze / veto / list` | Images |
-| `npx opency stock status / connect unsplash / disconnect unsplash` | Stock providers |
-| `npx opency feed` · `results` | Feed rhythm · what performed best |
+| `npx @opency/cli init [folder]` | Creates a workspace |
+| `npx @opency/cli setup` · `doctor` | Installs the render browser · checks the environment |
+| `npx @opency/cli mcp` | MCP server (stdio) |
+| `npx @opency/cli brief questions [brand\|campaign\|piece]` | The questions of each brief |
+| `npx @opency/cli campaign new / brief / plan / status / list` | Campaigns |
+| `npx @opency/cli brand list / use / new / import <url> / check` | Brands |
+| `npx @opency/cli new <slug> --layouts cover-type,steps,closer` | New piece (`--campaign`, `--from`, `--format`) |
+| `npx @opency/cli render <piece>` | PNG, JPG, contact sheet, captions and report (`--pdf`, `--scale 2`) |
+| `npx @opency/cli dev <piece>` | Live preview with editable text |
+| `npx @opency/cli version <piece> save / list / diff / restore` | Versions, without relying on git |
+| `npx @opency/cli motion <piece> --slides all --audio track.mp3` | MP4 video |
+| `npx @opency/cli assets add / stock / stock-import / analyze / veto / list` | Images |
+| `npx @opency/cli stock status / connect unsplash / disconnect unsplash` | Stock providers |
+| `npx @opency/cli feed` · `results` | Feed rhythm · what performed best |
 
 All of them accept `--brand <slug>`. The workspace is the folder that contains `brands/`, or the one `OPENCY_HOME` points to.
 

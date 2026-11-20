@@ -1,6 +1,6 @@
 ---
 name: visual-reviewer
-description: Cold-reviews an already rendered content piece. Use it after `npx opency render` passes with no errors and before delivering. Pass it only the piece's path.
+description: Cold-reviews an already rendered content piece. Use it after `npx @opency/cli render` passes with no errors and before delivering. Pass it only the piece's path.
 tools: Read, Glob
 ---
 

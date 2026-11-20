@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Brands: create, select, import from a website and check the palette.
 //
-//   npx opency brand list
-//   npx opency brand new <slug> --name "Name"          creates brands/<slug>/ with the skeleton
-//   npx opency brand use <slug>                         default active brand (brands/.active)
-//   npx opency brand import <url> [--brand slug]        reads colors, typefaces, logo and copy from a website
-//   npx opency brand check [--brand slug]               contrast of every palette combination + fonts
+//   npx @opency/cli brand list
+//   npx @opency/cli brand new <slug> --name "Name"          creates brands/<slug>/ with the skeleton
+//   npx @opency/cli brand use <slug>                         default active brand (brands/.active)
+//   npx @opency/cli brand import <url> [--brand slug]        reads colors, typefaces, logo and copy from a website
+//   npx @opency/cli brand check [--brand slug]               contrast of every palette combination + fonts
 //
 // `import` does not write tokens: it leaves a report in brands/<slug>/import/ so the agent can propose
 // the palette and the user can approve it. `check` resolves colors in the browser (works for hex, oklch, color-mix).
@@ -82,7 +82,7 @@ try {
     await writeFile(path.join(BRANDS, ".active"), target + "\n");
     console.log(`✓ Active brand: ${target}`);
   } else if (cmd === "new") {
-    if (!target) fail('Usage: npx opency brand new <slug> --name "Name"');
+    if (!target) fail('Usage: npx @opency/cli brand new <slug> --name "Name"');
     const slug = slugify(target), dir = brandDir(slug), demo = brandDir("_demo");
     if (existsSync(dir)) fail(`brands/${slug} already exists`);
     for (const d of ["assets/logos", "assets/photos", "assets/textures", "assets/stock", "pieces", "templates"]) await mkdir(path.join(dir, d), { recursive: true });
@@ -91,9 +91,9 @@ try {
     await writeJSON(path.join(dir, "assets/assets.json"), { assets: [] });
     await writeJSON(path.join(dir, "brand.json"), { name: typeof args.name === "string" ? args.name : "{{NOMBRE}}", slug, handle: "", language: "en", country: "", address: null, usesEmoji: false, usesDashes: false, pillars: [], defaults: { texture: "fine", grade: "editorial", dominantMode: "type" }, logos: {}, verified: [] });
     if ((await listBrands()).length === 1) await writeFile(path.join(BRANDS, ".active"), slug + "\n");
-    console.log(`✓ brands/${slug}/ created with neutral tokens. Next: onboarding (references/onboarding.md) or npx opency brand import <url> --brand ${slug}`);
+    console.log(`✓ brands/${slug}/ created with neutral tokens. Next: onboarding (references/onboarding.md) or npx @opency/cli brand import <url> --brand ${slug}`);
   } else if (cmd === "import") {
-    if (!target) fail("Usage: npx opency brand import <url> [--brand slug]");
+    if (!target) fail("Usage: npx @opency/cli brand import <url> [--brand slug]");
     const slug = await resolveBrand(args);
     const out = path.join(brandDir(slug), "import");
     await mkdir(out, { recursive: true });

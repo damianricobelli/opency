@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 // Campaigns: a brief and a plan of pieces that share one message.
 //
-//   npx opency campaign new <slug> --name "Name" [--answers file.json] [--set key="value"]…
-//   npx opency campaign brief <slug> [--set key="value"]… [--answers file.json]      fill in or correct answers
-//   npx opency campaign plan <slug> --file plan.json                                  save the piece plan
-//   npx opency campaign status <slug>                                                 what is missing, which pieces exist and how they are
-//   npx opency campaign list
-//   npx opency brief questions [brand|campaign|piece] [--json]                        the questions of each brief
+//   npx @opency/cli campaign new <slug> --name "Name" [--answers file.json] [--set key="value"]…
+//   npx @opency/cli campaign brief <slug> [--set key="value"]… [--answers file.json]      fill in or correct answers
+//   npx @opency/cli campaign plan <slug> --file plan.json                                  save the piece plan
+//   npx @opency/cli campaign status <slug>                                                 what is missing, which pieces exist and how they are
+//   npx @opency/cli campaign list
+//   npx @opency/cli brief questions [brand|campaign|piece] [--json]                        the questions of each brief
 //   All of them: --brand <slug>   ·   --json for structured output.
 //
 // The campaign lives in brands/<brand>/campaigns/<slug>/brief.json. Pieces are linked with
-// `npx opency new <piece> --campaign <slug>` (stored in piece.json → campaign).
+// `npx @opency/cli new <piece> --campaign <slug>` (stored in piece.json → campaign).
 // A plan is a list of { slug, intent, format, channel, date, angle, layouts? }.
 
 import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
@@ -45,7 +45,7 @@ const [cmd, target] = args._;
 let brand; try { brand = await resolveBrand(args); } catch (e) { fail(e.message); }
 const CDIR = path.join(brandDir(brand), "campaigns");
 const file = (slug) => path.join(CDIR, slug, "brief.json");
-const load = async (slug) => (await readJSON(file(slug), null)) ?? fail(`Campaign "${slug}" does not exist in brands/${brand}/campaigns. Create it: npx opency campaign new ${slug} --name "…"`);
+const load = async (slug) => (await readJSON(file(slug), null)) ?? fail(`Campaign "${slug}" does not exist in brands/${brand}/campaigns. Create it: npx @opency/cli campaign new ${slug} --name "…"`);
 async function save(c) {
   c.updatedAt = today();
   await writeJSON(file(c.slug), c);
@@ -78,9 +78,9 @@ async function status(slug) {
 
 try {
   if (cmd === "new") {
-    if (!target) fail('Usage: npx opency campaign new <slug> --name "Name"');
+    if (!target) fail('Usage: npx @opency/cli campaign new <slug> --name "Name"');
     const slug = slugify(target);
-    if (existsSync(file(slug))) fail(`Campaign "${slug}" already exists. To change answers: npx opency campaign brief ${slug} --set key="value"`);
+    if (existsSync(file(slug))) fail(`Campaign "${slug}" already exists. To change answers: npx @opency/cli campaign brief ${slug} --set key="value"`);
     await mkdir(path.join(CDIR, slug), { recursive: true });
     const c = { slug, name: typeof args.name === "string" ? args.name : target, brand, createdAt: today(), status: "brief", answers: await collectAnswers(), plan: [] };
     await save(c);
@@ -97,7 +97,7 @@ try {
     out({ ...s, nextQuestions: nq }, `${renderMarkdown("campaign", c.answers)}\n${s.readyToDesign ? "✓ Ready to design." : `Missing: ${s.missing.map((m) => m.id).join(", ")}`}\n→ ${s.next}`);
   } else if (cmd === "plan") {
     const c = await load(target);
-    if (typeof args.file !== "string") fail("Usage: npx opency campaign plan <slug> --file plan.json   (a list of { slug, intent, format, channel, date, angle })");
+    if (typeof args.file !== "string") fail("Usage: npx @opency/cli campaign plan <slug> --file plan.json   (a list of { slug, intent, format, channel, date, angle })");
     const plan = await readJSON(path.resolve(args.file), null);
     if (!Array.isArray(plan) || !plan.length) fail("The plan must be a list with at least one piece.");
     for (const [i, p] of plan.entries()) {
@@ -108,7 +108,7 @@ try {
     c.plan = plan.map((p) => ({ slug: slugify(p.slug), intent: p.intent ?? "", format: p.format ?? "4:5", channel: p.channel ?? "", date: p.date ?? "", angle: p.angle, ...(p.layouts ? { layouts: p.layouts } : {}) }));
     c.status = "planned";
     await save(c);
-    out(await status(target), `✓ Plan saved: ${c.plan.length} piece(s)\n${c.plan.map((p) => `  ${p.date || "no date   "} ${p.format.padEnd(5)} ${p.slug.padEnd(28)} ${p.angle}`).join("\n")}\n  Create each one: npx opency new <slug> --campaign ${c.slug} --layouts … --date …`);
+    out(await status(target), `✓ Plan saved: ${c.plan.length} piece(s)\n${c.plan.map((p) => `  ${p.date || "no date   "} ${p.format.padEnd(5)} ${p.slug.padEnd(28)} ${p.angle}`).join("\n")}\n  Create each one: npx @opency/cli new <slug> --campaign ${c.slug} --layouts … --date …`);
   } else if (cmd === "status") {
     const s = await status(target);
     out(s, [`${s.name} · ${brand}/${s.slug} · ${s.readyToDesign ? "brief complete" : `${s.missing.length} answer(s) missing`}`,
@@ -120,7 +120,7 @@ try {
     const dirs = (await readdir(CDIR, { withFileTypes: true }).catch(() => [])).filter((d) => d.isDirectory());
     const rows = [];
     for (const d of dirs) { const c = await readJSON(file(d.name), null); if (c) rows.push({ slug: c.slug, name: c.name, status: c.status, pieces: (await piecesOf(c.slug)).length, planned: c.plan?.length ?? 0, updatedAt: c.updatedAt }); }
-    out(rows, rows.length ? rows.map((r) => `${r.slug.padEnd(28)} ${r.name} · ${r.pieces}/${r.planned} pieces · ${r.status}`).join("\n") : `(${brand} has no campaigns: npx opency campaign new <slug> --name "…")`);
+    out(rows, rows.length ? rows.map((r) => `${r.slug.padEnd(28)} ${r.name} · ${r.pieces}/${r.planned} pieces · ${r.status}`).join("\n") : `(${brand} has no campaigns: npx @opency/cli campaign new <slug> --name "…")`);
   } else {
     console.log((await readFile(new URL(import.meta.url), "utf8")).split("\n").filter((l) => l.startsWith("//")).map((l) => l.slice(3)).join("\n"));
   }

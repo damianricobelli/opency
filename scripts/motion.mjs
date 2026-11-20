@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Video from slides with CSS animations (@keyframes / transitions / Web Animations).
 //
-//   npx opency motion <piece> --slide 1 [--duration 6]            one slide → render/slide-01.mp4
-//   npx opency motion <piece> --slides all [--duration 4]         every slide → render/reel.mp4 (crossfade between slides)
-//   npx opency motion <piece> --slides 1,3,5 --audio track.mp3    with music (trimmed and faded out at the end)
+//   npx @opency/cli motion <piece> --slide 1 [--duration 6]            one slide → render/slide-01.mp4
+//   npx @opency/cli motion <piece> --slides all [--duration 4]         every slide → render/reel.mp4 (crossfade between slides)
+//   npx @opency/cli motion <piece> --slides 1,3,5 --audio track.mp3    with music (trimmed and faded out at the end)
 //   options: --fps 30  --scale 1  --fade 0.4  --brand slug
 //
 // Deterministic render: pauses the animations and seeks them frame by frame (it does not record the screen,
@@ -19,7 +19,7 @@ import { FORMATS, parseArgs, readJSON, resolvePiece, launchBrowser } from "./lib
 
 const args = parseArgs(process.argv.slice(2));
 const fail = (m) => { console.error(`✗ ${m}`); process.exit(1); };
-let pieceDir; try { pieceDir = await resolvePiece(args._[0], args); } catch (e) { fail(`${e.message}\nUsage: npx opency motion <piece> [--slide 1 | --slides all] [--duration 6] [--audio file]`); }
+let pieceDir; try { pieceDir = await resolvePiece(args._[0], args); } catch (e) { fail(`${e.message}\nUsage: npx @opency/cli motion <piece> [--slide 1 | --slides all] [--duration 6] [--audio file]`); }
 if (spawnSync("ffmpeg", ["-version"]).status !== 0) fail("ffmpeg is missing (brew install ffmpeg / apt install ffmpeg).");
 
 const piece = await readJSON(path.join(pieceDir, "piece.json"), {});

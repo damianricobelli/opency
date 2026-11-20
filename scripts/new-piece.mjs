@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Creates a new piece in brands/<brand>/pieces/.
 //
-//   npx opency new <slug> --layouts cover-type,steps,big-number,closer     combines layouts from the library
-//   npx opency new <slug> --template <name>                                 starts from one of the brand's saved templates
-//   npx opency new <slug> --from <piece id> [--format 9:16]                 duplicates or adapts an existing piece
-//   npx opency new <slug> [--slides 6]                                      blank slides
+//   npx @opency/cli new <slug> --layouts cover-type,steps,big-number,closer     combines layouts from the library
+//   npx @opency/cli new <slug> --template <name>                                 starts from one of the brand's saved templates
+//   npx @opency/cli new <slug> --from <piece id> [--format 9:16]                 duplicates or adapts an existing piece
+//   npx @opency/cli new <slug> [--slides 6]                                      blank slides
 //   options: --brand slug  --campaign slug  --format 4:5|1:1|9:16|16:9  --date YYYY-MM-DD  --intent …  --category …
 //
 // When copying a layout: rewrites paths for the brand, puts its name and logo in the bottom bar
@@ -17,7 +17,7 @@ import { ROOT, FORMATS, parseArgs, readJSON, writeJSON, resolveBrand, brandDir, 
 const args = parseArgs(process.argv.slice(2));
 const fail = (m) => { console.error(`✗ ${m}`); process.exit(1); };
 const rawSlug = args._[0];
-if (!rawSlug) fail("Usage: npx opency new <slug> [--layouts a,b,c | --template name | --from piece | --slides N] [--format 4:5] [--brand slug]");
+if (!rawSlug) fail("Usage: npx @opency/cli new <slug> [--layouts a,b,c | --template name | --from piece | --slides N] [--format 4:5] [--brand slug]");
 
 let brandSlug; try { brandSlug = await resolveBrand(args); } catch (e) { fail(e.message); }
 const brand = await loadBrand(brandSlug);
@@ -108,4 +108,4 @@ const piece = {
 await writeJSON(path.join(dir, "piece.json"), piece);
 
 console.log(`✓ brands/${brandSlug}/pieces/${id} · ${format} · ${total} slide(s)${args.layouts ? ` · ${sources.map((s) => s.layout).join(" → ")}` : ""}`);
-console.log(`  Next: fill in piece.json, edit the slides and run: npx opency render ${id}${args.brand ? ` --brand ${brandSlug}` : ""}`);
+console.log(`  Next: fill in piece.json, edit the slides and run: npx @opency/cli render ${id}${args.brand ? ` --brand ${brandSlug}` : ""}`);

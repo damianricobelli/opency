@@ -7,8 +7,8 @@ Read this before using a photo or a logo, or searching for stock.
 **Order of preference:**
 1. The brand's own photos.
 2. House textures (`data-texture`: they need no file and no credit).
-3. Stock libraries: `npx opency assets stock "<search in English>"` queries Openverse (no key needed) and, if the user connected their own account with `npx opency stock connect unsplash`, Unsplash too. Then `stock-import <ref>`. Credit and license are recorded automatically.
-4. A URL the user gave you: `npx opency assets add <url>`.
+3. Stock libraries: `npx @opency/cli assets stock "<search in English>"` queries Openverse (no key needed) and, if the user connected their own account with `npx @opency/cli stock connect unsplash`, Unsplash too. Then `stock-import <ref>`. Credit and license are recorded automatically.
+4. A URL the user gave you: `npx @opency/cli assets add <url>`.
 
 **Searching a stock library well:**
 - In English and specific: subject, action, framing and light (`"barista pouring latte art close up natural light"`), not a lone noun.
@@ -27,13 +27,13 @@ Import only the chosen photo, not the whole search. If the user asks for photos,
 
 If a photo is not big enough for a full background, it goes in a smaller block (`photo-card`), never enlarged: the render flags it as `image_upscaled`. If a logo arrives as a small bitmap, ask for the SVG.
 
-**Logos.** They do not go in the photo registry: they are declared in `brand.json → logos` (`onLight`, `onDark`, `onPrimary`, `icon`). `npx opency new` puts the variant that matches each slide's surface on that slide, and the render flags `logo_low_contrast` if the logo cannot be told apart from its background.
+**Logos.** They do not go in the photo registry: they are declared in `brand.json → logos` (`onLight`, `onDark`, `onPrimary`, `icon`). `npx @opency/cli new` puts the variant that matches each slide's surface on that slide, and the render flags `logo_low_contrast` if the logo cannot be told apart from its background.
 
 **Mandatory analysis before using a photo.**
 1. Look at it.
 2. Record the focal point and the protected regions, in 0-to-1 coordinates on the original image:
    ```
-   npx opency assets analyze <id> --focal 0.52,0.38 --protect "face:0.44,0.2,0.14,0.18" --protect "hand:…" --done
+   npx @opency/cli assets analyze <id> --focal 0.52,0.38 --protect "face:0.44,0.2,0.14,0.18" --protect "hand:…" --done
    ```
    Types: `face`, `hand`, `subject`, `text` and `logo`. An empty list with `--done` means "I looked at it and there is nothing to protect".
 3. Use the focal point as `style="--fx:52%;--fy:38%"` on the `<img>`.
@@ -42,8 +42,8 @@ With that in place, the render warns you if the crop cuts a face (error) or if t
 
 **Repetition.**
 - A cover photo is never repeated.
-- No photo comes back within 21 days (`npx opency feed` enforces it).
-- A photo the user rejected is vetoed (`npx opency assets veto <id>`) and never shows up again.
+- No photo comes back within 21 days (`npx @opency/cli feed` enforces it).
+- A photo the user rejected is vetoed (`npx @opency/cli assets veto <id>`) and never shows up again.
 
 **Few resources:**
 - With no photo, the composition is typographic, with materials.

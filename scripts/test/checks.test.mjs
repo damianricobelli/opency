@@ -1,4 +1,4 @@
-// npx opency doctor — verifies that the checks catch what they should and do not flag what is fine.
+// npx @opency/cli doctor — verifies that the checks catch what they should and do not flag what is fine.
 // The sample copy below is intentionally in Spanish: the copy linter targets Spanish-language copy.
 import test from "node:test";
 import assert from "node:assert/strict";

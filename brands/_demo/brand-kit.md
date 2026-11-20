@@ -1,6 +1,6 @@
 # Brand kit — {{BRAND_NAME}}
 
-> Template. `npx opency brand new <slug>` copies it into the new brand and the agent fills it in during onboarding (`references/onboarding.md`).
+> Template. `npx @opency/cli brand new <slug>` copies it into the new brand and the agent fills it in during onboarding (`references/onboarding.md`).
 > Color and type values live in `tokens.css`; the data the scripts read (form of address, logos, pillars, verified facts) lives in `brand.json`.
 
 ## 1. Identity
@@ -40,7 +40,7 @@ Hard rules (they work better than adjectives):
 | `--ink` | {{…}} | {{text on light backgrounds}} |
 | `--ink-inverse` | {{…}} | {{text on photos and dark panels}} |
 
-The contrast of every combination is verified with `npx opency brand check`.
+The contrast of every combination is verified with `npx @opency/cli brand check`.
 
 ## 5. Typography
 

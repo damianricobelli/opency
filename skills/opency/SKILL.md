@@ -27,9 +27,9 @@ This file is the core. The detail of each topic is in `references/` and is read 
 
 opency works in a **workspace**: the folder that contains `brands/` and `templates/`.
 
-- If the current directory has none: `npx opency init` (creates it here), then `npx opency setup` (browser used by the renderer).
-- If something in the environment fails: `npx opency doctor`.
-- **With the MCP server connected** (`workspace_status` is available), use its tools: they do the same as the commands, they return the images so you can look at them, and they let you run the brief as a form. Without MCP, use the `npx opency …` commands in the table.
+- If the current directory has none: `npx @opency/cli init` (creates it here), then `npx @opency/cli setup` (browser used by the renderer).
+- If something in the environment fails: `npx @opency/cli doctor`.
+- **With the MCP server connected** (`workspace_status` is available), use its tools: they do the same as the commands, they return the images so you can look at them, and they let you run the brief as a form. Without MCP, use the `npx @opency/cli …` commands in the table.
 
 ```
 AGENTS.md · references/                  instructions
@@ -54,42 +54,42 @@ The active brand is in `brands/.active`. Every command accepts `--brand <slug>`.
 
 | Command | MCP tool | What for |
 |---|---|---|
-| `npx opency brief questions [brand\|campaign\|piece]` | `brief_questions`, `brief_interview` | The brief questions; interview with a form |
-| `npx opency campaign new / brief / plan / status / list` | `campaign_create`, `campaign_brief`, `campaign_plan`, `campaign_status` | Campaigns: brief, piece plan and progress |
-| `npx opency brand list / use / new / import <url> / check` | `brand_list`, `brand_get`, `brand_create`, `brand_import_site`, `brand_check`, `brand_write` | Brands: pick, create, read a website, verify palette and fonts |
-| `npx opency new <slug> --layouts a,b,c` | `piece_create`, `layouts_list` | New piece combining layouts (`--campaign`, `--from <piece>`, `--template`, `--format`) |
-| `npx opency render <piece>` | `piece_render`, `piece_view` | PNG, JPG, contact sheet, captions and quality report (`--pdf`, `--scale 2`) |
-| `npx opency dev <piece>` | — | Browser preview with text the user can edit |
-| `npx opency version <piece> save / list / diff / restore` | `piece_version` | Piece versions |
-| `npx opency motion <piece> --slides all` | `piece_motion` | MP4 video (`--audio`) |
-| `npx opency assets add / stock / stock-import / analyze / veto / list` | `stock_status`, `stock_search`, `stock_import`, `asset_add`, `asset_analyze`, `asset_view`, `asset_list`, `asset_veto` | Own and stock photos, with quality control |
-| `npx opency feed` | `feed_check` | Feed rhythm, repetitions and profile grid |
-| `npx opency results` | `results_add`, `results_summary` | Which published pieces performed best |
+| `npx @opency/cli brief questions [brand\|campaign\|piece]` | `brief_questions`, `brief_interview` | The brief questions; interview with a form |
+| `npx @opency/cli campaign new / brief / plan / status / list` | `campaign_create`, `campaign_brief`, `campaign_plan`, `campaign_status` | Campaigns: brief, piece plan and progress |
+| `npx @opency/cli brand list / use / new / import <url> / check` | `brand_list`, `brand_get`, `brand_create`, `brand_import_site`, `brand_check`, `brand_write` | Brands: pick, create, read a website, verify palette and fonts |
+| `npx @opency/cli new <slug> --layouts a,b,c` | `piece_create`, `layouts_list` | New piece combining layouts (`--campaign`, `--from <piece>`, `--template`, `--format`) |
+| `npx @opency/cli render <piece>` | `piece_render`, `piece_view` | PNG, JPG, contact sheet, captions and quality report (`--pdf`, `--scale 2`) |
+| `npx @opency/cli dev <piece>` | — | Browser preview with text the user can edit |
+| `npx @opency/cli version <piece> save / list / diff / restore` | `piece_version` | Piece versions |
+| `npx @opency/cli motion <piece> --slides all` | `piece_motion` | MP4 video (`--audio`) |
+| `npx @opency/cli assets add / stock / stock-import / analyze / veto / list` | `stock_status`, `stock_search`, `stock_import`, `asset_add`, `asset_analyze`, `asset_view`, `asset_list`, `asset_veto` | Own and stock photos, with quality control |
+| `npx @opency/cli feed` | `feed_check` | Feed rhythm, repetitions and profile grid |
+| `npx @opency/cli results` | `results_add`, `results_summary` | Which published pieces performed best |
 
 Without file access (MCP only): `piece_read` and `piece_write` read and write the slides and `piece.json`.
 
 ## At the start of a session
 
-1. `npx opency brand list` (or `workspace_status`). If the user did not say which brand and there is more than one, ask.
+1. `npx @opency/cli brand list` (or `workspace_status`). If the user did not say which brand and there is more than one, ask.
 2. Read from that brand: `brand.json`, `brand-kit.md`, `tokens.css`, `decisions.md` and `calendar.md` (`brand_get` returns all of it).
 3. If `brand.json` does not exist or contains `{{…}}`: the brand is not loaded. Follow `references/onboarding.md` before designing.
 
 ## Campaign flow
 
 1. **Brief** (`references/brief.md`). Infer what you can from the brand and the request; ask the rest in short batches. The question you never skip: *what do you want to get across?* Play the message back in one sentence and wait for confirmation.
-2. **Save:** `npx opency campaign new <slug> --name "…" --set message="…" …`.
+2. **Save:** `npx @opency/cli campaign new <slug> --name "…" --set message="…" …`.
 3. **Plan.** Propose the pieces in text: each with a one-sentence angle, intent, format, channel and date. Each angle proves the message from a different place. Wait for the yes, then save it (`campaign plan`).
 4. **One piece at a time**, with the flow below and `--campaign <slug>`. Show the first one before making the rest: if the direction is off, you fix one piece instead of six.
-5. **Series.** All pieces share a material and one signature move. `npx opency campaign status <slug>` tells you what is missing.
-6. **Deliver** the campaign: one line per piece with its status, plus the grid from `npx opency feed`.
+5. **Series.** All pieces share a material and one signature move. `npx @opency/cli campaign status <slug>` tells you what is missing.
+6. **Deliver** the campaign: one line per piece with its status, plus the grid from `npx @opency/cli feed`.
 
 ## Piece flow
 
-1. **Context.** Everything from the previous step, plus the brand's templates and, if you are editing an existing piece, `npx opency version <piece> diff` and its `history`: what the user changed stays untouched.
+1. **Context.** Everything from the previous step, plus the brand's templates and, if you are editing an existing piece, `npx @opency/cli version <piece> diff` and its `history`: what the user changed stays untouched.
 2. **Direction.** Intent and recipe (`references/planning.md`), a one-sentence thesis, dominant mode, signature move and what to avoid. It goes in `piece.direction`. If the request is ambiguous and redoing is expensive, ask a single question (`piece` brief); otherwise decide and say what you assumed.
 3. **Full copy before design** (`references/copy.md`): role, claim and support of each slide, captions and alt text.
 4. **Images** (`references/assets.md`): the brand's own photos first; then house textures; then stock. Search, **look at the previews**, import only the chosen one and analyze it before use.
-5. **Compose** with `npx opency new … --layouts …` and adapt each slide (`references/art-direction.md`). If a text does not fit a layout, change the layout: do not shrink the type.
+5. **Compose** with `npx @opency/cli new … --layouts …` and adapt each slide (`references/art-direction.md`). If a text does not fit a layout, change the layout: do not shrink the type.
 6. **Render.** Fix every error. Warnings are fixed or justified in one line. Do not iterate more than twice on the same thing (`references/quality.md`).
 7. **Look at `render/contact-sheet.png`.** Look for what the checks cannot see: hierarchy, rhythm, whether it looks like the brand.
 8. **Independent review** (`references/review.md`): the `visual-reviewer` subagent if it exists; otherwise a cold review as a separate step. One pass of fixes.
@@ -146,11 +146,11 @@ Never use third-party logos, characters or copyrighted material, or unofficial a
 | Publishing or recording results | `references/publishing.md` |
 | Recording a decision or a correction | `references/learning.md` |
 
-The references sit next to this file. In a workspace created with `npx opency init` they are in `references/`.
+The references sit next to this file. In a workspace created with `npx @opency/cli init` they are in `references/`.
 
 ## If something fails
 
-- **No workspace:** `npx opency init`.
-- **No browser for the render:** `npx opency setup`, or `CHROME_PATH=/path/to/chrome`.
-- **A font does not load:** the `.woff2` must be in `brands/<brand>/assets/fonts/` and declared in `tokens.css`. `npx opency brand check` confirms it.
-- **Stock:** Openverse works without a key. Unsplash is optional and uses the user's own free Access Key: tell them to run `npx opency stock connect unsplash` in their terminal (never ask them to paste the key in the chat). If the search returns nothing good, ask for the brand's own photos or solve it with typography.
+- **No workspace:** `npx @opency/cli init`.
+- **No browser for the render:** `npx @opency/cli setup`, or `CHROME_PATH=/path/to/chrome`.
+- **A font does not load:** the `.woff2` must be in `brands/<brand>/assets/fonts/` and declared in `tokens.css`. `npx @opency/cli brand check` confirms it.
+- **Stock:** Openverse works without a key. Unsplash is optional and uses the user's own free Access Key: tell them to run `npx @opency/cli stock connect unsplash` in their terminal (never ask them to paste the key in the chat). If the search returns nothing good, ask for the brand's own photos or solve it with typography.

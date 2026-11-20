@@ -2,10 +2,10 @@
 
 Fourteen slide archetypes (4:5), tested against quality control: 0 errors and 0 warnings. They are starting points. Each piece adapts them: change the copy, the background, the texture and the size, without repeating the same layout on every slide.
 
-`npx opency layouts` renders them to `templates/layouts/render/contact-sheet.png`. To build a piece by combining them:
+`npx @opency/cli layouts` renders them to `templates/layouts/render/contact-sheet.png`. To build a piece by combining them:
 
 ```bash
-npx opency new my-piece --layouts cover-type,statement,steps,big-number,closer
+npx @opency/cli new my-piece --layouts cover-type,statement,steps,big-number,closer
 ```
 
 | # | Name | What for | Notes |

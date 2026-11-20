@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Stock providers: see what is connected and connect your own Unsplash account.
 //
-//   npx opency stock status [--json]            which providers are available
-//   npx opency stock connect unsplash           asks for YOUR Unsplash Access Key (hidden input), checks it and saves it
-//   npx opency stock connect unsplash --key …   same, without the prompt (for scripts)
-//   npx opency stock disconnect unsplash        removes the saved key
+//   npx @opency/cli stock status [--json]            which providers are available
+//   npx @opency/cli stock connect unsplash           asks for YOUR Unsplash Access Key (hidden input), checks it and saves it
+//   npx @opency/cli stock connect unsplash --key …   same, without the prompt (for scripts)
+//   npx @opency/cli stock disconnect unsplash        removes the saved key
 //
 // opency ships no API keys. Openverse needs none. Unsplash is optional: each user creates a free
 // app in their own Unsplash account and uses its Access Key, so requests count against their own
@@ -71,7 +71,7 @@ if (cmd === "connect") {
   await setEnv(p.keyName, "");
   console.log(`✓ ${p.label} disconnected (key removed from .env).`);
 } else if (cmd === "status" || !cmd) {
-  const rows = Object.entries(PROVIDERS).map(([id, p]) => ({ id, label: p.label, connected: !!p.key(), needsKey: !!p.keyName, license: p.license, connect: p.keyName && !p.key() ? `npx opency stock connect ${id}` : null }));
+  const rows = Object.entries(PROVIDERS).map(([id, p]) => ({ id, label: p.label, connected: !!p.key(), needsKey: !!p.keyName, license: p.license, connect: p.keyName && !p.key() ? `npx @opency/cli stock connect ${id}` : null }));
   if (args.json) console.log(JSON.stringify(rows, null, 2));
   else for (const r of rows) console.log(`${r.connected ? "✓" : "·"} ${r.label.padEnd(10)} ${r.connected ? (r.needsKey ? "connected with your key" : "works without a key") : `not connected → ${r.connect}`}`);
 } else {

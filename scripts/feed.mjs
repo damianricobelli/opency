@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Reviews the whole feed and builds the profile preview.
 //
-// Usage: npx opency feed [-- --from 2026-11-01] [--candidate pieces/<id>]
+// Usage: npx @opency/cli feed [-- --from 2026-11-01] [--candidate pieces/<id>]
 //
 // Rules (over pieces with a plannedDate, sorted by date; folders starting with _ are excluded):
 //   · never 3 pieces in a row with a flat background, nor 3 in a row with a photo
@@ -41,7 +41,7 @@ const days = (a, b) => Math.abs((new Date(a) - new Date(b)) / 86400000);
 const issues = [];
 const add = (code, ids, msg) => issues.push({ code, ids, msg });
 
-for (const it of items) if (!it.rendered) add("not_rendered", [it.id], "not rendered: run npx opency render " + it.id);
+for (const it of items) if (!it.rendered) add("not_rendered", [it.id], "not rendered: run npx @opency/cli render " + it.id);
 
 for (let i = 2; i < items.length; i++) {
   const w = items.slice(i - 2, i + 1);

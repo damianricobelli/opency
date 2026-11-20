@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Creates an opency workspace in a folder.
 //
-//   npx opency init [folder] [--force] [--no-demo]
+//   npx @opency/cli init [folder] [--force] [--no-demo]
 //
 // Copies: AGENTS.md + references/ (the agent's instructions), templates/ (base and layouts),
 // brands/_demo (demo brand), .claude/agents/ (reviewer) and .mcp.json.
@@ -44,7 +44,7 @@ await put(".claude/agents/visual-reviewer.md", await readFile(path.join(PKG, "ag
 if (args.demo !== false && !args["no-demo"]) await copyTree(path.join(PKG, "brands/_demo"), "brands/_demo");
 else await mkdir(path.join(dest, "brands"), { recursive: true });
 
-await put(".mcp.json", JSON.stringify({ mcpServers: { opency: { command: "npx", args: ["-y", "opency", "mcp"] } } }, null, 2) + "\n");
+await put(".mcp.json", JSON.stringify({ mcpServers: { opency: { command: "npx", args: ["-y", "@opency/cli", "mcp"] } } }, null, 2) + "\n");
 await put(".gitignore", "node_modules/\n.DS_Store\n.env\n**/render/.frames-*/\n**/.check.html\n");
 
 const brands = (await readdir(path.join(dest, "brands"), { withFileTypes: true }).catch(() => [])).filter((d) => d.isDirectory() && !d.name.startsWith("_")).map((d) => d.name);
@@ -53,7 +53,7 @@ if (done.length) console.log(`  created: ${done.join(", ")}`);
 if (kept.length) console.log(`  left untouched (already there; --force to update): ${kept.join(", ")}`);
 console.log(`
 Next:
-  1. npx opency setup                    browser used by the renderer
+  1. npx @opency/cli setup                    browser used by the renderer
   2. Open this folder with your agent (Claude Code, Cursor, Codex) and ask:
      ${brands.length ? `"Build a campaign for ${brands[0]}"` : '"Load my brand from mysite.com"'}
      The agent runs the brief with you before it designs.`);

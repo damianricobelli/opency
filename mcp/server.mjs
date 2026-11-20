@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // opency MCP server (stdio).
 //
-//   npx opency mcp          ·   claude mcp add opency -- npx -y opency mcp
+//   npx @opency/cli mcp          ·   claude mcp add opency -- npx -y @opency/cli mcp
 //
 // Exposes the engine (brands, brief, campaigns, stock, pieces, render, feed) as tools, the skill's
 // instructions as resources and three starter prompts. Every tool runs the same script as the CLI,
@@ -225,7 +225,7 @@ tool("stock_search", "Search stock photos", `Searches free photos on Openverse a
   return ok(...parts);
 }, { readOnlyHint: true, openWorldHint: true });
 
-tool("stock_status", "Stock providers", "Which stock providers are available. Openverse always works. Unsplash is optional and uses the user's OWN free Access Key: if it is not connected and would help, tell the user to run `npx opency stock connect unsplash` in their terminal. Never ask them to paste the key in the chat.", {}, async () => result(await engine("stock.mjs", ["status", "--json"])), RO);
+tool("stock_status", "Stock providers", "Which stock providers are available. Openverse always works. Unsplash is optional and uses the user's OWN free Access Key: if it is not connected and would help, tell the user to run `npx @opency/cli stock connect unsplash` in their terminal. Never ask them to paste the key in the chat.", {}, async () => result(await engine("stock.mjs", ["status", "--json"])), RO);
 
 tool("stock_import", "Import a stock photo", "Downloads the chosen photo at full resolution, normalizes it (sRGB, no metadata), records author and license in assets.json and returns the image so you can analyze it. Then call asset_analyze.", { ref: z.string().regex(/^(unsplash|openverse):[A-Za-z0-9_-]{1,64}$/), description: z.string().min(3).max(200).describe("What the photo shows: the agent uses it to pick the photo later."), id: Slug.optional(), brand: Brand }, async ({ ref, description, id, brand }) => {
   const slug = await activeBrand(brand);
