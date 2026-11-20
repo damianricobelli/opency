@@ -36,3 +36,9 @@ Only simple texts can be edited. A headline with a highlighted word (`<span clas
 For a custom animation, write `@keyframes` in the slide. Entrances of 0.3 to 1.2 s; nothing that blinks or bounces for no reason. Designed for 9:16.
 
 There are no automatic subtitles and no voice-over: the slide's text is the message.
+
+## With the tools
+
+- **Duplicate, adapt, translate:** `piece_duplicate` (`npx @opency/cli new <slug> --from <piece> [--format 9:16] [--language es]`) returns the new piece's slots with their current text. Rewrite or translate them with `piece_edit`; a translation usually runs longer, so check the budgets.
+- **Templates:** `template` with `save` (`npx @opency/cli template save <piece> <name>`) stores the structure and the material of an approved piece, not its life (results, feedback and history stay behind). `list` shows them.
+- **Preview:** `piece_preview` starts the editable preview and returns its URL for the user.

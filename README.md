@@ -51,46 +51,43 @@ Everything runs on your machine and everything is a file you own: HTML/CSS per s
 
 ## Install
 
-Requires Node 20.9+ and Chrome (or the bundled Chromium). For video, ffmpeg.
+Requires Node 20.9+ and Chrome (or the Chromium that `setup` downloads). For video, ffmpeg.
 
-**1. The skill** — the instructions the agent follows:
-
-```bash
-npx skills add damianricobelli/opency
-```
-
-**2. The workspace** — where your brands and pieces live:
+**See it first** — renders a demo carousel on your machine, nothing to configure:
 
 ```bash
-npx @opency/cli init my-agency
+npx @opency/cli demo
 ```
 
-```bash
-npx @opency/cli setup
-```
-
-**3. The MCP server** — optional in Claude Code and Cursor, which can already run the commands; required in clients without a terminal, such as Claude Desktop:
+**1. The MCP server** — the tools your agent uses. In Claude Code:
 
 ```bash
 claude mcp add opency -- npx -y @opency/cli mcp
 ```
 
 <details>
-<summary>Any other MCP client</summary>
+<summary>Claude Desktop, Cursor and any other MCP client</summary>
 
 ```json
 {
   "mcpServers": {
     "opency": {
       "command": "npx",
-      "args": ["-y", "@opency/cli", "mcp"],
-      "env": { "OPENCY_HOME": "/path/to/my-agency" }
+      "args": ["-y", "@opency/cli", "mcp"]
     }
   }
 }
 ```
 
 </details>
+
+**2. The skill** — the craft: how to brief, write, compose and review.
+
+```bash
+npx skills add damianricobelli/opency
+```
+
+That is all. There is no workspace to set up: your brands and pieces live in `~/opency`, created on first use. To keep them somewhere else (a client's repo, a shared drive), run `npx @opency/cli init <folder>` there, or set `OPENCY_HOME`.
 
 <details>
 <summary>As a Claude Code plugin (skill + MCP server + reviewer subagent in one step)</summary>
@@ -102,7 +99,7 @@ claude mcp add opency -- npx -y @opency/cli mcp
 
 </details>
 
-Then open the workspace with your agent and ask:
+Then ask your agent:
 
 > Load my brand from mysite.com.<br>
 > Build a campaign for the December launch.<br>
@@ -147,7 +144,19 @@ The one question it never skips: **what do you want to get across?** The answer 
 
 ### 3. It plans, then builds
 
-Each piece of the campaign proves the message from a different angle, and you approve the plan before anything is designed. Pieces are HTML/CSS using the brand's tokens, composed from 14 tested layouts:
+Each piece of the campaign proves the message from a different angle, and you approve the plan before anything is designed.
+
+The agent does not write HTML. It sends each slide as data — a layout and the text for its slots — and opency builds the slide with the brand's tokens, logo and pager, renders it and returns the result in one call:
+
+```json
+{ "layout": "steps",
+  "slots": { "headline": "How to brew it at home",
+             "step-1": "Grind it medium-coarse.",
+             "step-2": "Water just off the boil.",
+             "step-3": "Four minutes, then press." } }
+```
+
+Every slot has a character budget, checked before rendering: when a text does not fit, the answer is another layout, never smaller type. There are 14 tested layouts, and raw HTML stays available for the idea no layout covers.
 
 <p align="center">
   <img src=".github/assets/layouts.webp" alt="The 14 slide layouts: type cover, photo cover, statement, big number, steps, comparison, photo card, data bars, testimonial, closer, news cards, app window, logo grid and co-brand" width="100%">
@@ -181,11 +190,16 @@ It walks you through creating a free app in your Unsplash account, asks for the 
   </picture>
 </p>
 
-Every piece is rendered with Chrome and checked pixel by pixel. Nothing is delivered with errors, and passing checks is not aesthetic approval — so a subagent that did not see the process reviews the contact sheet cold and returns up to 5 findings.
+Every piece is rendered with Chrome and checked pixel by pixel. Fixes that cannot change meaning or design — a headline's line breaks, the logo variant for the surface, mixed textures — are applied automatically; everything else is reported with what to do. Nothing is delivered with errors, and passing checks is not aesthetic approval — so a subagent that did not see the process reviews the contact sheet cold and returns up to 5 findings.
 
 ### 6. You decide
 
-opency never publishes on its own. It leaves everything ready in `render/`, and you approve, adjust or veto.
+opency never publishes on its own. When a piece is ready:
+
+- **Review page.** One self-contained HTML file with the slides, captions and alt text. Open it or forward it to your client: no account, no server.
+- **Live preview.** A local page where you double-click any text to correct it; the agent treats your edits as approved.
+- **Approval.** Recorded only when you say yes.
+- **Delivery folder.** Numbered images, one caption file per network, the alt text and a checklist that flags captions over a network's limit and photo credits that are still missing.
 
 ## What the render checks
 
@@ -255,31 +269,42 @@ my-agency/
 
 | Group | Tools |
 |---|---|
-| Workspace | `workspace_status` · `workspace_init` · `doctor` · `skill_guide` |
-| Brand | `brand_list` · `brand_get` · `brand_create` · `brand_use` · `brand_import_site` · `brand_check` · `brand_write` |
+| Start | `workspace_status` · `demo` · `doctor` · `skill_guide` · `workspace_init` |
+| Brand | `brand_get` · `brand_create` · `brand_use` · `brand_import_site` · `brand_fonts` · `brand_check` · `brand_write` |
 | Brief | `brief_questions` · `brief_interview` |
 | Campaigns | `campaign_create` · `campaign_brief` · `campaign_plan` · `campaign_status` · `campaign_list` |
 | Images | `stock_status` · `stock_search` · `stock_import` · `asset_add` · `asset_analyze` · `asset_view` · `asset_list` · `asset_veto` |
-| Pieces | `layouts_list` · `piece_create` · `piece_list` · `piece_read` · `piece_write` · `piece_render` · `piece_view` · `piece_version` · `piece_motion` |
+| Compose | `layouts_list` · `piece_compose` · `piece_edit` · `piece_repair` · `piece_read` · `piece_list` |
+| Review and delivery | `piece_preview` · `piece_handoff` · `piece_view` · `piece_render` |
+| Reuse | `piece_duplicate` · `template` · `piece_version` · `piece_motion` |
+| Raw HTML | `piece_create` · `piece_write` |
 | Feed and results | `feed_check` · `results_add` · `results_summary` |
 
 Also: the skill's instructions as resources (`opency://guide/…`) and three prompts (`new-campaign`, `load-brand`, `weekly-plan`).
 
+- **One call from copy to contact sheet.** `piece_compose` takes the slides as data, builds them, renders and returns the report and the image.
 - **Tools return images, not just text.** The agent sees the contact sheet and the stock previews before it decides.
+- **No setup step.** The first call creates the workspace and says where; `doctor` can download the render browser.
 - **One implementation.** Every tool runs the same script as the CLI, so MCP and terminal never drift apart.
-- **Guardrails built in.** `brand_write` refuses to overwrite a loaded brand without the user's confirmation, slides cannot contain scripts, downloads reject private addresses, and API keys never travel through the chat.
+- **Guardrails built in.** Approval and changes to a brand that already has pieces need the user's confirmation, slides cannot contain scripts, downloads reject private addresses, and API keys never travel through the chat.
 
 ## Commands
 
 | Command | What it does |
 |---|---|
-| `npx @opency/cli init [folder]` | Creates a workspace |
+| `npx @opency/cli demo` | Renders the demo carousel |
+| `npx @opency/cli init [folder]` | Creates a workspace in a specific folder (the default is `~/opency`) |
 | `npx @opency/cli setup` · `doctor` | Installs the render browser · checks the environment |
 | `npx @opency/cli mcp` | MCP server (stdio) |
 | `npx @opency/cli brief questions [brand\|campaign\|piece]` | The questions of each brief |
 | `npx @opency/cli campaign new / brief / plan / status / list` | Campaigns |
 | `npx @opency/cli brand list / use / new / import <url> / check` | Brands |
-| `npx @opency/cli new <slug> --layouts cover-type,steps,closer` | New piece (`--campaign`, `--from`, `--format`) |
+| `npx @opency/cli fonts search / add / list` | Install the brand's typefaces by name |
+| `npx @opency/cli compose layouts / new / edit / slots` | Build and edit pieces from data |
+| `npx @opency/cli repair <piece>` | Apply the safe fixes from the last render |
+| `npx @opency/cli handoff review / status / package <piece>` | Review page, approval, delivery folder |
+| `npx @opency/cli template save / list` | Brand templates |
+| `npx @opency/cli new <slug> --layouts cover-type,steps,closer` | New piece with sample copy (`--campaign`, `--from`, `--format`, `--language`, `--template`) |
 | `npx @opency/cli render <piece>` | PNG, JPG, contact sheet, captions and report (`--pdf`, `--scale 2`) |
 | `npx @opency/cli dev <piece>` | Live preview with editable text |
 | `npx @opency/cli version <piece> save / list / diff / restore` | Versions, without relying on git |
@@ -288,7 +313,7 @@ Also: the skill's instructions as resources (`opency://guide/…`) and three pro
 | `npx @opency/cli stock status / connect unsplash / disconnect unsplash` | Stock providers |
 | `npx @opency/cli feed` · `results` | Feed rhythm · what performed best |
 
-All of them accept `--brand <slug>`. The workspace is the folder that contains `brands/`, or the one `OPENCY_HOME` points to.
+All of them accept `--brand <slug>`. The workspace is the nearest folder that contains `brands/`, else `OPENCY_HOME`, else `~/opency`.
 
 ## Known limits
 
@@ -297,7 +322,9 @@ All of them accept `--brand <slug>`. The workspace is the folder that contains `
 - **Unsplash:** implemented against its API, but the automated tests only cover Openverse (no key required).
 - **Photos with people:** the face-crop check depends on the agent marking the regions correctly.
 - **Video:** no automatic subtitles or voice-over.
-- **Copy linter:** the cliché phrase lists target Spanish-language copy. Structural checks (figures without a source, limits, alt text, repeated subheads) apply to any language.
+- **Copy linter:** the cliché phrase lists cover English and Spanish. Other languages get the structural checks only (figures without a source, limits, alt text, repeated subheads).
+- **Typefaces:** installed by name only when they are open-licensed (Fontsource). A commercial typeface needs its files from you.
+- **Review page:** a file you send, not a hosted link with comments.
 
 ## Development
 

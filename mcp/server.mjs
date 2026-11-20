@@ -10,6 +10,7 @@
 // Nothing here publishes to social networks: opency leaves files ready and the user decides.
 
 import { spawn } from "node:child_process";
+import { createRequire } from "node:module";
 import { readFile, writeFile, readdir, mkdir, cp, mkdtemp, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import os from "node:os";
@@ -18,7 +19,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import sharp from "sharp";
-import { PKG, ROOT, BRANDS, hasWorkspace, listBrands, loadBrand, brandDir, readJSON, readText, today } from "../scripts/lib/project.mjs";
+import { PKG, ROOT, BRANDS, hasWorkspace, ensureWorkspace, listBrands, loadBrand, brandDir, readJSON, readText, today } from "../scripts/lib/project.mjs";
 import { BRIEFS, briefKinds, nextQuestions, missingAnswers, elicitationSchema } from "../scripts/lib/brief.mjs";
 import { fetchBuffer, availableProviders, missingKeys } from "../scripts/lib/stock.mjs";
 
@@ -67,13 +68,47 @@ const pieceDir = async (brand, id) => {
   if (!existsSync(path.join(dir, "piece.json"))) throw new Error(`Piece "${id}" does not exist. Use piece_list.`);
   return dir;
 };
-const guard = (fn) => async (a, extra) => { try { return await fn(a ?? {}, extra); } catch (e) { return bad(e.message); } };
+// A workspace always exists by the time a tool runs: the first call creates it and says where.
+const guard = (fn) => async (a, extra) => {
+  try {
+    const created = ensureWorkspace({ quiet: true });
+    const res = await fn(a ?? {}, extra);
+    if (created && !res.isError) res.content.unshift(text(`Workspace created at ${ROOT}. Brands, pieces and renders live there as plain files.`));
+    return res;
+  } catch (e) { return bad(e.message); }
+};
+/** Writes `data` to a temp JSON file, runs `fn(file)` and cleans up. */
+async function withJSON(data, fn) {
+  const tmp = await mkdtemp(path.join(os.tmpdir(), "opency-"));
+  try { const file = path.join(tmp, "spec.json"); await writeFile(file, JSON.stringify(data)); return await fn(file); }
+  finally { await rm(tmp, { recursive: true, force: true }); }
+}
+/** Renders a piece and returns the report plus the contact sheet, as content blocks. */
+async function renderBlocks(dir, { pdf = false, scale = 1 } = {}) {
+  const r = await engine("render.mjs", [dir, "--scale", scale, ...(pdf ? ["--pdf"] : [])], { timeout: 300000 });
+  if (!r.ok) return { ok: false, blocks: [text([r.err, r.out].filter(Boolean).join("\n"))] };
+  const sheet = path.join(dir, "render/contact-sheet.png");
+  const report = await readJSON(path.join(dir, "render/report.json"), null);
+  const errors = report?.summary?.errors ?? 0;
+  return { ok: true, errors, blocks: [text(await readText(path.join(dir, "render/report.md"))), text(errors ? "Next: fix the errors. piece_repair applies the safe ones; the rest need piece_edit or another layout." : "Next: LOOK at the contact sheet (hierarchy, rhythm, does it look like the brand?), then piece_handoff action=\"review\" to show the user."), ...(existsSync(sheet) ? [await image(sheet, 2000)] : [])] };
+}
+/** A brand with pieces already made: changing its identity changes existing work, so it takes the user's yes. */
+async function established(slug) {
+  return (await readdir(path.join(brandDir(slug), "pieces"), { withFileTypes: true }).catch(() => [])).some((d) => d.isDirectory());
+}
 const NEEDS_WS = "This directory is not an opency workspace yet. Call workspace_init (it creates brands/, templates/ and the instructions).";
 
 const server = new McpServer({ name: "opency", version: VERSION }, {
   instructions: `opency turns the agent into the content team of one or more brands: account manager, art director, designer and copywriter.
-Order of work: 1) workspace_status. 2) skill_guide (read "core" in full before the first piece). 3) If the brand is not loaded: brief_interview kind=brand and the "onboarding" guide. 4) Before designing a campaign or an ambiguous piece: brief_interview. Nothing gets designed without knowing what it should get across. 5) campaign_plan → piece_create → piece_write → piece_render (look at the contact sheet it returns) → cold review → delivery.
-Rules: never make up figures, prices, clients or testimonials; only registered (stock_import / asset_add) and analyzed (asset_analyze) images; get an explicit yes before brand_write on a loaded brand, before deleting, and before sharing anything outside the project. Answer and ask in the user's language; write copy in the brand's language. opency does not publish to social networks: it delivers files.`,
+The path, in order:
+1. workspace_status. Never used opency here? Run demo to show the user what it produces.
+2. skill_guide("core") before the first piece (and the topic guides when they come up).
+3. Brand not loaded: brief_interview kind="brand", brand_import_site, brand_fonts, then propose and brand_write.
+4. A campaign or an ambiguous request: brief_interview first. Nothing gets designed without knowing what it should get across.
+5. piece_compose: send the slides as DATA (layout + text per slot); it builds the HTML, renders and returns the contact sheet. layouts_list shows every layout's slots and budgets.
+6. Read the report and LOOK at the contact sheet. piece_repair applies the safe fixes; piece_edit changes texts or photos. piece_write (raw HTML) is the escape hatch for when no layout fits.
+7. piece_handoff: "review" makes a page the user can open or forward, "approve" records their yes, "package" leaves the files ready to upload.
+Rules: never make up figures, prices, clients or testimonials; only registered (stock_import / asset_add) and analyzed (asset_analyze) images; get an explicit yes before brand_write on a loaded brand, before approving, before deleting, and before sharing anything outside the project. Answer and ask in the user's language; write copy in the brand's language. opency does not publish to social networks: it delivers files.`,
 });
 
 const tool = (name, title, description, inputSchema, handler, annotations = {}) =>
@@ -98,7 +133,26 @@ tool("workspace_status", "Workspace status", "Starting point of every session: b
 
 tool("workspace_init", "Create the workspace", "Creates the agent instructions, the templates and a demo brand in the current directory. Overwrites nothing unless force is set.", { force: z.boolean().optional().describe("Updates instructions and templates even if they exist. Never touches the user's brands.") }, async ({ force }) => result(await engine("init.mjs", [ROOT, ...(force ? ["--force"] : [])])));
 
-tool("doctor", "Check the environment", "Checks render browser, ffmpeg, stock keys and workspace. Use it if piece_render fails.", {}, async () => result(await engine("doctor.mjs", [])), RO);
+tool("doctor", "Check the environment", "Checks render browser, ffmpeg, stock providers and workspace. With fix=true it downloads the render browser (Chromium, ~150 MB, takes a minute) when none is found: use it if piece_compose or piece_render says no browser was found.", { fix: z.boolean().default(false) }, async ({ fix }) => {
+  const first = await engine("doctor.mjs", []);
+  if (!fix || first.ok) return result(first);
+  const cli = path.join(path.dirname(createRequire(import.meta.url).resolve("playwright/package.json")), "cli.js");
+  const install = await new Promise((resolve) => {
+    const child = spawn(process.execPath, [cli, "install", "chromium"], { stdio: ["ignore", "pipe", "pipe"] });
+    let log = ""; child.stdout.on("data", (d) => (log += d)); child.stderr.on("data", (d) => (log += d));
+    const timer = setTimeout(() => child.kill("SIGKILL"), 600000);
+    child.on("close", (code) => { clearTimeout(timer); resolve({ code, log: log.trim().split("\n").slice(-3).join("\n") }); });
+  });
+  const after = await engine("doctor.mjs", []);
+  return install.code === 0 ? result(after, "Browser installed.") : bad(`Could not download the browser:\n${install.log}\nAlternative: install Google Chrome, or set CHROME_PATH.`);
+});
+
+tool("demo", "Show what opency makes", "Renders the demo carousel on this machine and returns its contact sheet. Use it the first time, before any setup, so the user sees a real result in a minute.", {}, async () => {
+  const r = await engine("demo.mjs", ["--json"], { timeout: 300000 });
+  const data = parse(r);
+  if (!r.ok || !data) return result(r);
+  return ok(`A real five-slide carousel, rendered and quality-checked on this machine (demo brand). Files: ${data.dir}\nNext: load the user's brand — brief_interview kind="brand", or brand_create + brand_import_site if they have a website.`, existsSync(data.contactSheet) ? await image(data.contactSheet, 2000) : null);
+});
 
 const TOPICS = { core: null, brief: "brief.md", onboarding: "onboarding.md", planning: "planning.md", copy: "copy.md", "art-direction": "art-direction.md", assets: "assets.md", quality: "quality.md", review: "review.md", operations: "operations.md", publishing: "publishing.md", learning: "learning.md", layouts: null };
 tool("skill_guide", "Skill instructions", 'Returns the working instructions. "core" is the core (read all of it at the start); the rest is read when the topic comes up: brief, onboarding, planning, copy, art-direction, assets, quality, review, operations, publishing, learning, layouts.', { topic: z.enum(Object.keys(TOPICS)).default("core") }, async ({ topic }) => {
@@ -108,8 +162,6 @@ tool("skill_guide", "Skill instructions", 'Returns the working instructions. "co
 }, RO);
 
 // ============================================================ Brands
-tool("brand_list", "List brands", "Brands in the workspace and which one is active.", {}, async () => result(await engine("brand.mjs", ["list"])), RO);
-
 tool("brand_get", "Read a brand", "Everything to know before designing: brand.json (data, logos, pillars, verified facts), brand-kit.md (voice, color roles, instructions), tokens.css, voice samples, decisions, calendar and inspirations.", { brand: Brand, include: z.array(z.enum(["brand.json", "brand-kit.md", "tokens.css", "voice-samples.md", "decisions.md", "calendar.md", "inspirations.md"])).optional().describe("Defaults to everything.") }, async ({ brand, include }) => {
   const slug = await activeBrand(brand), dir = brandDir(slug);
   const files = include ?? ["brand.json", "brand-kit.md", "tokens.css", "voice-samples.md", "decisions.md", "calendar.md", "inspirations.md"];
@@ -136,13 +188,29 @@ tool("brand_import_site", "Read a website", "Opens the brand's website and extra
 
 tool("brand_check", "Verify palette and fonts", "Measures the contrast of every palette combination and confirms the fonts load. It must finish clean before the first piece.", { brand: Brand }, async ({ brand }) => result(await engine("brand.mjs", ["check", ...withBrand(brand)])), RO);
 
+tool("brand_fonts", "Install the brand's typefaces", `Installs typefaces by name from Fontsource (open-licensed fonts, Google Fonts included), so the user does not have to hunt for .woff2 files.
+- "search": find a family and see its weights.
+- "add": downloads the files into the brand for a role (display, body or mono) and returns the @font-face CSS. With apply=true it also updates tokens.css (a backup is kept).
+- "list": what the brand has installed.
+Only weights the family really has: never a synthetic weight. If the brand's typeface is commercial and not on Fontsource, ask the user for the files.`, {
+  action: z.enum(["search", "add", "list"]), query: z.string().max(60).optional().describe("search: the family to look for."),
+  family: z.string().max(60).optional(), role: z.enum(["display", "body", "mono"]).optional(), weights: z.array(z.number().int().min(100).max(900)).max(9).optional(), italic: z.boolean().default(false),
+  apply: z.boolean().default(false).describe("add: also write tokens.css."), confirmedByUser: z.boolean().default(false).describe("Required with apply once the brand has pieces."), brand: Brand,
+}, async ({ action, query, family, role, weights, italic, apply, confirmedByUser, brand }) => {
+  if (action === "search") return query ? result(await engine("fonts.mjs", ["search", clean(query), "--json"], { timeout: 60000 })) : bad('action="search" needs query.');
+  const b = await activeBrand(brand);
+  if (action === "list") return result(await engine("fonts.mjs", ["list", "--json", "--brand", b]));
+  if (!family || !role) return bad('action="add" needs family and role.');
+  if (apply && (await established(b)) && !confirmedByUser) return bad(`${b} already has pieces: changing its typefaces changes how the next ones look next to them. Show the user the family and call again with confirmedByUser=true once they say yes.`);
+  return result(await engine("fonts.mjs", ["add", clean(family), "--role", role, ...(weights?.length ? ["--weights", weights.join(",")] : []), ...(italic ? ["--italic"] : []), ...(apply ? ["--apply"] : []), "--json", "--brand", b], { timeout: 120000 }), apply ? "Run brand_check to confirm the fonts load and the palette still passes." : null);
+}, { openWorldHint: true });
+
 const BRAND_FILES = ["brand.json", "brand-kit.md", "tokens.css", "voice-samples.md", "calendar.md", "decisions.md", "inspirations.md"];
-tool("brand_write", "Write a brand file", "Writes one of the brand's files. REQUIRES an explicit yes from the user if the brand is already loaded and the file is brand.json, brand-kit.md or tokens.css: show the proposal in text first. Keeps a copy of the previous version in history/.", { brand: Brand, file: z.enum(BRAND_FILES), content: z.string().max(200000), confirmedByUser: z.boolean().describe("true only if the user approved this change in this conversation.") }, async ({ brand, file, content, confirmedByUser }) => {
+tool("brand_write", "Write a brand file", "Writes one of the brand's files. Always show the proposal in text and get the user\'s yes before writing brand.json, brand-kit.md or tokens.css; once the brand has pieces, confirmedByUser=true is required for those files. Keeps a copy of the previous version in history/.", { brand: Brand, file: z.enum(BRAND_FILES), content: z.string().max(200000), confirmedByUser: z.boolean().describe("true only if the user approved this change in this conversation.") }, async ({ brand, file, content, confirmedByUser }) => {
   const slug = await activeBrand(brand), dir = brandDir(slug);
   if (slug.startsWith("_")) return bad("Demo brands cannot be edited: create one with brand_create.");
-  const b = await loadBrand(slug);
   const core = ["brand.json", "brand-kit.md", "tokens.css"].includes(file);
-  if (core && b.loaded && !confirmedByUser) return bad(`${slug} is already loaded. Show the change to the user and call again with confirmedByUser=true once they say yes.`);
+  if (core && (await established(slug)) && !confirmedByUser) return bad(`${slug} already has pieces made with this identity. Show the change to the user and call again with confirmedByUser=true once they say yes.`);
   if (file === "brand.json") { try { JSON.parse(content); } catch (e) { return bad(`brand.json is not valid JSON: ${e.message}`); } }
   const target = path.join(dir, file);
   if (existsSync(target) && core) { const h = path.join(dir, "history", today()); await mkdir(h, { recursive: true }); await cp(target, path.join(h, file)); }
@@ -175,6 +243,12 @@ Pass in "known" everything you already know from the request, the brand or the w
     }
   }
   let saved = null;
+  if (kind === "brand" && Object.keys(answers).length) {
+    const slug = await activeBrand(brand).catch(() => null);
+    // Only known keys are stored; a brand that does not exist yet keeps its answers in this result.
+    const known = Object.fromEntries(Object.entries(answers).filter(([k]) => BRIEFS.brand.questions.some((q) => q.id === k)));
+    if (slug && !slug.startsWith("_") && Object.keys(known).length) { const r = await withJSON(known, (file) => engine("campaign.mjs", ["brand-brief", "--answers", file, "--json", "--brand", slug])); if (r.ok) saved = `brands/${slug}/brief.json`; }
+  }
   if (kind === "campaign" && campaign && Object.keys(answers).length) {
     const tmp = await mkdtemp(path.join(os.tmpdir(), "opency-"));
     try { await writeFile(path.join(tmp, "a.json"), JSON.stringify(answers)); const r = await engine("campaign.mjs", ["brief", campaign, "--answers", path.join(tmp, "a.json"), "--json", ...withBrand(brand)]); if (!r.ok) return result(r); saved = campaign; }
@@ -268,15 +342,76 @@ tool("asset_view", "View an image", "Returns the registered image so you can loo
 tool("asset_veto", "Veto an image", "Marks a photo the user rejected so it is never used again (or re-enables it).", { id: Slug, reason: z.string().max(200).optional(), undo: z.boolean().default(false), brand: Brand }, async ({ id, reason, undo, brand }) => result(await engine("assets.mjs", [undo ? "unveto" : "veto", id, ...(reason ? ["--reason", clean(reason)] : []), ...withBrand(brand)])));
 
 // ============================================================ Pieces
-tool("layouts_list", "Available layouts", "The tested slide archetypes and the brand's saved templates. Returns the layouts' contact sheet.", { brand: Brand }, async ({ brand }) => {
-  const lib = await readJSON(path.join(ROOT, "templates/layouts/piece.json"), { slides: [] });
+tool("layouts_list", "Layouts and their slots", "Every layout with its SLOTS (the texts it takes), each slot's character budget and its sample copy, plus the brand's saved templates and the layouts' contact sheet. Read it before piece_compose.", { brand: Brand, sheet: z.boolean().default(true).describe("Attach the contact sheet of the layouts.") }, async ({ brand, sheet }) => {
+  const lib = parse(await engine("compose.mjs", ["layouts", "--json"])) ?? [];
   const slug = await activeBrand(brand).catch(() => null);
-  const tpl = slug ? (await readdir(path.join(brandDir(slug), "templates"), { withFileTypes: true }).catch(() => [])).filter((d) => d.isDirectory()).map((d) => d.name) : [];
-  const sheet = path.join(ROOT, "templates/layouts/render/contact-sheet.png");
-  return ok(await readText(path.join(ROOT, "templates/layouts/README.md")), `\nNames: ${lib.slides.map((s) => s.layout).join(", ")}\nBrand templates: ${tpl.join(", ") || "(none)"}`, existsSync(sheet) ? await image(sheet, 1800) : null);
+  const tpl = slug ? parse(await engine("template.mjs", ["list", "--json", "--brand", slug])) ?? [] : [];
+  const file = path.join(ROOT, "templates/layouts/render/contact-sheet.png");
+  return ok({ layouts: lib.map((l) => ({ layout: l.layout, surface: l.surface, photo: !!l.photo, bars: l.bars ?? undefined, slots: Object.fromEntries(l.slots.map((x) => [x.id, x.max ? `${x.max} chars · e.g. "${x.text}"` : `e.g. "${x.text}"`])) })), brandTemplates: tpl, how: "A slot set to null is removed with its row. *word* highlights one word in the accent color. Text over a slot's budget means: shorten it or pick another layout, never shrink the type. Do not repeat one layout on every slide." }, await readText(path.join(ROOT, "templates/layouts/README.md")), sheet && existsSync(file) ? await image(file, 1800) : null);
 }, RO);
 
-tool("piece_create", "Create a piece", "Creates the piece by combining layouts (the usual way), from a brand template, or by duplicating/adapting another piece to another format. Write the full copy first: if a text does not fit a layout, change the layout, do not shrink the type.", {
+const SlotMap = z.record(z.string(), z.union([z.string(), z.null()])).describe("Slot id → text. null removes the slot (and its row or list item). *word* highlights one word.");
+const SlideSpec = {
+  slots: SlotMap.optional(),
+  remove: z.array(z.string()).optional(),
+  image: z.object({ asset: Slug }).optional().describe("A registered, analyzed asset, for layouts with a photo."),
+  bars: z.array(z.number().min(0).max(100)).max(8).optional().describe("Bar widths in percent, for data-bars."),
+  alt: z.string().max(400).optional().describe("Alt text of the slide."),
+  role: z.string().max(40).optional(),
+  claim: z.string().max(200).optional().describe("What this slide asserts, in one line."),
+};
+const PieceMeta = {
+  title: z.string().max(120).optional(),
+  hook: z.string().max(200).optional().describe("The cover's hook."),
+  direction: z.record(z.string(), z.union([z.string(), z.array(z.string())])).optional().describe("thesis, dominantMode, density, signatureMove, avoid…"),
+  captions: z.record(z.string(), z.string()).optional().describe("Per network: instagram, linkedin, tiktok…"),
+  sources: z.array(z.record(z.string(), z.string())).optional().describe("Where each figure or claim comes from."),
+};
+
+tool("piece_compose", "Compose a piece from data", `The main way to make a piece: send the slides as data and opency builds the HTML with the brand's tokens, logo and pager, then renders and returns the quality report and the contact sheet in one call.
+Each slide is a layout plus the text for its slots (layouts_list shows them). Write the full copy first; budgets are checked before rendering. Include direction.thesis, the hook, captions and each slide's alt text so the piece is complete.`, {
+  slug: z.string().min(1).max(60), brand: Brand,
+  slides: z.array(z.object({ layout: z.string(), ...SlideSpec })).min(1).max(20),
+  ...PieceMeta,
+  format: Format.optional(), date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), campaign: Slug.optional(), intent: z.string().max(40).optional(), category: z.string().max(40).optional(),
+  render: z.boolean().default(true),
+}, async ({ slug, brand, render, ...spec }) => {
+  const b = await activeBrand(brand);
+  const r = await withJSON(spec, (file) => engine("compose.mjs", ["new", clean(slug), "--spec", file, "--json", "--brand", b]));
+  const data = parse(r);
+  if (!r.ok || !data) return result(r);
+  if (data.summary.errors || !render) return ok(data);
+  const out = await renderBlocks(path.join(ROOT, data.dir));
+  return ok({ piece: data.piece, dir: data.dir, composeIssues: data.issues }, ...out.blocks);
+});
+
+tool("piece_edit", "Edit a piece's texts, photos or metadata", "Changes only what you send: the text of some slots, a slide's photo, alt text, captions, hook or direction. Then renders again and returns the report and the contact sheet. Texts the user edited by hand in the preview are theirs: do not overwrite them unless they ask.", {
+  piece: PieceId, brand: Brand,
+  slides: z.array(z.object({ n: z.number().int().min(1).max(20), ...SlideSpec })).max(20).optional(),
+  ...PieceMeta,
+  change: z.string().max(200).optional().describe("One line for the piece's history: what changed and why."),
+  render: z.boolean().default(true),
+}, async ({ piece, brand, render, ...spec }) => {
+  const dir = await pieceDir(brand, piece);
+  const r = await withJSON(spec, (file) => engine("compose.mjs", ["edit", dir, "--spec", file, "--json"]));
+  const data = parse(r);
+  if (!r.ok || !data) return result(r);
+  if (data.summary.errors || !render) return ok(data);
+  const out = await renderBlocks(dir);
+  return ok({ piece: data.piece, composeIssues: data.issues }, ...out.blocks);
+});
+
+tool("piece_repair", "Apply the safe fixes", "Applies the fixes that are deterministic and cannot change meaning or design (for example a headline's line breaks, the logo variant for the surface, the pager), saves a version first, renders again and returns the new report and contact sheet. What it skips needs your judgment: it tells you why.", { piece: PieceId, brand: Brand }, async ({ piece, brand }) => {
+  const dir = await pieceDir(brand, piece);
+  const r = await engine("repair.mjs", [dir, "--json"]);
+  const data = parse(r);
+  if (!r.ok || !data) return result(r);
+  if (!data.fixed.length) return ok({ ...data, note: "Nothing could be fixed automatically. Use piece_edit, or another layout." });
+  const out = await renderBlocks(dir);
+  return ok(data, ...out.blocks);
+});
+
+tool("piece_create", "Create an empty piece", "Creates a piece with the layouts' sample copy still in place, from layouts, from a brand template (template=<name>) or as blank slides. Prefer piece_compose, which creates and fills it in one call; use this to start from a template or when you will write the HTML yourself.", {
   slug: z.string().min(1).max(60), brand: Brand,
   layouts: z.array(z.string()).min(1).max(20).optional().describe("One layout per slide, in order. Do not repeat the same one on every slide."),
   template: z.string().optional(), from: PieceId.optional().describe("Piece to duplicate or adapt."),
@@ -305,11 +440,14 @@ tool("piece_list", "List pieces", "The brand's pieces with format, status, campa
 }, RO);
 
 const PIECE_FILE = z.string().regex(/^(piece\.json|slide-\d{2}\.html)$/, "piece.json or slide-NN.html");
-tool("piece_read", "Read a piece", "Returns piece.json and the slides' HTML (all of them, or the requested files). Also the quality report if there is one.", { piece: PieceId, files: z.array(PIECE_FILE).optional(), report: z.boolean().default(false), brand: Brand }, async ({ piece, files, report, brand }) => {
+tool("piece_read", "Read a piece", 'Returns the piece as data: every slide with its layout and the current text of each slot, plus title, hook and captions (what you need to edit or translate it). With as="html" it returns piece.json and the raw HTML of the slides instead. report=true adds the last quality report.', { piece: PieceId, as: z.enum(["slots", "html"]).default("slots"), files: z.array(PIECE_FILE).optional().describe("Only with as=html."), report: z.boolean().default(false), brand: Brand }, async ({ piece, as, files, report, brand }) => {
   const dir = await pieceDir(brand, piece);
-  const all = files ?? ["piece.json", ...(await readdir(dir)).filter((f) => /^slide-\d{2}\.html$/.test(f)).sort()];
   const parts = [];
-  for (const f of all) parts.push(`===== ${f} =====\n${await readText(path.join(dir, f)) || "(does not exist)"}`);
+  if (as === "slots") { const r = await engine("compose.mjs", ["slots", dir, "--json"]); if (!r.ok) return result(r); parts.push(r.out); }
+  else {
+    const all = files ?? ["piece.json", ...(await readdir(dir)).filter((f) => /^slide-\d{2}\.html$/.test(f)).sort()];
+    for (const f of all) parts.push(`===== ${f} =====\n${await readText(path.join(dir, f)) || "(does not exist)"}`);
+  }
   if (report) parts.push(`===== render/report.md =====\n${await readText(path.join(dir, "render/report.md")) || "(not rendered)"}`);
   return ok(parts.join("\n\n"));
 }, RO);
@@ -324,13 +462,10 @@ tool("piece_write", "Write slides or piece.json", "Writes one or more files of t
   return ok(`✓ ${files.map((f) => f.file).join(", ")}. Run piece_render.`);
 });
 
-tool("piece_render", "Render and check", "Renders the piece, runs pixel-level quality control (contrast over photos, safe areas, widows, cropped faces, figures without a source, copy) and returns the report and the CONTACT SHEET. Look at it: passing checks is not aesthetic approval. Nothing is delivered with errors.", { piece: PieceId, pdf: z.boolean().default(false).describe("Also outputs carousel.pdf for LinkedIn."), scale: z.number().int().min(1).max(4).default(1).describe("2 for 2K."), brand: Brand }, async ({ piece, pdf, scale, brand }) => {
+tool("piece_render", "Render and check", "Renders the piece, runs pixel-level quality control (contrast over photos, safe areas, widows, cropped faces, figures without a source, copy) and returns the report and the CONTACT SHEET. Look at it: passing checks is not aesthetic approval. piece_compose and piece_edit already render; use this after piece_write, or for a PDF or a 2K export.", { piece: PieceId, pdf: z.boolean().default(false).describe("Also outputs carousel.pdf for LinkedIn."), scale: z.number().int().min(1).max(4).default(1).describe("2 for 2K."), brand: Brand }, async ({ piece, pdf, scale, brand }) => {
   const dir = await pieceDir(brand, piece);
-  const r = await engine("render.mjs", [dir, "--scale", scale, ...(pdf ? ["--pdf"] : [])], { timeout: 300000 });
-  if (!r.ok) return result(r);
-  const sheet = path.join(dir, "render/contact-sheet.png");
-  const outputs = (await readdir(path.join(dir, "render")).catch(() => [])).filter((f) => !f.startsWith("."));
-  return ok(await readText(path.join(dir, "render/report.md")), `\nFiles in ${path.relative(ROOT, dir)}/render/: ${outputs.join(", ")}`, existsSync(sheet) ? await image(sheet, 2000) : null);
+  const out = await renderBlocks(dir, { pdf, scale });
+  return out.ok ? ok(...out.blocks) : { isError: true, content: out.blocks };
 });
 
 tool("piece_view", "View a rendered slide", "Returns an already rendered slide at a larger size, or the contact sheet.", { piece: PieceId, slide: z.number().int().min(1).max(20).optional().describe("No number: the contact sheet."), brand: Brand }, async ({ piece, slide, brand }) => {
@@ -349,6 +484,75 @@ tool("piece_version", "Piece versions", "save keeps a copy before a big change; 
 tool("piece_motion", "Generate video", "Builds an MP4 from the slides (staggered entrances and crossfades). Requires ffmpeg and data-motion on each slide's <main>. Audio is supplied by the user, with the rights cleared.", { piece: PieceId, slides: z.union([z.literal("all"), z.number().int().min(1).max(20)]).default("all"), duration: z.number().min(2).max(15).default(4), audio: z.string().optional().describe("Local path to an audio file supplied by the user."), brand: Brand }, async ({ piece, slides, duration, audio, brand }) => {
   const dir = await pieceDir(brand, piece);
   return result(await engine("motion.mjs", [dir, ...(slides === "all" ? ["--slides", "all"] : ["--slide", slides]), "--duration", duration, ...(audio ? ["--audio", audio] : [])], { timeout: 600000 }));
+});
+
+// ============================================================ Preview, review and delivery
+const previews = new Map(); // piece dir → { child, url }
+process.on("exit", () => { for (const p of previews.values()) p.child.kill(); });
+
+tool("piece_preview", "Open the live preview", "Starts a local preview of the piece and returns its URL for the user to open. It reloads on every change, and the user can double-click any text to correct it; those edits are recorded as theirs and count as approved. Call it again with stop=true to close it.", { piece: PieceId, stop: z.boolean().default(false), brand: Brand }, async ({ piece, stop, brand }) => {
+  const dir = await pieceDir(brand, piece);
+  const running = previews.get(dir);
+  if (stop) { running?.child.kill(); previews.delete(dir); return ok(running ? "Preview closed." : "No preview was running for that piece."); }
+  if (running && running.child.exitCode === null) return ok({ url: running.url, note: "Already running." });
+  const port = 4321 + previews.size + Math.floor(Math.random() * 400);
+  const child = spawn(process.execPath, [path.join(PKG, "scripts/dev.mjs"), dir, "--port", String(port)], { cwd: ROOT, env: { ...process.env, OPENCY_HOME: ROOT }, stdio: ["ignore", "pipe", "pipe"] });
+  const url = await new Promise((resolve, reject) => {
+    let log = "";
+    const timer = setTimeout(() => reject(new Error(`The preview did not start: ${log.trim() || "no output"}`)), 8000);
+    child.stdout.on("data", (d) => { log += d; const m = log.match(/http:\/\/localhost:\d+/); if (m) { clearTimeout(timer); resolve(m[0]); } });
+    child.stderr.on("data", (d) => (log += d));
+    child.on("close", () => { clearTimeout(timer); reject(new Error(`The preview stopped: ${log.trim()}`)); });
+  });
+  previews.set(dir, { child, url });
+  return ok({ url, note: "Give the user this link. It runs on their machine while this session is open. Texts they edit there are theirs: read them back with piece_read before changing anything." });
+});
+
+tool("piece_handoff", "Review, approval and delivery", `The last mile, one action at a time:
+- "review": builds ONE self-contained HTML page (slides, captions, alt text) the user can open or forward to their client: no account, no server. Marks the piece as in review.
+- "approve": records the user's approval. Only after they said yes in this conversation.
+- "status": sets idea | draft | review | approved | scheduled | published.
+- "package": copies the approved piece into delivery/ ready to upload: numbered images, one caption file per network, alt text and a checklist with what to do on each network.
+opency never publishes: the user uploads the package, or a publishing tool they connected does it with their confirmation.`, {
+  piece: PieceId, action: z.enum(["review", "approve", "status", "package"]),
+  status: z.enum(["idea", "draft", "review", "approved", "scheduled", "published"]).optional().describe('For action="status".'),
+  confirmedByUser: z.boolean().default(false).describe("Required for approve, and for the statuses approved, scheduled and published."),
+  force: z.boolean().default(false).describe("package: skip the approved / zero-errors requirement. Say why to the user."),
+  brand: Brand,
+}, async ({ piece, action, status, confirmedByUser, force, brand }) => {
+  const dir = await pieceDir(brand, piece);
+  if (action === "review") {
+    const r = await engine("handoff.mjs", ["review", dir, "--json"]);
+    const data = parse(r);
+    if (!r.ok || !data) return result(r);
+    return ok({ ...data, next: `Tell the user where the file is (${data.absolute}) and that they can open it or forward it. Wait for their changes or their approval.` });
+  }
+  const target = action === "approve" ? "approved" : status;
+  if (action === "approve" || action === "status") {
+    if (!target) return bad('action="status" needs a status.');
+    if (["approved", "scheduled", "published"].includes(target) && !confirmedByUser) return bad(`"${target}" is the user's decision. Ask them, and call again with confirmedByUser=true once they say yes.`);
+    return result(await engine("handoff.mjs", ["status", dir, target, "--json", "--by", confirmedByUser ? "persona" : "agente"]));
+  }
+  return result(await engine("handoff.mjs", ["package", dir, "--json", ...(force ? ["--force"] : [])]));
+});
+
+tool("piece_duplicate", "Duplicate, adapt or translate", "Creates a new piece from an existing one: the same structure for new content, another format (4:5 → 9:16: then recompose, do not just resize), or another language. Returns the new piece's slots with their current text so you can rewrite or translate them with piece_edit.", { from: PieceId, slug: z.string().min(1).max(60), format: Format.optional(), language: z.string().regex(/^[a-z]{2}(-[A-Z]{2})?$/).optional().describe("A translation: the texts still have to be translated with piece_edit."), date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(), brand: Brand }, async ({ from, slug, format, language, date, brand }) => {
+  const b = await activeBrand(brand);
+  await pieceDir(b, from);
+  const argv = [clean(slug), "--from", from, "--brand", b];
+  for (const [k, v] of Object.entries({ format, language, date })) if (v) argv.push(`--${k}`, v);
+  const r = await engine("new-piece.mjs", argv);
+  if (!r.ok) return result(r);
+  const id = r.out.match(/pieces\/(\S+)/)?.[1];
+  const slots = id ? await engine("compose.mjs", ["slots", id, "--json", "--brand", b]) : null;
+  return ok(r.out, slots?.ok ? slots.out : null, language ? "Translate every slot, the hook, the captions and the alt texts with piece_edit. Keep the layout budgets: a translation often runs longer." : format ? "Recompose for the new format with piece_edit (and piece_write if a slide needs a different structure), then render." : "Replace the copy with piece_edit.");
+});
+
+tool("template", "Brand templates", 'action="save" stores an approved piece as a template of the brand (its structure and material, not its copy); action="list" shows them. Start from one with piece_create template=<name>. Offer to save when a piece is approved without changes.', { action: z.enum(["save", "list"]), piece: PieceId.optional(), name: z.string().max(40).optional(), note: z.string().max(200).optional().describe("What the template is for."), brand: Brand }, async ({ action, piece, name, note, brand }) => {
+  const b = await activeBrand(brand);
+  if (action === "list") return result(await engine("template.mjs", ["list", "--json", "--brand", b]));
+  if (!piece || !name) return bad('action="save" needs piece and name.');
+  return result(await engine("template.mjs", ["save", await pieceDir(b, piece), clean(name), "--json", ...(note ? ["--note", clean(note)] : [])]));
 });
 
 // ============================================================ Feed and results

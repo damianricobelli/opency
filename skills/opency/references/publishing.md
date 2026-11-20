@@ -25,3 +25,9 @@ Do not use unofficial automations, scripts against the networks or follower scra
 ## After publishing
 
 When the user gives you the numbers, enter them with `npx @opency/cli results add <piece> --reach … --saves … --shares … --likes … --comments …`. Do not estimate them.
+
+## Review, approval and the delivery folder
+
+- **Review:** `npx @opency/cli handoff review <piece>` (MCP: `piece_handoff` with `review`) writes `render/review.html`: one self-contained page with the slides, captions and alt text. The user can open it or forward it to their client; it needs no account and no server.
+- **Approval:** when the user says yes, `handoff status <piece> approved` (MCP: `approve`, with `confirmedByUser`). A piece with render errors cannot be approved.
+- **Delivery:** `handoff package <piece>` copies the approved piece into `delivery/`: numbered images, one caption file per network, the alt text and `PUBLISH.md`, a checklist that also flags captions over a network's limit and CC BY credits missing from the caption.

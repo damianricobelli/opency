@@ -25,11 +25,14 @@ This file is the core. The detail of each topic is in `references/` and is read 
 
 ## First: the workspace
 
-opency works in a **workspace**: the folder that contains `brands/` and `templates/`.
+opency works in a **workspace**: a folder with `brands/` and `templates/`. You never have to set one up by hand:
 
-- If the current directory has none: `npx @opency/cli init` (creates it here), then `npx @opency/cli setup` (browser used by the renderer).
-- If something in the environment fails: `npx @opency/cli doctor`.
-- **With the MCP server connected** (`workspace_status` is available), use its tools: they do the same as the commands, they return the images so you can look at them, and they let you run the brief as a form. Without MCP, use the `npx @opency/cli …` commands in the table.
+- It uses the nearest folder that has `brands/`, else `OPENCY_HOME`, else `~/opency`, which is created on first use. Tell the user where it is the first time.
+- `npx @opency/cli init <folder>` creates one somewhere specific (a client's repo, a shared drive).
+- **First time with this user?** Run `npx @opency/cli demo` (MCP: `demo`): it renders the demo carousel so they see a real result before anything else.
+- If rendering fails for lack of a browser: `npx @opency/cli setup` (MCP: `doctor` with `fix=true`).
+
+**With the MCP server connected** (`workspace_status` is available), use its tools: they do the same as the commands, return the images so you can look at them, and run the brief as a form. Without MCP, use the `npx @opency/cli …` commands.
 
 ```
 AGENTS.md · references/                  instructions
@@ -52,21 +55,39 @@ The active brand is in `brands/.active`. Every command accepts `--brand <slug>`.
 
 ## Commands and tools
 
-| Command | MCP tool | What for |
+| What for | MCP tool | Command |
 |---|---|---|
-| `npx @opency/cli brief questions [brand\|campaign\|piece]` | `brief_questions`, `brief_interview` | The brief questions; interview with a form |
-| `npx @opency/cli campaign new / brief / plan / status / list` | `campaign_create`, `campaign_brief`, `campaign_plan`, `campaign_status` | Campaigns: brief, piece plan and progress |
-| `npx @opency/cli brand list / use / new / import <url> / check` | `brand_list`, `brand_get`, `brand_create`, `brand_import_site`, `brand_check`, `brand_write` | Brands: pick, create, read a website, verify palette and fonts |
-| `npx @opency/cli new <slug> --layouts a,b,c` | `piece_create`, `layouts_list` | New piece combining layouts (`--campaign`, `--from <piece>`, `--template`, `--format`) |
-| `npx @opency/cli render <piece>` | `piece_render`, `piece_view` | PNG, JPG, contact sheet, captions and quality report (`--pdf`, `--scale 2`) |
-| `npx @opency/cli dev <piece>` | — | Browser preview with text the user can edit |
-| `npx @opency/cli version <piece> save / list / diff / restore` | `piece_version` | Piece versions |
-| `npx @opency/cli motion <piece> --slides all` | `piece_motion` | MP4 video (`--audio`) |
-| `npx @opency/cli assets add / stock / stock-import / analyze / veto / list` | `stock_status`, `stock_search`, `stock_import`, `asset_add`, `asset_analyze`, `asset_view`, `asset_list`, `asset_veto` | Own and stock photos, with quality control |
-| `npx @opency/cli feed` | `feed_check` | Feed rhythm, repetitions and profile grid |
-| `npx @opency/cli results` | `results_add`, `results_summary` | Which published pieces performed best |
+| Where things stand; first-run demo | `workspace_status`, `demo`, `doctor` | `npx @opency/cli demo` · `doctor` · `setup` |
+| The brief | `brief_questions`, `brief_interview` | `npx @opency/cli brief questions [brand\|campaign\|piece]` |
+| Campaigns: brief, plan, progress | `campaign_create`, `campaign_brief`, `campaign_plan`, `campaign_status` | `npx @opency/cli campaign new / brief / plan / status / list` |
+| Brands: create, read a website, typefaces, verify | `brand_get`, `brand_create`, `brand_import_site`, `brand_fonts`, `brand_check`, `brand_write` | `npx @opency/cli brand list / use / new / import <url> / check` · `fonts search / add / list` |
+| **Compose a piece from data** | `layouts_list`, `piece_compose` | `npx @opency/cli compose layouts` · `compose new <slug> --spec piece.json` |
+| Change texts, photos, captions | `piece_read`, `piece_edit` | `npx @opency/cli compose slots <piece>` · `compose edit <piece> --spec edits.json` |
+| Apply the safe fixes | `piece_repair` | `npx @opency/cli repair <piece>` |
+| Render, export | `piece_render`, `piece_view` | `npx @opency/cli render <piece>` (`--pdf`, `--scale 2`) |
+| Let the user see and correct it | `piece_preview` | `npx @opency/cli dev <piece>` |
+| Review page, approval, files to upload | `piece_handoff` | `npx @opency/cli handoff review / status / package <piece>` |
+| Duplicate, adapt, translate; templates | `piece_duplicate`, `template` | `npx @opency/cli new <slug> --from <piece> [--format] [--language]` · `template save / list` |
+| Versions | `piece_version` | `npx @opency/cli version <piece> save / list / diff / restore` |
+| Video | `piece_motion` | `npx @opency/cli motion <piece> --slides all` (`--audio`) |
+| Photos: own and stock | `stock_status`, `stock_search`, `stock_import`, `asset_add`, `asset_analyze`, `asset_view`, `asset_list`, `asset_veto` | `npx @opency/cli assets add / stock / stock-import / analyze / veto / list` |
+| Feed rhythm; what performed | `feed_check`, `results_add`, `results_summary` | `npx @opency/cli feed` · `results` |
+| Raw HTML (escape hatch) | `piece_create`, `piece_write` | `npx @opency/cli new <slug> --layouts a,b,c`, then edit the files |
 
-Without file access (MCP only): `piece_read` and `piece_write` read and write the slides and `piece.json`.
+### Compose with data, not HTML
+
+A layout has **slots**: the texts it takes, each with a character budget (`layouts_list`). A piece is a list of slides, each one a layout plus the text for its slots:
+
+```json
+{ "layout": "steps", "slots": { "headline": "How to brew it at home", "step-1": "Grind it medium-coarse.", "step-2": "Water just off the boil.", "step-3": "Four minutes, then press.", "step-4": null } }
+```
+
+- A slot set to `null` is removed, with its row or list item.
+- `*word*` highlights ONE word in the accent color.
+- Over a slot's budget, the text does not fit: shorten it or choose another layout. Never shrink the type.
+- Sample copy left in a slot is an error: every slot gets the brand's copy or is removed.
+- `piece_compose` builds the HTML, renders and returns the report and the contact sheet in one call. `piece_edit` changes only what you send and renders again.
+- Write HTML yourself (`piece_write`) only when no layout fits the idea.
 
 ## At the start of a session
 
@@ -79,7 +100,7 @@ Without file access (MCP only): `piece_read` and `piece_write` read and write th
 1. **Brief** (`references/brief.md`). Infer what you can from the brand and the request; ask the rest in short batches. The question you never skip: *what do you want to get across?* Play the message back in one sentence and wait for confirmation.
 2. **Save:** `npx @opency/cli campaign new <slug> --name "…" --set message="…" …`.
 3. **Plan.** Propose the pieces in text: each with a one-sentence angle, intent, format, channel and date. Each angle proves the message from a different place. Wait for the yes, then save it (`campaign plan`).
-4. **One piece at a time**, with the flow below and `--campaign <slug>`. Show the first one before making the rest: if the direction is off, you fix one piece instead of six.
+4. **One piece at a time**, with the flow below and its `campaign`. Show the first one before making the rest: if the direction is off, you fix one piece instead of six.
 5. **Series.** All pieces share a material and one signature move. `npx @opency/cli campaign status <slug>` tells you what is missing.
 6. **Deliver** the campaign: one line per piece with its status, plus the grid from `npx @opency/cli feed`.
 
@@ -89,12 +110,12 @@ Without file access (MCP only): `piece_read` and `piece_write` read and write th
 2. **Direction.** Intent and recipe (`references/planning.md`), a one-sentence thesis, dominant mode, signature move and what to avoid. It goes in `piece.direction`. If the request is ambiguous and redoing is expensive, ask a single question (`piece` brief); otherwise decide and say what you assumed.
 3. **Full copy before design** (`references/copy.md`): role, claim and support of each slide, captions and alt text.
 4. **Images** (`references/assets.md`): the brand's own photos first; then house textures; then stock. Search, **look at the previews**, import only the chosen one and analyze it before use.
-5. **Compose** with `npx @opency/cli new … --layouts …` and adapt each slide (`references/art-direction.md`). If a text does not fit a layout, change the layout: do not shrink the type.
-6. **Render.** Fix every error. Warnings are fixed or justified in one line. Do not iterate more than twice on the same thing (`references/quality.md`).
-7. **Look at `render/contact-sheet.png`.** Look for what the checks cannot see: hierarchy, rhythm, whether it looks like the brand.
+5. **Compose** with `piece_compose` (`references/art-direction.md`): one layout per slide, varied, with the copy in its slots. If a text does not fit a layout, change the layout: do not shrink the type.
+6. **Read the report.** Run `piece_repair` for the safe fixes. Fix the remaining errors with `piece_edit` or another layout. Warnings are fixed or justified in one line. Do not iterate more than twice on the same thing (`references/quality.md`).
+7. **Look at the contact sheet.** Look for what the checks cannot see: hierarchy, rhythm, whether it looks like the brand.
 8. **Independent review** (`references/review.md`): the `visual-reviewer` subagent if it exists; otherwise a cold review as a separate step. One pass of fixes.
-9. **Deliver** and update `calendar.md`.
-10. **Learn** (`references/learning.md`).
+9. **Hand it over** with `piece_handoff`: `review` builds one page the user can open or forward to their client; offer `piece_preview` if they want to correct texts themselves. When they say yes, `approve`, then `package` leaves the files ready to upload. Update `calendar.md`.
+10. **Learn** (`references/learning.md`). If the piece was approved without changes, offer to save it as a template.
 
 ## Rules that do not depend on the topic
 
@@ -126,7 +147,7 @@ No account of the process.
 
 ## Confirmations
 
-Ask for an explicit yes, every time, before: publishing or scheduling; deleting a piece, template or asset; changing `brand.json`, `brand-kit.md` or `tokens.css` of a loaded brand; saving a campaign plan; sharing anything outside the project; naming a client in a piece.
+Ask for an explicit yes, every time, before: publishing or scheduling; deleting a piece, template or asset; changing `brand.json`, `brand-kit.md` or `tokens.css` of a loaded brand; saving a campaign plan; marking a piece approved; sharing anything outside the project; naming a client in a piece.
 
 Never use third-party logos, characters or copyrighted material, or unofficial automation against the networks.
 
@@ -150,7 +171,7 @@ The references sit next to this file. In a workspace created with `npx @opency/c
 
 ## If something fails
 
-- **No workspace:** `npx @opency/cli init`.
+- **No workspace:** one is created at `~/opency` on first use; `npx @opency/cli init <folder>` for another place.
 - **No browser for the render:** `npx @opency/cli setup`, or `CHROME_PATH=/path/to/chrome`.
-- **A font does not load:** the `.woff2` must be in `brands/<brand>/assets/fonts/` and declared in `tokens.css`. `npx @opency/cli brand check` confirms it.
+- **Typefaces:** `brand_fonts` (`npx @opency/cli fonts add "Family" --role display --apply`) installs open-licensed families by name. A commercial typeface needs its `.woff2` files from the user, in `brands/<brand>/assets/fonts/` and declared in `tokens.css`. `brand check` confirms they load.
 - **Stock:** Openverse works without a key. Unsplash is optional and uses the user's own free Access Key: tell them to run `npx @opency/cli stock connect unsplash` in their terminal (never ask them to paste the key in the chat). If the search returns nothing good, ask for the brand's own photos or solve it with typography.

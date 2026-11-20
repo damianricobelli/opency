@@ -47,3 +47,11 @@ Ask for the minimum and deduce the rest: website, Instagram, brand manual, logo,
 - **Assumptions:** everything you deduced without confirmation is listed at the end of `brand-kit.md`, and you tell the user.
 
 Close the onboarding with a rendered test piece.
+
+## Typefaces by name
+
+Do not ask for `.woff2` files if the family is open-licensed: `npx @opency/cli fonts search "<name>"`, then `fonts add "<Family>" --role display|body|mono --apply` (MCP: `brand_fonts`). It downloads the files from Fontsource, writes the license next to them, adds the `@font-face` rules to `tokens.css` (keeping a backup) and never fabricates a weight the family does not have. For a commercial typeface, ask the user for the files; if they cannot provide them, propose the closest open family and record it as an assumption.
+
+## The brand's brief is saved
+
+What the user answers when the brand is loaded goes to `brands/<brand>/brief.json` and `brief.md` (`npx @opency/cli campaign brand-brief --set key="value"`; `brief_interview` with `kind="brand"` does it for you). Read it before asking anything again.

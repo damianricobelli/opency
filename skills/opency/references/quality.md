@@ -64,3 +64,9 @@ After the render passes, ask for a visual review from someone who did not see th
 ## Tests
 
 `npx @opency/cli doctor` verifies that the checks still detect what they should (a slide with deliberate defects) and that the layout library passes clean. Run the tests after touching any script or `base.css`.
+
+## Safe fixes first
+
+Before fixing anything by hand, run `npx @opency/cli repair <piece>` (MCP: `piece_repair`). It applies only fixes that cannot change meaning or design: a headline's line breaks, the logo variant for the slide's surface, mixed textures, pager numbering and the `lang` attribute. It saves a version first and lists everything it skipped with the reason. Copy, color, layout, type size and image choices are never touched automatically: those are yours.
+
+The copy linter has phrase lists for Spanish and English, chosen by the piece's language (then the brand's).

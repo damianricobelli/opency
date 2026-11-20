@@ -6,6 +6,7 @@
 //   npx @opency/cli campaign plan <slug> --file plan.json                                  save the piece plan
 //   npx @opency/cli campaign status <slug>                                                 what is missing, which pieces exist and how they are
 //   npx @opency/cli campaign list
+//   npx @opency/cli campaign brand-brief [--set key="value"]… [--answers file.json]    the brand's own brief (brands/<brand>/brief.json)
 //   npx @opency/cli brief questions [brand|campaign|piece] [--json]                        the questions of each brief
 //   All of them: --brand <slug>   ·   --json for structured output.
 //
@@ -42,6 +43,27 @@ if (args._[0] === "questions" || (args._[0] === "brief" && args._[1] === "questi
 }
 
 const [cmd, target] = args._;
+
+// ---- the brand's own brief: what the user answered when the brand was loaded ----
+if (cmd === "brand-brief") {
+  let b; try { b = await resolveBrand(args); } catch (e) { fail(e.message); }
+  const file = path.join(brandDir(b), "brief.json");
+  const current = (await readJSON(file, null)) ?? { brand: b, createdAt: today(), answers: {} };
+  const add = await collectAnswers();
+  const unknown = Object.keys(add).filter((k) => !BRIEFS.brand.questions.some((q) => q.id === k));
+  if (unknown.length) fail(`Unknown key(s): ${unknown.join(", ")}. Valid: ${BRIEFS.brand.questions.map((q) => q.id).join(", ")}`);
+  if (Object.keys(add).length) {
+    Object.assign(current.answers, add);
+    current.updatedAt = today();
+    await writeJSON(file, current);
+    await writeFile(path.join(brandDir(b), "brief.md"), renderMarkdown("brand", current.answers) + "\n");
+  }
+  const missing = missingAnswers("brand", current.answers).map((q) => ({ id: q.id, ask: q.ask }));
+  out({ brand: b, answers: current.answers, missing, readyToPropose: !missing.length, nextQuestions: nextQuestions("brand", current.answers) },
+    `${renderMarkdown("brand", current.answers)}\n${missing.length ? `Missing: ${missing.map((m) => m.id).join(", ")}` : "✓ Enough to propose palette, typefaces and voice."}`);
+  process.exit(0);
+}
+
 let brand; try { brand = await resolveBrand(args); } catch (e) { fail(e.message); }
 const CDIR = path.join(brandDir(brand), "campaigns");
 const file = (slug) => path.join(CDIR, slug, "brief.json");

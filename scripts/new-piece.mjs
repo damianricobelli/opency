@@ -5,7 +5,7 @@
 //   npx @opency/cli new <slug> --template <name>                                 starts from one of the brand's saved templates
 //   npx @opency/cli new <slug> --from <piece id> [--format 9:16]                 duplicates or adapts an existing piece
 //   npx @opency/cli new <slug> [--slides 6]                                      blank slides
-//   options: --brand slug  --campaign slug  --format 4:5|1:1|9:16|16:9  --date YYYY-MM-DD  --intent …  --category …
+//   options: --brand slug  --campaign slug  --language xx (with --from: a translation)  --format 4:5|1:1|9:16|16:9  --date YYYY-MM-DD  --intent …  --category …
 //
 // When copying a layout: rewrites paths for the brand, puts its name and logo in the bottom bar
 // (light or dark version depending on the slide surface) and numbers the pager.
@@ -66,6 +66,7 @@ for (const [i, src] of sources.entries()) {
   const logo = surface === "on-primary" ? (logos.onPrimary ?? logos.onDark) : surface ? logos.onDark : logos.onLight;
   html = html
     .replace(/data-format="[^"]*"/, `data-format="${format}"`)
+    .replace(/<html lang="[^"]*"/, `<html lang="${typeof args.language === "string" ? args.language : (inherited?.language ?? brand.language ?? "en")}"`)
     .replace(/<title>[^<]*<\/title>/, `<title>${id} · slide ${n} · ${src.layout}</title>`)
     .replace(/href="[^"]*tokens\.css"/, 'href="../../tokens.css"')
     .replace(/href="[^"]*base\.css"/, 'href="../../../../templates/base/base.css"')
@@ -94,7 +95,8 @@ for (const [i, src] of sources.entries()) {
 
 const piece = {
   id, title: inherited?.title ?? "", status: "draft", category: args.category ?? inherited?.category ?? "", plannedDate: date, format, version: 1,
-  language: inherited?.language ?? brand.language ?? "en",
+  language: typeof args.language === "string" ? args.language : (inherited?.language ?? brand.language ?? "en"),
+  ...(typeof args.language === "string" && args.from && args.language !== inherited?.language ? { translationOf: String(args.from) } : {}),
   ...(args.from ? { adaptedFrom: String(args.from) } : {}),
   ...(typeof args.campaign === "string" ? { campaign: slugify(args.campaign) } : inherited?.campaign && args.from ? { campaign: inherited.campaign } : {}),
   direction: inherited?.direction ?? { intent: args.intent ?? "", thesis: "", dominantMode: brand.raw?.defaults?.dominantMode ?? "", density: "", signatureMove: "", avoid: [] },

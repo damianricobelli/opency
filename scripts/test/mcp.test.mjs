@@ -78,7 +78,7 @@ test("piece: create, read, write, render and view", async () => {
   const c = await call("piece_create", { slug: "por-que-frio", layouts: ["cover-type", "steps", "closer"], campaign: "verano", date: "2026-12-01" });
   assert.ok(!c.isError, c.text);
   const id = "2026-12-01-por-que-frio";
-  const read = await call("piece_read", { piece: id, files: ["slide-01.html"] });
+  const read = await call("piece_read", { piece: id, as: "html", files: ["slide-01.html"] });
   assert.match(read.text, /<main class="canvas/);
   const html = read.text.split("=====\n")[1];
   assert.ok((await call("piece_write", { piece: id, files: [{ file: "slide-01.html", content: html + "<script>alert(1)</script>" }] })).isError, "rejects <script>");
@@ -92,6 +92,68 @@ test("piece: create, read, write, render and view", async () => {
   const st = JSON.parse((await call("campaign_status", { campaign: "verano" })).text);
   assert.equal(st.pieces.length, 1);
   assert.equal(st.pieces[0].errors, 0);
+});
+
+test("compose from data → repair → review → approve → package, without writing HTML", async () => {
+  const lib = JSON.parse((await call("layouts_list", { sheet: false })).content[0].text);
+  assert.ok(lib.layouts.find((l) => l.layout === "steps").slots["step-1"], "layouts expose their slots");
+
+  const bad = JSON.parse((await call("piece_compose", { slug: "bad", brand: "cafe", date: "2026-12-02", slides: [{ layout: "cover-type", slots: { nope: "x" } }] })).text);
+  assert.ok(bad.issues.some((i) => i.code === "unknown_slot"));
+  assert.ok(bad.issues.some((i) => i.code === "sample_copy_left"), "sample copy left in place is an error, caught before rendering");
+
+  const made = await call("piece_compose", {
+    slug: "cold brew", brand: "cafe", date: "2026-12-03", campaign: "verano", title: "Cold brew, explained", hook: "Cold brew takes 16 hours",
+    direction: { thesis: "Cold brew is slow on purpose" }, captions: { instagram: "Cold brew steeps for sixteen hours in the fridge. Slow extraction, softer cup." },
+    slides: [
+      { layout: "cover-type", slots: { kicker: "Guide · three steps", headline: "Three mistakes that spoil your brews", support: "Why a slow extraction changes the cup." }, alt: "Cover: cold brew takes sixteen hours." },
+      { layout: "steps", slots: { headline: "How we brew each batch", "step-1": "Coarse grind, cold water.", "step-2": "Sixteen hours in the fridge.", "step-3": "Filter it twice.", "step-4": null }, alt: "Three steps to make cold brew." },
+      { layout: "closer", slots: { kicker: "To wrap up", headline: "One brew per batch. Always.", "cta-text": "Order it in the app" }, alt: "Closing slide: slow on purpose." },
+    ],
+  });
+  assert.ok(!made.isError, made.text);
+  assert.match(made.text, /0 errors/);
+  assert.equal(made.images.length, 1, "one call returns the contact sheet");
+  const id = "2026-12-03-cold-brew";
+
+  const read = JSON.parse((await call("piece_read", { piece: id, brand: "cafe" })).text);
+  assert.equal(read.slides[1].slots.length, 4, "headline + three steps: the fourth went away with its list item");
+  assert.equal(read.slides[0].slots.find((x) => x.id === "kicker").text, "Guide · three steps");
+
+  const edited = await call("piece_edit", { piece: id, brand: "cafe", slides: [{ n: 3, slots: { "cta-text": "Order it in the app today" } }], change: "sharper call to action" });
+  assert.ok(!edited.isError, edited.text);
+  assert.equal(edited.images.length, 1, edited.text);
+  assert.match((await call("piece_read", { piece: id, brand: "cafe" })).text, /Order it in the app today/);
+
+  const repaired = await call("piece_repair", { piece: id, brand: "cafe" });
+  assert.ok(!repaired.isError, repaired.text);
+
+  const review = JSON.parse((await call("piece_handoff", { piece: id, action: "review", brand: "cafe" })).text);
+  assert.match(review.file, /review\.html$/);
+  assert.equal(review.status, "review");
+  const { readFile: read2 } = await import("node:fs/promises");
+  const html = await read2(review.absolute, "utf8");
+  assert.ok(!/src="(?!data:)/.test(html), "the review page embeds its images: one file, no server");
+  assert.match(html, /Cold brew, explained/);
+
+  assert.ok((await call("piece_handoff", { piece: id, action: "package", brand: "cafe" })).isError, "no package before approval");
+  assert.ok((await call("piece_handoff", { piece: id, action: "approve", brand: "cafe" })).isError, "approval is the user's: needs confirmedByUser");
+  assert.ok(!(await call("piece_handoff", { piece: id, action: "approve", confirmedByUser: true, brand: "cafe" })).isError);
+  const pack = JSON.parse((await call("piece_handoff", { piece: id, action: "package", brand: "cafe" })).text);
+  assert.ok(pack.files.includes("PUBLISH.md") && pack.files.includes("caption-instagram.txt") && pack.files.some((f) => /^01\./.test(f)));
+
+  const tpl = await call("template", { action: "save", piece: id, name: "three-step guide", brand: "cafe" });
+  assert.ok(!tpl.isError, tpl.text);
+  assert.equal(JSON.parse((await call("template", { action: "list", brand: "cafe" })).text)[0].name, "three-step-guide");
+
+  const copy = await call("piece_duplicate", { from: id, slug: "cold brew es", language: "es", date: "2026-12-04", brand: "cafe" });
+  assert.ok(!copy.isError, copy.text);
+  assert.match(copy.text, /Translate every slot/);
+});
+
+test("the brand brief is saved with the brand", async () => {
+  const r = JSON.parse((await call("brief_interview", { kind: "brand", brand: "cafe", rounds: 1, known: { name: "Test Coffee", what: "Specialty coffee for offices" } })).text);
+  assert.equal(r.savedTo, "brands/cafe/brief.json");
 });
 
 test("brand_write requires confirmation on a loaded brand", async () => {
@@ -137,4 +199,22 @@ test("live stock: search, import and analyze (Openverse)", { skip: !NET && "set 
   assert.ok(list[0].credit && list[0].license, "records credit and license");
   assert.ok(!(await call("asset_analyze", { id: list[0].id, focal: { x: 0.5, y: 0.4 }, protect: [{ kind: "subject", x: 0.3, y: 0.2, w: 0.4, h: 0.6 }], brand: "cafe" })).isError);
   assert.equal(JSON.parse((await call("asset_list", { brand: "cafe" })).text)[0].analyzed, true);
+});
+
+test("no workspace anywhere: the first call creates the default one and says where", async () => {
+  const home = await mkdtemp(path.join(os.tmpdir(), "opency-home-"));
+  const elsewhere = await mkdtemp(path.join(os.tmpdir(), "opency-cwd-"));
+  const fresh = new Client({ name: "opency-test-fresh", version: "0" });
+  const env = { ...process.env, HOME: home, USERPROFILE: home };
+  delete env.OPENCY_HOME;
+  await fresh.connect(new StdioClientTransport({ command: process.execPath, args: [path.join(PKG, "mcp/server.mjs")], cwd: elsewhere, env }));
+  try {
+    const r = await fresh.callTool({ name: "workspace_status", arguments: {} });
+    const text = r.content.filter((c) => c.type === "text").map((c) => c.text).join("\n");
+    assert.match(text, /Workspace created at/);
+    assert.ok(text.includes(path.join(home, "opency")));
+    const { existsSync } = await import("node:fs");
+    assert.ok(existsSync(path.join(home, "opency/brands/_demo/brand.json")));
+    assert.ok(existsSync(path.join(home, "opency/templates/base/base.css")));
+  } finally { await fresh.close(); await rm(home, { recursive: true, force: true }); await rm(elsewhere, { recursive: true, force: true }); }
 });
