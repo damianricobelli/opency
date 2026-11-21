@@ -15,3 +15,6 @@ Slide 14: Background photo with the names of two brands joined by a cross, and o
 Slide 15: A color field with one short line in very large type, a small label on each top corner and a supporting line.
 Slide 16: A headline and a chat conversation in four message bubbles that ends in a confirmation.
 Slide 17: A full-bleed photo tinted in one brand color, with the headline at the bottom.
+Slide 18: A dictionary entry: one word in very large type with its pronunciation, origin and meaning.
+Slide 19: A photo with a headline on top and, below, a message box with a request written in it and a send button.
+Slide 20: An event poster over a photo: the name in very large type between two rows of facts (day, date, time, place).

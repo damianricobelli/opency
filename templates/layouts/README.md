@@ -1,6 +1,6 @@
 # Layout library
 
-Seventeen slide archetypes (4:5), tested against quality control: 0 errors and 0 warnings. They are starting points. Each piece adapts them: change the copy, the background, the texture and the size, without repeating the same layout on every slide.
+Twenty slide archetypes (4:5), tested against quality control: 0 errors and 0 warnings. They are starting points. Each piece adapts them: change the copy, the background, the texture and the size, without repeating the same layout on every slide.
 
 `npx @opency/cli layouts` renders them to `templates/layouts/render/contact-sheet.png`. To build a piece by combining them:
 
@@ -26,7 +26,12 @@ npx @opency/cli new my-piece --layouts cover-type,statement,steps,big-number,clo
 | 14 | `cobrand` | Announcement with another brand | Photo with a veil and the two logos joined by a cross. |
 | 15 | `poster` | A cover or a statement that has to stop the scroll | A color field, one short line in hero-size type (up to ~26 characters), a small label on each top corner. Stacked short lines are the point. |
 | 16 | `chat` | Products that live in a conversation: bookings, support, sales by message | Four bubbles (`in-*` from the customer, `out-*` from the brand) and a status chip. Shows the product instead of a photo of someone using it. |
+| 18 | `definition` | A concept the brand owns, or a word that names the idea | A dictionary entry: the word in hero type (up to ~12 characters), pronunciation, origin and a one-line meaning. |
+| 19 | `prompt` | Products you talk or write to | A photo, a headline and a glass message box with the request written in it. Shows the product in one gesture. |
+| 20 | `event` | Events, launches, openings | A photo, the name in hero type between two rows of three short facts (day, date, time, place). |
 | 17 | `photo-duotone` | A photo that is not the brand's own, or not sharp enough to run clean | Full bleed, tinted in one brand color (`--duo`), with grain. Makes a mediocre photo look intended. |
+
+Layouts 01, 03, 04, 10, 15 and 18 work on any surface (`on-bg`, `on-alt`, `on-primary`, `on-secondary`): the compositor uses that to give a carousel its rhythm. Any type layout takes a house pattern with `data-pattern="grid|dots|rings|rays|glow"` on the canvas.
 
 The copy in the layouts is sample copy. Each layout declares its text budget with `data-max`: the render warns you if you exceed it by more than 20%.
 

@@ -5,6 +5,7 @@
  * Scale by role:  .t-hero .t-cover .t-closer .t-title .t-subtitle .t-body .t-intro .t-cue .t-label
  * Surfaces:       .on-bg .on-alt .on-primary .on-accent
  * Materials:      <main class="canvas" data-texture="fine|coarse|paper|fabric|film" data-vignette>
+ * Patterns:       <main class="canvas" data-pattern="grid|dots|rings|rays|glow">   (house backdrops drawn in the ink color; type slides only)
  * Photos:         <figure class="photo" data-grade="none|editorial|immersive|mono|duotone"><img data-asset="id"></figure>
  * Veils:          <div class="veil" data-veil="flat|low|high|window"></div>   (card = text in .card, no veil)
  * Scrim:          <div class="scrim" style="left;top;width;height"></div>     (local shadow behind a block)
@@ -110,6 +111,31 @@ img { display: block; max-width: none; }
   content: ""; position: absolute; inset: 0; z-index: 39; pointer-events: none;
   background: radial-gradient(ellipse 85% 75% at 50% 45%, transparent 55%, rgb(0 0 0 / var(--vignette, 0.35)) 100%);
 }
+
+/* ---------- House patterns (drawn with the surface's own ink: they work on every surface and every brand) ----------
+   A pattern is a continuity device: the same one on every type slide of a piece, never on a photo.
+   --pattern is its strength (0.05–0.12 reads as paper stock; more competes with the text). */
+.canvas[data-pattern] { --p: color-mix(in oklab, currentColor calc(var(--pattern, 0.08) * 100%), transparent); }
+.canvas[data-pattern="grid"] {
+  background-image: linear-gradient(var(--p) 2px, transparent 2px), linear-gradient(90deg, var(--p) 2px, transparent 2px);
+  background-size: 90px 90px; background-position: -1px -1px;
+}
+.canvas[data-pattern="dots"] {
+  background-image: radial-gradient(circle, var(--p) 3px, transparent 3.5px);
+  background-size: 45px 45px; background-position: 22px 22px;
+}
+.canvas[data-pattern="rings"] {
+  background-image: repeating-radial-gradient(circle at 100% 0%, transparent 0 118px, var(--p) 118px 120px);
+}
+.canvas[data-pattern="rays"] {
+  background-image: repeating-conic-gradient(from 0deg at 100% 100%, transparent 0deg 5.4deg, var(--p) 5.4deg 5.7deg);
+}
+.canvas[data-pattern="glow"] {
+  background-image:
+    radial-gradient(ellipse 75% 55% at 100% 0%, color-mix(in oklab, var(--accent) 34%, transparent), transparent 70%),
+    radial-gradient(ellipse 60% 45% at 0% 100%, color-mix(in oklab, currentColor 10%, transparent), transparent 70%);
+}
+.photo-slide[data-pattern] { background-image: none; }
 
 /* ---------- Photos ---------- */
 .photo { position: absolute; inset: 0; overflow: hidden; z-index: 0; }

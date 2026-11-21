@@ -151,6 +151,48 @@ test("compose from data → repair → review → approve → package, without w
   assert.match(copy.text, /Translate every slot/);
 });
 
+test("design from intent → another version → the user's review moves the next choice", async () => {
+  assert.ok(!(await call("brand_create", { slug: "estudio", name: "Test Studio" })).isError);
+  const recipes = JSON.parse((await call("recipes_list")).text);
+  assert.ok(recipes.recipes.length >= 20 && recipes.proof.steps);
+  const intent = {
+    slug: "one-idea", brand: "estudio", date: "2026-12-05", title: "One idea",
+    direction: { thesis: "One idea per piece", dominantMode: "type", pattern: "grid" },
+    slides: [
+      { role: "hook", labels: ["The rule", "No. 12"], claim: "Say one thing well.", support: "A piece that says two things is remembered for neither.", alt: "Poster." },
+      { role: "how", claim: "How we cut a draft", proof: { kind: "steps", items: ["Write it all down.", "Circle the one line.", "Delete the rest."] }, alt: "Three steps." },
+      { role: "close", claim: "One idea per piece.", cta: "Save this for your next draft", alt: "Close." },
+    ],
+  };
+  const dry = JSON.parse((await call("piece_design", { ...intent, dry: true })).text);
+  assert.deepEqual(dry.slides.map((x) => x.recipe), ["type_poster", "steps", "type_closer"]);
+  const made = await call("piece_design", intent);
+  assert.ok(!made.isError, made.text);
+  assert.equal(made.images.length, 1, "returns the contact sheet");
+  const first = JSON.parse(made.text.slice(0, made.text.indexOf("\n}") + 2));
+  assert.equal(first.pattern, "grid");
+  assert.ok(first.recipes.every((x) => x.why));
+
+  const unfit = await call("piece_design", { slug: "too-long", brand: "estudio", slides: [{ role: "point", claim: "x".repeat(120) }] });
+  assert.ok(unfit.isError);
+  assert.match(unfit.text, /COMPOSITION_UNRESOLVED/);
+
+  const variant = await call("piece_variant", { piece: "2026-12-05-one-idea", brand: "estudio" });
+  assert.ok(!variant.isError, variant.text);
+  const v = JSON.parse(variant.text.slice(0, variant.text.indexOf("\n}") + 2));
+  assert.ok(v.changed.some((x) => x.now === "steps_cards"), "the steps become cards");
+  assert.match(v.restore, /restore/);
+  const slots = JSON.parse((await call("piece_read", { piece: "2026-12-05-one-idea", brand: "estudio" })).text);
+  assert.ok(JSON.stringify(slots).includes("Circle the one line."), "same words");
+
+  const fb = await call("piece_feedback", { piece: "2026-12-05-one-idea", brand: "estudio", verdict: "rejected", note: "the cards feel like a template", slide: 2 });
+  assert.match(fb.text, /avoid: steps_cards/);
+  const taste = JSON.parse((await call("taste_get", { brand: "estudio" })).text);
+  assert.equal(taste.recipes.steps_cards, -1);
+  assert.match((await call("brand_get", { brand: "estudio" })).text, /feel like a template/);
+  assert.ok((await call("inspiration_add", { source: "http://127.0.0.1/ref.png", note: "the grain", brand: "estudio" })).isError, "internal addresses are refused");
+});
+
 test("the brief comes in the user's language, and it is remembered", async () => {
   const es = JSON.parse((await call("brief_questions", { kind: "campaign", language: "es-AR" })).text);
   assert.equal(es.language, "es");

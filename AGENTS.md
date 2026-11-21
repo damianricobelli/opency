@@ -14,6 +14,9 @@ scripts/                     the engine (each file is a command)
   lib/brief.mjs              the brief questions: single source for CLI, MCP and docs
   lib/stock.mjs              Openverse, Unsplash and safe downloads
   lib/compose.mjs            slots: fill a layout with data instead of writing HTML
+  lib/recipes.mjs            the compositor: from a slide's intent to a layout, with the reason
+  lib/piece.mjs              how a layout becomes a slide of a brand (surface, pattern, logo, pager)
+  lib/taste.mjs              what the user liked and rejected; read by the compositor
   lib/repair.mjs             the safe automatic fixes
   lib/fonts.mjs              typefaces by name (Fontsource)
   lib/copy-lint.mjs          copy linter (English and Spanish lists)
@@ -21,7 +24,7 @@ scripts/                     the engine (each file is a command)
 mcp/server.mjs               MCP server (stdio): every tool runs an engine script
 skills/opency/              SKILL.md + references/: what the agent reads
 agents/visual-reviewer.md    cold-review subagent
-templates/                   base.css and the 17 layouts
+templates/                   base.css and the 20 layouts
 brands/_demo/                demo brand (the only one versioned)
 .claude-plugin/              Claude Code plugin and marketplace manifests
 web/                         landing page (TanStack Start); separate project with its own package.json
@@ -37,6 +40,7 @@ web/                         landing page (TanStack Start); separate project wit
 - **Every download goes through `fetchBuffer`** in `lib/stock.mjs`, which rejects private addresses.
 - **The copy linter has one block of lists per language** (`es`, `en`), chosen by the piece's language. Adding a language means adding a block, not translating one.
 - **Slots are the contract between agent and layout.** A layout's editable texts are elements with an `id` and no tags inside (`scripts/lib/compose.mjs`). Give new layouts stable ids and a `data-max` budget on every text.
+- **Recipes are the contract between intent and layout.** A recipe (`scripts/lib/recipes.mjs`) is eligible only if it shows exactly the fields the slide sent and every text fits its budget; the score is a sum of named criteria, so every choice has a reason in words. A new layout is not reachable by `piece_design` until a recipe maps to it. Nothing in the compositor calls a model or invents content.
 - **No setup step.** A workspace is created on first use (`ensureWorkspace` in `lib/project.mjs`); never tell the user to initialize one before they can try something.
 - Run `pnpm test` before finishing. `OPENCY_TEST_NETWORK=1 pnpm test` adds the live stock test.
 - `brands/*` is git-ignored except `_demo`: never commit real brands.

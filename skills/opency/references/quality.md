@@ -22,7 +22,12 @@ Read this when the render flags something you do not know how to fix, and before
 | `font_not_loaded` | It is rendering with a fallback font. | Put the `.woff2` in `assets/fonts/`. |
 | `logo_low_contrast` | Part of the logo cannot be told apart from the background (for example, a violet logo mark on a violet panel). | Use the `brand.json → logos` variant for that surface. |
 | `over_budget` | The text exceeds what the layout supports (`data-max`) by more than 20%. | Shorten it or change layout. Do not shrink the type. |
-| `alignment_drift` / `material_drift` / `template_rhythm` | The bottom bar moves between slides, textures or treatments are mixed, or every slide uses the same layout. | Unify the bar and the material; vary the structure. |
+| `alignment_drift` / `material_drift` / `template_rhythm` | The bottom bar moves between slides, textures or treatments are mixed, every slide uses the same layout or three in a row do. | Unify the bar and the material; vary the structure (`piece_variant`). |
+| `flat_rhythm` | Five or more slides sit on the same background. | Give the peak slide another surface. |
+| `missing_content_visual` | Every slide of a long carousel is a sentence. | Show one thing: a number, the steps, a comparison, the product, a photo. |
+| `weak_dominant` | No element leads the slide: the largest text is close in size to the next. | Make one thing clearly bigger, or cut the others. |
+| `decorative_container` / `orphan_divider` | An empty box, or a rule with nothing next to it. | Remove it: every visible object needs a job. |
+| `crop_unverified` | A photo is cropped and nobody recorded what the crop may cut. | Look at it (`asset_view`) and finish its analysis (`asset_analyze`). |
 | `brand_literal_color` | A color outside the tokens. | Change it to `var(--…)`. |
 | `placeholder_left` / `data_tbd` | Placeholders or to-be-confirmed data remain. | Fill them in. It is not delivered like this. |
 | `copy_*` / `caption_*` / `unsourced_figure` / `missing_alt_text` | Findings from the copy linter (see `references/copy.md`). | Rewrite. Figures carry a source. |
@@ -34,6 +39,7 @@ Read this when the render flags something you do not know how to fix, and before
 ## Export and delivery
 
 **Which file to use:**
+- **How it is rendered:** a real browser engine lays out the slide (the same text shaping, kerning and color math a designer sees), rasterized at twice the size and reduced with Lanczos, tagged sRGB. `--no-supersample` turns the reduction off.
 - **PNG:** for typographic and flat-color pieces.
 - **JPG** (95, 4:4:4 chroma): for pieces with photos. Instagram recompresses a well-made JPG less.
 - **`--scale 2`:** for 2K or print deliveries.

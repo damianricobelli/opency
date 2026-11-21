@@ -8,8 +8,9 @@
 <style>
   .content { justify-content: space-between; }
   #headline { max-width: 11ch; }
-  #cta { display: flex; gap: 24px; align-items: center; justify-content: space-between; padding: 36px 44px; border-radius: var(--radius); background: var(--ink-inverse); color: var(--primary); font-weight: var(--weight-strong); }
+  #cta { display: flex; gap: 24px; align-items: center; justify-content: space-between; padding: 36px 44px; border-radius: var(--radius); background: var(--cta-bg, var(--ink-inverse)); color: var(--cta-ink, var(--primary)); font-weight: var(--weight-strong); }
   #arrow { font-family: var(--font-display); font-size: 1.3em; line-height: 1; }
+  .on-bg #cta, .on-alt #cta { --cta-bg: var(--primary); --cta-ink: var(--ink-inverse); }
 </style>
 </head>
 <body>
@@ -20,7 +21,7 @@
       <h2 id="headline" class="t-closer" data-max="55">One idea per piece. Always.</h2>
       <p id="cta" class="t-body"><span id="cta-text" data-max="60">DM us PLAN and we'll send you the template</span><span id="arrow">→</span></p>
     </div>
-    <footer class="chrome-bar" data-chrome><span id="brand">@brand</span><span id="pager">10/17</span></footer>
+    <footer class="chrome-bar" data-chrome><span id="brand">@brand</span><span id="pager">10/20</span></footer>
   </div>
 </main>
 </body>

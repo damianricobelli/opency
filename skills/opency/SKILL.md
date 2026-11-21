@@ -37,7 +37,7 @@ opency works in a **workspace**: a folder with `brands/` and `templates/`. You n
 ```
 AGENTS.md · references/                  instructions
 templates/base/                           base.css: canvas, zones, scale, materials, motion
-templates/layouts/                        17 tested slide archetypes
+templates/layouts/                        20 tested slide archetypes
 brands/<brand>/
   brand.json                              data the scripts read: form of address, logos, pillars, verified
   brand-kit.md                            voice, color roles, creative profile, instructions, assumptions
@@ -61,7 +61,10 @@ The active brand is in `brands/.active`. Every command accepts `--brand <slug>`.
 | The brief | `brief_questions`, `brief_interview` | `npx @opency/cli brief questions [brand\|campaign\|piece]` |
 | Campaigns: brief, plan, progress | `campaign_create`, `campaign_brief`, `campaign_plan`, `campaign_status` | `npx @opency/cli campaign new / brief / plan / status / list` |
 | Brands: create, read a website, typefaces, verify | `brand_get`, `brand_create`, `brand_import_site`, `brand_fonts`, `brand_check`, `brand_write` | `npx @opency/cli brand list / use / new / import <url> / check` · `fonts search / add / list` |
-| **Compose a piece from data** | `layouts_list`, `piece_compose` | `npx @opency/cli compose layouts` · `compose new <slug> --spec piece.json` |
+| **Design a piece from intent** | `recipes_list`, `piece_design` | `npx @opency/cli compose recipes` · `compose design <slug> --spec intent.json` (`--dry` shows the plan) |
+| Another version, same words | `piece_variant` | `npx @opency/cli compose variant <piece>` (`--slide N`) |
+| What the user likes: reviews and references | `piece_feedback`, `inspiration_add`, `taste_get` | `npx @opency/cli taste feedback / inspire / show / forget` |
+| Compose with explicit layouts | `layouts_list`, `piece_compose` | `npx @opency/cli compose layouts` · `compose new <slug> --spec piece.json` |
 | Change texts, photos, captions | `piece_read`, `piece_edit` | `npx @opency/cli compose slots <piece>` · `compose edit <piece> --spec edits.json` |
 | Apply the safe fixes | `piece_repair` | `npx @opency/cli repair <piece>` |
 | Render, export | `piece_render`, `piece_view` | `npx @opency/cli render <piece>` (`--pdf`, `--scale 2`) |
@@ -74,7 +77,31 @@ The active brand is in `brands/.active`. Every command accepts `--brand <slug>`.
 | Feed rhythm; what performed | `feed_check`, `results_add`, `results_summary` | `npx @opency/cli feed` · `results` |
 | Raw HTML (escape hatch) | `piece_create`, `piece_write` | `npx @opency/cli new <slug> --layouts a,b,c`, then edit the files |
 
-### Compose with data, not HTML
+### Design from intent, not from layouts
+
+You decide what the piece says and one design direction. The compositor decides the layout of every slide, and tells you why.
+
+```json
+{ "direction": { "thesis": "Cold brew is specialty coffee too", "dominantMode": "type", "density": "airy", "pattern": "grid" },
+  "slides": [
+    { "role": "hook", "labels": ["Summer menu", "No. 3"], "claim": "Cold is not lazy.", "support": "Eighteen hours of extraction say otherwise." },
+    { "role": "how", "claim": "How we brew it", "proof": { "kind": "steps", "items": ["Coarse grind.", "Cold water, 18 hours.", "Filtered twice."] } },
+    { "role": "proof", "claim": "hours in every glass", "proof": { "kind": "number", "value": "18" } },
+    { "role": "close", "claim": "Try it this week.", "cta": "Order a cold brew at the bar" } ] }
+```
+
+- **Each slide is a job** (`role`: hook, context, point, proof, how, compare, offer, close), a **claim** (the headline), and optionally a kicker, a support line, corner labels, a CTA, one emphasized word and a **proof**.
+- **A proof shows instead of describing:** `number`, `steps`, `comparison`, `bars`, `quote`, `chat`, `window`, `cards`, `logos`, `definition`, `prompt`, `event`, `cobrand`. `recipes_list` gives each shape and its budgets.
+- **The compositor never invents and never squeezes.** A recipe is eligible only if it shows exactly the fields you sent and every text fits its budget. Among the eligible ones it scores: fit of the copy, the slide's job, the direction's dominant mode and density, rhythm (no layout twice in a row, no three slides of one family or one tone in a row), one hero gesture per piece, a readable accent, and what the user liked or rejected before.
+- **A photo is used only when its crop is known to be safe:** registered, not vetoed, analysis finished, large enough. Otherwise the slide is composed with type and the answer says why.
+- **`COMPOSITION_UNRESOLVED`:** no recipe shows that content. Nothing is created. Shorten the copy, split the slide, drop the field named in the answer or change the proof.
+- **Another version** (`piece_variant`): the same words in another structure, saved as a new version. Offer it when the user hesitates about the look, before rewriting anything.
+
+**Choose the direction before anything else.** For an open brief or a carousel, think through three directions that differ in structure, dominant and material (not just color). Compare them with concrete reasons: fit with the content and the brand, clarity at feed size, whether the assets exist. Send one. Do not build three carousels to throw two away.
+
+### Compose with explicit layouts
+
+When you need one specific layout on one specific slide, skip the compositor.
 
 A layout has **slots**: the texts it takes, each with a character budget (`layouts_list`). A piece is a list of slides, each one a layout plus the text for its slots:
 
@@ -92,7 +119,7 @@ A layout has **slots**: the texts it takes, each with a character budget (`layou
 ## At the start of a session
 
 1. `npx @opency/cli brand list` (or `workspace_status`). If the user did not say which brand and there is more than one, ask.
-2. Read from that brand: `brand.json`, `brand-kit.md`, `tokens.css`, `decisions.md` and `calendar.md` (`brand_get` returns all of it).
+2. Read from that brand: `brand.json`, `brand-kit.md`, `tokens.css`, `decisions.md` and `calendar.md` (`brand_get` returns all of it, plus the brand's taste: what the user liked, rejected and saved as reference).
 3. If `brand.json` does not exist or contains `{{…}}`: the brand is not loaded. Follow `references/onboarding.md` before designing.
 
 ## Campaign flow
@@ -110,12 +137,12 @@ A layout has **slots**: the texts it takes, each with a character budget (`layou
 2. **Direction.** Intent and recipe (`references/planning.md`), a one-sentence thesis, dominant mode, signature move and what to avoid. It goes in `piece.direction`. If the request is ambiguous and redoing is expensive, ask a single question (`piece` brief); otherwise decide and say what you assumed.
 3. **Full copy before design** (`references/copy.md`): role, claim and support of each slide, captions and alt text.
 4. **Images** (`references/assets.md`): the brand's own photos and product first. With none, the piece is typographic: color fields, large type, the product itself (`chat`, `app-window`). Stock is the last resort, never the default: a generic photo of a person holding a phone is what makes a piece look like a template. If you do use stock, **look at the previews**, import only the chosen one, analyze it, and set it full-bleed and graded (`cover-photo`, `photo-duotone`), never small above a white card.
-5. **Compose** with `piece_compose` (`references/art-direction.md`): one layout per slide, varied, with the copy in its slots. If a text does not fit a layout, change the layout: do not shrink the type.
+5. **Compose** with `piece_design` (`references/art-direction.md`): each slide's role, claim and proof plus the direction. Read the recipe chosen for each slide and its reason. If a slide is unresolved, change the copy or the proof: do not shrink the type. Use `piece_compose` only to force a specific layout.
 6. **Read the report.** Run `piece_repair` for the safe fixes. Fix the remaining errors with `piece_edit` or another layout. Warnings are fixed or justified in one line. Do not iterate more than twice on the same thing (`references/quality.md`).
-7. **Look at the contact sheet.** Look for what the checks cannot see: hierarchy, rhythm, whether it looks like the brand.
+7. **Look at the contact sheet.** Look for what the checks cannot see: hierarchy, rhythm, whether it looks like the brand. If the structure is what feels off, `piece_variant` before rewriting.
 8. **Independent review** (`references/review.md`): the `visual-reviewer` subagent if it exists; otherwise a cold review as a separate step. One pass of fixes.
 9. **Hand it over** with `piece_handoff`: `review` builds one page the user can open or forward to their client; offer `piece_preview` if they want to correct texts themselves. When they say yes, `approve`, then `package` leaves the files ready to upload. Update `calendar.md`.
-10. **Learn** (`references/learning.md`). If the piece was approved without changes, offer to save it as a template.
+10. **Learn** (`references/learning.md`). Record what the user said about the piece with `piece_feedback`, in their words. If the piece was approved without changes, offer to save it as a template.
 
 ## Rules that do not depend on the topic
 

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" data-format="4:5" data-layout="prompt">
+<head>
+<meta charset="utf-8">
+<title>Layout 19 · prompt</title>
+<link rel="stylesheet" href="../../brands/_demo/tokens.css">
+<link rel="stylesheet" href="../base/base.css">
+<style>
+  .content { justify-content: space-between; }
+  .top { display: grid; gap: 26px; }
+  #headline { max-width: 13ch; }
+  #support { max-width: 26ch; }
+  .ask { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 28px; padding: 26px 26px 26px 40px; border-radius: 26px; }
+  #prompt { font-size: calc(var(--size-cue) * var(--k) * 1px); line-height: 1.25; }
+  .send { width: 76px; height: 76px; border-radius: 18px; background: var(--accent-base, var(--accent)); color: var(--on-accent, var(--ink)); display: grid; place-items: center; font-family: var(--font-display); font-size: 40px; line-height: 1; }
+</style>
+</head>
+<body>
+<main class="canvas photo-slide" data-texture="film" data-vignette style="--grain:.4">
+  <figure class="photo" data-grade="editorial">
+    <img data-asset="sample-sunset" src="../../brands/_demo/assets/photos/sample-sunset.jpg" alt="" style="--fx:54%;--fy:50%">
+  </figure>
+  <div class="veil" data-veil="flat" style="--veil:.62"></div>
+  <div class="safe">
+    <div class="content">
+      <div class="top">
+        <h1 id="headline" class="t-title" data-max="48">Writing the plan is the coach's call.</h1>
+        <p id="support" class="t-intro" data-max="100">Formatting it is manual work, and it is the part that eats your week.</p>
+      </div>
+      <div class="ask glass">
+        <p id="prompt" data-max="62">Build a push, pull, legs routine for my group.</p>
+        <span class="send" aria-hidden="true">↑</span>
+      </div>
+    </div>
+    <footer class="chrome-bar" data-chrome><span id="brand">Brand</span><span id="pager">19/20</span></footer>
+  </div>
+</main>
+</body>
+</html>

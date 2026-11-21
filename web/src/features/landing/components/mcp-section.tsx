@@ -27,8 +27,9 @@ const GROUPS = [
   {
     label: m.mcp_group_pieces,
     tools: [
-      "piece_compose",
-      "piece_edit",
+      "piece_design",
+      "piece_variant",
+      "piece_feedback",
       "piece_repair",
       "piece_preview",
       "piece_handoff",

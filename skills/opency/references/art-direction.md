@@ -80,7 +80,33 @@ Read this before composing or when a piece looks generic.
 
 ## Layouts
 
-17 archetypes in `templates/layouts/` (`npx @opency/cli layouts` shows them): typographic and photo covers, statement, number, steps, comparison, photo with card, data bars, testimonial, closer, news cards, product window, logo grid and co-brand. They are starting points: each brand takes them into its own system (see how `brands/urbs/pieces/` turned out).
+20 archetypes in `templates/layouts/` (`npx @opency/cli layouts` shows them): typographic and photo covers, statement, number, steps, comparison, photo with card, data bars, testimonial, closer, news cards, product window, logo grid, co-brand, poster, chat, duotone photo, dictionary definition, prompt box and event poster. You rarely pick them by hand: `piece_design` chooses among them through recipes (`npx @opency/cli compose recipes`). They are starting points: each brand takes them into its own system (see how `brands/urbs/pieces/` turned out).
+
+## Direction: the vocabulary
+
+A direction is decided once per piece and sent with the intent. It is what the compositor reads.
+
+| Field | Values | What it changes |
+|---|---|---|
+| `thesis` | one sentence | The idea every slide serves. Not drawn. |
+| `dominantMode` | `type` · `photo` · `data` · `artifact` · `mixed` | Which family of recipes leads when a slide could go either way. |
+| `density` | `airy` · `balanced` · `dense` | Favors roomy recipes (poster, cover, number) or full ones (steps, cards, comparison). |
+| `variance` | `calm` · `varied` | How hard the compositor pushes surfaces and families to alternate. |
+| `continuityDevice` | `none` · `pattern` · `corner-labels` · `kicker` | What ties the slides together. With `pattern`, every type slide carries the same backdrop. |
+| `pattern` | `grid` · `dots` · `rings` · `rays` · `glow` | The house backdrop, drawn in the surface's own ink (`--pattern` sets its strength, 0.05–0.12). |
+| `signatureMove` | free text | The one gesture the piece is remembered by. Recorded so the series can repeat it. |
+| `avoid` | recipe, layout or family names | Rules them out. |
+
+**Three directions, one sent.** Before composing an open brief, write three directions that differ in structure, dominant and material. Example for a product launch: (a) type-led and airy, the claim as a poster and the product as one number; (b) artifact-led, the product shown as a conversation and a window; (c) photo-led and calm, one duotone photo and corner labels. Pick with reasons the user would recognize: which one the content can actually fill, which one reads at feed size, which one the brand has assets for.
+
+**Patterns are a material, not decoration.** One pattern per piece, on type slides only, at paper-stock strength. Never under a photo, never two patterns in one piece.
+
+**Rhythm the compositor enforces, and you should respect when composing by hand:**
+- never the same layout twice in a row;
+- never three slides of the same family (type, photo, structure, artifact, voice) in a row;
+- never three slides of the same tone in a row; a peak slide (poster, big number, definition) contrasts with the slide before;
+- one hero gesture per piece;
+- an accent word only where the accent passes contrast as text.
 
 ## What makes a piece look designed
 

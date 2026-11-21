@@ -2,55 +2,62 @@
   "piece": "defects",
   "format": "4:5",
   "scale": 1,
-  "renderedAt": "2026-11-20T17:52:18.188Z",
+  "renderedAt": "2026-11-21T19:40:42.843Z",
   "slides": [
     {
       "n": 1,
       "file": "slide-01.html",
       "mode": "flat",
-      "accentMass": 0,
+      "accentMass": 0.001,
       "texts": [
         {
           "id": "headline",
           "role": "headline",
           "text": "Una portada bastante larga que termina sola",
-          "chrome": false
+          "chrome": false,
+          "fs": 100
         },
         {
           "id": "low",
           "role": "body",
           "text": "Texto gris sobre fondo oscuro: no se lee.",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "out",
           "role": "body",
           "text": "Fuera de la zona segura",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "a",
           "role": "body",
           "text": "Bloque uno superpuesto",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "b",
           "role": "body",
           "text": "Bloque dos superpuesto",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "tiny",
           "role": "body",
           "text": "Letra demasiado chica",
-          "chrome": false
+          "chrome": false,
+          "fs": 14
         },
         {
           "id": "claim",
           "role": "body",
           "text": "Logramos 40% más ventas 🚀 {{DATO}}",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         }
       ],
       "images": [],
@@ -59,6 +66,7 @@
         "texture": "",
         "grade": ""
       },
+      "tone": "rgb(18, 18, 18)",
       "issues": [
         {
           "code": "outside_safe_area",
@@ -87,7 +95,7 @@
         {
           "code": "external_image",
           "where": "img",
-          "msg": "external image: download it into assets/ and register it (npx opency assets add)",
+          "msg": "external image: download it into assets/ and register it (npx @opency/cli assets add)",
           "severity": "error"
         },
         {
@@ -101,6 +109,18 @@
           "where": "",
           "msg": "{{…}} placeholders left unfilled",
           "severity": "error"
+        },
+        {
+          "code": "decorative_container",
+          "where": "div.card",
+          "msg": "an empty box: every visible object needs a job. Remove it or give it content",
+          "severity": "warn"
+        },
+        {
+          "code": "orphan_divider",
+          "where": "span.rule",
+          "msg": "a rule with nothing next to it to separate or announce: remove it",
+          "severity": "warn"
         },
         {
           "code": "over_budget",
@@ -143,12 +163,6 @@
       "severity": "error"
     },
     {
-      "code": "copy_ai_phrase:apertura_gastada",
-      "where": "caption instagram",
-      "msg": "\"¿Sabías que\" — replace with a concrete fact in the brand's own words",
-      "severity": "warn"
-    },
-    {
       "code": "copy_too_many_hashtags",
       "where": "caption instagram",
       "msg": "4 hashtags (max. 3)",
@@ -158,12 +172,6 @@
       "code": "copy_filler_hashtags",
       "where": "caption instagram",
       "msg": "filler hashtags: #love #fyp #viral #marketing",
-      "severity": "warn"
-    },
-    {
-      "code": "copy_generic_cta",
-      "where": "caption instagram",
-      "msg": "generic CTA: \"Más info\" — name the object (what, where, how)",
       "severity": "warn"
     },
     {

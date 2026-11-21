@@ -9,6 +9,7 @@ const CHECKS = [
   { label: m.quality_check_faces, status: m.quality_status_ok },
   { label: m.quality_check_figures, status: m.quality_status_ok },
   { label: m.quality_check_slop, status: m.quality_status_fixed },
+  { label: m.quality_check_rhythm, status: m.quality_status_ok },
 ] as const;
 
 /** A slide as the checker sees it: safe zone, focal point, covered strip. */

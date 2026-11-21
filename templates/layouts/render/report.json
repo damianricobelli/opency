@@ -2,7 +2,7 @@
   "piece": "_layouts",
   "format": "4:5",
   "scale": 1,
-  "renderedAt": "2026-11-20T19:46:14.783Z",
+  "renderedAt": "2026-11-21T19:40:44.398Z",
   "slides": [
     {
       "n": 1,
@@ -14,31 +14,36 @@
           "id": "kicker",
           "role": "label",
           "text": "GUIDE · 5 STEPS",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "headline",
           "role": "headline",
           "text": "Three mistakes that stall your sales",
-          "chrome": false
+          "chrome": false,
+          "fs": 100
         },
         {
           "id": "support",
           "role": "support",
           "text": "What we changed on our account and what happened next.",
-          "chrome": false
+          "chrome": false,
+          "fs": 34
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "01/17",
-          "chrome": true
+          "text": "01/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -60,6 +65,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(243, 239, 230)",
       "issues": []
     },
     {
@@ -72,31 +78,36 @@
           "id": "tag",
           "role": "label",
           "text": "REAL STORY",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "headline",
           "role": "headline",
           "text": "Out running before the sun is up",
-          "chrome": false
+          "chrome": false,
+          "fs": 100
         },
         {
           "id": "support",
           "role": "support",
           "text": "Six weeks of training, told from the inside.",
-          "chrome": false
+          "chrome": false,
+          "fs": 34
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "02/17",
-          "chrome": true
+          "text": "02/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [
@@ -120,6 +131,7 @@
         "texture": "film",
         "grade": "editorial"
       },
+      "tone": "photo",
       "issues": []
     },
     {
@@ -129,28 +141,39 @@
       "accentMass": 0.001,
       "texts": [
         {
+          "id": "kicker",
+          "role": "label",
+          "text": "THE IDEA",
+          "chrome": false,
+          "fs": 28
+        },
+        {
           "id": "headline",
           "role": "headline",
           "text": "Posting every day is not a strategy.",
-          "chrome": false
+          "chrome": false,
+          "fs": 100
         },
         {
           "id": "support",
           "role": "support",
           "text": "Reach grows when you repeat the format that already worked, with a new topic.",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "03/17",
-          "chrome": true
+          "text": "03/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -172,6 +195,7 @@
         "texture": "coarse",
         "grade": ""
       },
+      "tone": "rgb(18, 18, 18)",
       "issues": []
     },
     {
@@ -184,37 +208,43 @@
           "id": "kicker",
           "role": "label",
           "text": "METHOD",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "number",
           "role": "headline",
           "text": "5",
-          "chrome": false
+          "chrome": false,
+          "fs": 386
         },
         {
           "id": "headline",
           "role": "headline",
           "text": "steps to build a carousel in one afternoon",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "support",
           "role": "support",
           "text": "From the idea to the finished file, without opening an editor.",
-          "chrome": false
+          "chrome": false,
+          "fs": 34
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "04/17",
-          "chrome": true
+          "text": "04/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -236,6 +266,7 @@
         "texture": "fine",
         "grade": ""
       },
+      "tone": "rgb(230, 224, 211)",
       "issues": []
     },
     {
@@ -248,67 +279,78 @@
           "id": "headline",
           "role": "headline",
           "text": "How we build each piece",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "span.n",
           "role": "label",
           "text": "01",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "step-1",
           "role": "body",
           "text": "We pick a single idea per piece.",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "span.n",
           "role": "label",
           "text": "02",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "step-2",
           "role": "body",
           "text": "We write the copy before designing.",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "span.n",
           "role": "label",
           "text": "03",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "step-3",
           "role": "body",
           "text": "We review at phone size.",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "span.n",
           "role": "label",
           "text": "04",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "step-4",
           "role": "body",
           "text": "We save what worked as a template.",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "05/17",
-          "chrome": true
+          "text": "05/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -330,6 +372,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(243, 239, 230)",
       "issues": []
     },
     {
@@ -342,67 +385,78 @@
           "id": "headline",
           "role": "headline",
           "text": "What changed in the process",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "before-label",
           "role": "label",
           "text": "BEFORE",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "before-1",
           "role": "body",
           "text": "One brief per post",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "before-2",
           "role": "body",
           "text": "Three rounds of changes",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "before-3",
           "role": "body",
           "text": "Design from scratch",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "now-label",
           "role": "label",
           "text": "NOW",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "now-1",
           "role": "body",
           "text": "One request by chat",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "now-2",
           "role": "body",
           "text": "One specific fix",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "now-3",
           "role": "body",
           "text": "Approved templates",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "06/17",
-          "chrome": true
+          "text": "06/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -424,6 +478,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(243, 239, 230)",
       "issues": []
     },
     {
@@ -436,31 +491,36 @@
           "id": "kicker",
           "role": "label",
           "text": "WEEK 3",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "headline",
           "role": "headline",
           "text": "Pace is built on short, steady runs",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "support",
           "role": "support",
           "text": "Four 30-minute runs did more than two long ones.",
-          "chrome": false
+          "chrome": false,
+          "fs": 34
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "07/17",
-          "chrome": true
+          "text": "07/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [
@@ -484,6 +544,7 @@
         "texture": "film",
         "grade": "editorial"
       },
+      "tone": "rgb(18, 18, 18)",
       "issues": []
     },
     {
@@ -496,73 +557,85 @@
           "id": "headline",
           "role": "headline",
           "text": "Where the time on a piece goes",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "l1",
           "role": "body",
           "text": "Idea",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "v1",
           "role": "body",
           "text": "1 h",
-          "chrome": false
+          "chrome": false,
+          "fs": 52
         },
         {
           "id": "l2",
           "role": "body",
           "text": "Design",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "v2",
           "role": "body",
           "text": "3 h",
-          "chrome": false
+          "chrome": false,
+          "fs": 52
         },
         {
           "id": "l3",
           "role": "body",
           "text": "Review",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "v3",
           "role": "body",
           "text": "1 h",
-          "chrome": false
+          "chrome": false,
+          "fs": 52
         },
         {
           "id": "l4",
           "role": "body",
           "text": "Publishing",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "v4",
           "role": "body",
           "text": "30 min",
-          "chrome": false
+          "chrome": false,
+          "fs": 52
         },
         {
           "id": "source",
           "role": "label",
           "text": "SOURCE: INTERNAL LOG (SAMPLE DATA)",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "08/17",
-          "chrome": true
+          "text": "08/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -584,6 +657,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(243, 239, 230)",
       "issues": []
     },
     {
@@ -596,37 +670,43 @@
           "id": "mark",
           "role": "body",
           "text": "“",
-          "chrome": false
+          "chrome": false,
+          "fs": 240
         },
         {
           "id": "quote",
           "role": "headline",
           "text": "We stopped requesting pieces by email. Now we review on Monday and they ship on Tuesday.",
-          "chrome": false
+          "chrome": false,
+          "fs": 52
         },
         {
           "id": "name",
           "role": "body",
           "text": "First Last",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "role",
           "role": "label",
           "text": "ROLE · COMPANY",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "09/17",
-          "chrome": true
+          "text": "09/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -648,6 +728,7 @@
         "texture": "film",
         "grade": ""
       },
+      "tone": "rgb(18, 18, 18)",
       "issues": []
     },
     {
@@ -660,37 +741,43 @@
           "id": "kicker",
           "role": "label",
           "text": "TO WRAP UP",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "headline",
           "role": "headline",
           "text": "One idea per piece. Always.",
-          "chrome": false
+          "chrome": false,
+          "fs": 90
         },
         {
           "id": "cta-text",
           "role": "body",
           "text": "DM us PLAN and we'll send you the template",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "arrow",
           "role": "body",
           "text": "→",
-          "chrome": false
+          "chrome": false,
+          "fs": 52
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "@BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "10/17",
-          "chrome": true
+          "text": "10/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -712,6 +799,7 @@
         "texture": "fine",
         "grade": ""
       },
+      "tone": "rgb(18, 18, 18)",
       "issues": []
     },
     {
@@ -724,73 +812,85 @@
           "id": "t1",
           "role": "label",
           "text": "PRODUCT",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "n1",
           "role": "body",
           "text": "We launched the new reports dashboard",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "t2",
           "role": "label",
           "text": "TEAM",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "n2",
           "role": "body",
           "text": "Two new people joined support",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "t3",
           "role": "label",
           "text": "EVENTS",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "n3",
           "role": "body",
           "text": "Open talk this Thursday at 6 pm",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "t4",
           "role": "label",
           "text": "GUIDE",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "n4",
           "role": "body",
           "text": "How to organize your monthly calendar",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "kicker",
           "role": "label",
           "text": "ISSUE 12",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "headline",
           "role": "headline",
           "text": "What happened at the brand this week",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "11/17",
-          "chrome": true
+          "text": "11/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -812,6 +912,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(230, 224, 211)",
       "issues": []
     },
     {
@@ -824,85 +925,99 @@
           "id": "headline",
           "role": "headline",
           "text": "The whole month's content in one folder",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "win-title",
           "role": "label",
           "text": "PIECES / NOVEMBER",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "r1",
           "role": "body",
           "text": "Plan launch",
-          "chrome": false
+          "chrome": false,
+          "fs": 32
         },
         {
           "id": "s1",
           "role": "label",
           "text": "APPROVED",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "r2",
           "role": "body",
           "text": "Getting started guide",
-          "chrome": false
+          "chrome": false,
+          "fs": 32
         },
         {
           "id": "s2",
           "role": "label",
           "text": "IN REVIEW",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "r3",
           "role": "body",
           "text": "A customer story",
-          "chrome": false
+          "chrome": false,
+          "fs": 32
         },
         {
           "id": "s3",
           "role": "label",
           "text": "DRAFT",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "r4",
           "role": "body",
           "text": "Weekly roundup",
-          "chrome": false
+          "chrome": false,
+          "fs": 32
         },
         {
           "id": "s4",
           "role": "label",
           "text": "DRAFT",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "r5",
           "role": "body",
           "text": "Campaign wrap-up",
-          "chrome": false
+          "chrome": false,
+          "fs": 32
         },
         {
           "id": "s5",
           "role": "label",
           "text": "IDEA",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "12/17",
-          "chrome": true
+          "text": "12/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -924,6 +1039,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(230, 224, 211)",
       "issues": []
     },
     {
@@ -936,61 +1052,71 @@
           "id": "kicker",
           "role": "label",
           "text": "WHO WE WORK WITH",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "headline",
           "role": "headline",
           "text": "Teams that already publish with us",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "l1",
           "role": "label",
           "text": "LOGO 1",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "l2",
           "role": "label",
           "text": "LOGO 2",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "l3",
           "role": "label",
           "text": "LOGO 3",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "l4",
           "role": "label",
           "text": "LOGO 4",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "l5",
           "role": "label",
           "text": "LOGO 5",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "l6",
           "role": "label",
           "text": "LOGO 6",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "13/17",
-          "chrome": true
+          "text": "13/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -1012,6 +1138,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(243, 239, 230)",
       "issues": []
     },
     {
@@ -1024,37 +1151,43 @@
           "id": "a",
           "role": "body",
           "text": "Brand",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "x",
           "role": "body",
           "text": "×",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "b",
           "role": "body",
           "text": "Partner",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "support",
           "role": "support",
           "text": "Since December we train together every Saturday.",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "14/17",
-          "chrome": true
+          "text": "14/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [
@@ -1078,6 +1211,7 @@
         "texture": "film",
         "grade": "editorial"
       },
+      "tone": "photo",
       "issues": []
     },
     {
@@ -1090,37 +1224,43 @@
           "id": "meta-left",
           "role": "label",
           "text": "THE RULE",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "meta-right",
           "role": "label",
           "text": "NO. 12",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "headline",
           "role": "headline",
           "text": "Say one thing well.",
-          "chrome": false
+          "chrome": false,
+          "fs": 184
         },
         {
           "id": "support",
           "role": "support",
           "text": "A piece that says two things is remembered for neither. Pick the one that matters.",
-          "chrome": false
+          "chrome": false,
+          "fs": 34
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "15/17",
-          "chrome": true
+          "text": "15/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -1142,6 +1282,7 @@
         "texture": "fine",
         "grade": ""
       },
+      "tone": "rgb(47, 59, 53)",
       "issues": []
     },
     {
@@ -1154,49 +1295,57 @@
           "id": "headline",
           "role": "headline",
           "text": "It all happens in the chat",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "in-1",
           "role": "body",
           "text": "Hi, do you have a table for Friday?",
-          "chrome": false
+          "chrome": false,
+          "fs": 37
         },
         {
           "id": "out-1",
           "role": "body",
           "text": "Yes: 8:00, 9:30 or 10:15. Which one works?",
-          "chrome": false
+          "chrome": false,
+          "fs": 37
         },
         {
           "id": "in-2",
           "role": "body",
           "text": "9:30 for four, please.",
-          "chrome": false
+          "chrome": false,
+          "fs": 37
         },
         {
           "id": "out-2",
           "role": "body",
           "text": "Done. Here is the link to confirm it.",
-          "chrome": false
+          "chrome": false,
+          "fs": 37
         },
         {
           "id": "status",
           "role": "label",
           "text": "BOOKED",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "16/17",
-          "chrome": true
+          "text": "16/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -1218,6 +1367,7 @@
         "texture": "fine",
         "grade": ""
       },
+      "tone": "rgb(18, 18, 18)",
       "issues": []
     },
     {
@@ -1230,37 +1380,43 @@
           "id": "meta-left",
           "role": "label",
           "text": "FIELD NOTES",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "meta-right",
           "role": "label",
           "text": "WEEK 3",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "headline",
           "role": "headline",
           "text": "Short runs, long gains",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "support",
           "role": "support",
           "text": "Notes from a season of early starts.",
-          "chrome": false
+          "chrome": false,
+          "fs": 34
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
-          "text": "17/17",
-          "chrome": true
+          "text": "17/20",
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [
@@ -1284,6 +1440,259 @@
         "texture": "film",
         "grade": "duotone"
       },
+      "tone": "photo",
+      "issues": []
+    },
+    {
+      "n": 18,
+      "file": "slide-18.html",
+      "mode": "flat",
+      "accentMass": 0.001,
+      "texts": [
+        {
+          "id": "kicker",
+          "role": "label",
+          "text": "WORD OF THE WEEK",
+          "chrome": false,
+          "fs": 28
+        },
+        {
+          "id": "term",
+          "role": "headline",
+          "text": "Kaizen",
+          "chrome": false,
+          "fs": 184
+        },
+        {
+          "id": "phonetic",
+          "role": "label",
+          "text": "/ˈKAꞮ.ZEN/",
+          "chrome": false,
+          "fs": 32
+        },
+        {
+          "id": "origin",
+          "role": "body",
+          "text": "from Japanese kai (change) + zen (good)",
+          "chrome": false,
+          "fs": 31
+        },
+        {
+          "id": "meaning",
+          "role": "headline",
+          "text": "(n.) The habit of getting one percent better every day.",
+          "chrome": false,
+          "fs": 52
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "BRAND",
+          "chrome": true,
+          "fs": 28
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "18/20",
+          "chrome": true,
+          "fs": 28
+        }
+      ],
+      "images": [],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "fine",
+        "grade": ""
+      },
+      "tone": "rgb(47, 59, 53)",
+      "issues": []
+    },
+    {
+      "n": 19,
+      "file": "slide-19.html",
+      "mode": "photo",
+      "accentMass": 0.003,
+      "texts": [
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Writing the plan is the coach's call.",
+          "chrome": false,
+          "fs": 78
+        },
+        {
+          "id": "support",
+          "role": "support",
+          "text": "Formatting it is manual work, and it is the part that eats your week.",
+          "chrome": false,
+          "fs": 34
+        },
+        {
+          "id": "prompt",
+          "role": "body",
+          "text": "Build a push, pull, legs routine for my group.",
+          "chrome": false,
+          "fs": 32
+        },
+        {
+          "id": "span.send",
+          "role": "body",
+          "text": "↑",
+          "chrome": false,
+          "fs": 40
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "BRAND",
+          "chrome": true,
+          "fs": 28
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "19/20",
+          "chrome": true,
+          "fs": 28
+        }
+      ],
+      "images": [
+        "sample-sunset"
+      ],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "film",
+        "grade": "editorial"
+      },
+      "tone": "photo",
+      "issues": []
+    },
+    {
+      "n": 20,
+      "file": "slide-20.html",
+      "mode": "photo",
+      "accentMass": 0.009,
+      "texts": [
+        {
+          "id": "f1",
+          "role": "label",
+          "text": "SUNDAY",
+          "chrome": false,
+          "fs": 28
+        },
+        {
+          "id": "f2",
+          "role": "label",
+          "text": "AUGUST",
+          "chrome": false,
+          "fs": 28
+        },
+        {
+          "id": "f3",
+          "role": "label",
+          "text": "MORNING",
+          "chrome": false,
+          "fs": 28
+        },
+        {
+          "id": "headline",
+          "role": "headline",
+          "text": "Open run day",
+          "chrome": false,
+          "fs": 158
+        },
+        {
+          "id": "f4",
+          "role": "label",
+          "text": "RIVERSIDE PARK",
+          "chrome": false,
+          "fs": 28
+        },
+        {
+          "id": "f5",
+          "role": "label",
+          "text": "ALL PACES",
+          "chrome": false,
+          "fs": 28
+        },
+        {
+          "id": "f6",
+          "role": "label",
+          "text": "NORTH GATE",
+          "chrome": false,
+          "fs": 28
+        },
+        {
+          "id": "tag",
+          "role": "label",
+          "text": "FREE ENTRY",
+          "chrome": false,
+          "fs": 28
+        },
+        {
+          "id": "brand",
+          "role": "chrome",
+          "text": "BRAND",
+          "chrome": true,
+          "fs": 28
+        },
+        {
+          "id": "pager",
+          "role": "chrome",
+          "text": "20/20",
+          "chrome": true,
+          "fs": 28
+        }
+      ],
+      "images": [
+        "sample-sunset"
+      ],
+      "chrome": {
+        "brand": {
+          "l": 80,
+          "r": 181,
+          "b": 1270,
+          "size": "28px"
+        },
+        "pager": {
+          "l": 899,
+          "r": 1000,
+          "b": 1270,
+          "size": "28px"
+        }
+      },
+      "material": {
+        "texture": "film",
+        "grade": "editorial"
+      },
+      "tone": "photo",
       "issues": []
     }
   ],

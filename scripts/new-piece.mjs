@@ -5,6 +5,7 @@
 //   npx @opency/cli new <slug> --template <name>                                 starts from one of the brand's saved templates
 //   npx @opency/cli new <slug> --from <piece id> [--format 9:16]                 duplicates or adapts an existing piece
 //   npx @opency/cli new <slug> [--slides 6]                                      blank slides
+//   with --layouts: --surfaces on-bg,on-primary,… (one per slide, empty keeps the layout's own)  --pattern grid|dots|rings|rays|glow
 //   options: --brand slug  --campaign slug  --language xx (with --from: a translation)  --format 4:5|1:1|9:16|16:9  --date YYYY-MM-DD  --intent …  --category …
 //
 // When copying a layout: rewrites paths for the brand, puts its name and logo in the bottom bar
@@ -12,6 +13,7 @@
 
 import { mkdir, readFile, writeFile, readdir, access } from "node:fs/promises";
 import path from "node:path";
+import { prepareSlide } from "./lib/piece.mjs";
 import { ROOT, FORMATS, parseArgs, readJSON, writeJSON, resolveBrand, brandDir, loadBrand, slugify, today } from "./lib/project.mjs";
 
 const args = parseArgs(process.argv.slice(2));
@@ -56,37 +58,17 @@ if (!FORMATS[format]) fail(`Invalid format "${format}". Options: ${Object.keys(F
 await mkdir(dir, { recursive: true });
 const total = sources.length;
 const pad = (x) => String(x).padStart(2, "0");
-const logos = brand.raw?.logos ?? {};
 const slides = [];
 
+const language = typeof args.language === "string" ? args.language : (inherited?.language ?? brand.language ?? "en");
+const surfaces = typeof args.surfaces === "string" ? args.surfaces.split(",") : [];
 for (const [i, src] of sources.entries()) {
   const n = i + 1;
-  let html = await readFile(src.path, "utf8");
-  const surface = html.match(/class="canvas[^"]*\b(on-primary|on-secondary|photo-slide)\b/)?.[1];
-  const logo = surface === "on-primary" ? (logos.onPrimary ?? logos.onDark) : surface ? logos.onDark : logos.onLight;
-  html = html
-    .replace(/data-format="[^"]*"/, `data-format="${format}"`)
-    .replace(/<html lang="[^"]*"/, `<html lang="${typeof args.language === "string" ? args.language : (inherited?.language ?? brand.language ?? "en")}"`)
-    .replace(/<title>[^<]*<\/title>/, `<title>${id} · slide ${n} · ${src.layout}</title>`)
-    .replace(/href="[^"]*tokens\.css"/, 'href="../../tokens.css"')
-    .replace(/href="[^"]*base\.css"/, 'href="../../../../templates/base/base.css"')
-    .replace(/src="(?:\.\.\/)+(?:brands\/[^/]+\/)?assets\//g, 'src="../../assets/')
-    .replace(/(<span id="pager">)[^<]*(<\/span>)/, `$1${pad(n)}/${pad(total)}$2`)
-    .replaceAll("{{FORMAT}}", format).replaceAll("{{PIECE_ID}}", id).replaceAll("{{N}}", pad(n)).replaceAll("{{TOTAL}}", pad(total));
-  // One material per piece: the texture is the brand's, not the source layout's
-  if (brand.loaded && !args.from && !args.template && brand.raw?.defaults && "texture" in brand.raw.defaults) {
-    const tex = brand.raw.defaults.texture;
-    html = html.replace(/(<main class="canvas[^"]*")([^>]*)>/, (m, head, rest) => {
-      rest = rest.replace(/\s*data-texture="[^"]*"/, "").replace(/\s*style="--grain:[^"]*"/, "");
-      return `${head}${tex ? ` data-texture="${tex}"` : ""}${rest}>`;
-    });
-  }
-  if (brand.loaded && !args.from) {
-    const mark = logo
-      ? `<img id="logo" class="logo" data-role="logo" src="../../${logo}" alt="${brand.name}">`
-      : `<span id="brand">${brand.handle || brand.name}</span>`;
-    html = html.replace(/<span id="brand">[^<]*<\/span>/, mark).replaceAll("{{MARCA}}", brand.handle || brand.name);
-  }
+  const html = prepareSlide(await readFile(src.path, "utf8"), {
+    brand, id, n, total, format, layout: src.layout, language,
+    surface: surfaces[i] && surfaces[i] !== "-" ? surfaces[i] : null, pattern: typeof args.pattern === "string" ? args.pattern : null,
+    own: !args.from && !args.template, mark: !args.from,
+  });
   const file = `slide-${pad(n)}.html`;
   await writeFile(path.join(dir, file), html);
   const prev = inherited?.slides?.[i];

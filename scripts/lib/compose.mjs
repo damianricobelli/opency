@@ -69,7 +69,7 @@ function removable(el) {
 
 /**
  * @param {string} html      the slide (already copied into the piece by new-piece)
- * @param {object} spec      { slots: {id: text|null}, remove: [ids], image: {asset}, bars: [percent…] }
+ * @param {object} spec      { slots: {id: text|null}, remove: [ids], image: {asset}, bars: [percent…], highlight: n (the bar row in the accent) }
  * @param {object} context   { n, sample: {id: sampleText} (the layout's sample copy), assets: [] (assets.json),
  *                             written: [ids] slots already given their copy in an earlier call }
  * @returns {{ html: string, filled: string[], left: string[], issues: object[] }}
@@ -115,6 +115,16 @@ export function fillSlide(html, spec = {}, { n = 0, sample = {}, assets = [], wr
       const f = asset.analysis?.focalPoint;
       if (f) img.setAttribute("style", `--fx:${Math.round(f.x * 100)}%;--fy:${Math.round(f.y * 100)}%`);
     }
+  }
+
+  // A card, row or tile whose texts are all gone goes with them.
+  for (const group of root.querySelectorAll("[data-group], .nc, .tile, .row")) {
+    if (!group.querySelectorAll("[id]").some((x) => isSlot(x)) && group.querySelectorAll("[id]").length === 0) group.remove();
+  }
+
+  if (spec.highlight) {
+    const rows = root.querySelectorAll(".chart .row");
+    rows.forEach((r, i) => (i + 1 === Number(spec.highlight) ? r.classList.add("hi") : r.classList.remove("hi")));
   }
 
   if (spec.bars) {

@@ -1,6 +1,6 @@
 # Quality report — _layouts
 
-4:5 · 17 slide(s) · ×1 · 0 errors · 0 warnings
+4:5 · 20 slide(s) · ×1 · 0 errors · 0 warnings
 
 ## Slide 1 (flat)
 - no findings
@@ -51,6 +51,15 @@
 - no findings
 
 ## Slide 17 (photo)
+- no findings
+
+## Slide 18 (flat)
+- no findings
+
+## Slide 19 (photo)
+- no findings
+
+## Slide 20 (photo)
 - no findings
 
 ## Copy and captions

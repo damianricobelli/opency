@@ -4,7 +4,7 @@
   "status": "reference",
   "format": "4:5",
   "version": 1,
-  "note": "Not a publishable piece. These are 17 archetypes to combine. Sample copy: always replace it.",
+  "note": "Not a publishable piece. These are 20 archetypes to combine. Sample copy: always replace it.",
   "slides": [
     {
       "n": 1,
@@ -90,6 +90,21 @@
       "n": 17,
       "layout": "photo-duotone",
       "alt": "A full-bleed photo tinted in one brand color, with the headline at the bottom."
+    },
+    {
+      "n": 18,
+      "layout": "definition",
+      "alt": "A dictionary entry: one word in very large type with its pronunciation, origin and meaning."
+    },
+    {
+      "n": 19,
+      "layout": "prompt",
+      "alt": "A photo with a headline on top and, below, a message box with a request written in it and a send button."
+    },
+    {
+      "n": 20,
+      "layout": "event",
+      "alt": "An event poster over a photo: the name in very large type between two rows of facts (day, date, time, place)."
     }
   ],
   "captions": {}

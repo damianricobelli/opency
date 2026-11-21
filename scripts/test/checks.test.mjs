@@ -132,6 +132,7 @@ test("render: detects the fixture defects", { timeout: 120000 }, () => {
   const c = [...codes(r.slides[0].issues), ...codes(r.copy)];
   for (const k of ["unreadable_contrast", "headline_orphan", "critical_overlap", "illegible_text_size", "placeholder_left", "external_image", "brand_literal_color", "over_budget", "unsourced_figure", "copy_emoji", "copy_filler_hashtags", "missing_alt_text"]) assert.ok(c.includes(k), `missing ${k} in: ${c.join(", ")}`);
   assert.ok(c.includes("layer_out_of_bounds") || c.includes("outside_safe_area"));
+  for (const k of ["decorative_container", "orphan_divider"]) assert.ok(c.includes(k), k);
 });
 test("render: the layout library passes clean", { timeout: 240000 }, () => {
   const r = render("templates/layouts");

@@ -146,20 +146,33 @@ The one question it never skips: **what do you want to get across?** The answer 
 
 Each piece of the campaign proves the message from a different angle, and you approve the plan before anything is designed.
 
-The agent does not write HTML. It sends each slide as data — a layout and the text for its slots — and opency builds the slide with the brand's tokens, logo and pager, renders it and returns the result in one call:
+The agent does not write HTML and does not pick layouts. It says what each slide has to say — its job, its claim, its proof — plus one design direction, and a deterministic compositor chooses the layout of every slide and explains why:
 
 ```json
-{ "layout": "steps",
-  "slots": { "headline": "How to brew it at home",
-             "step-1": "Grind it medium-coarse.",
-             "step-2": "Water just off the boil.",
-             "step-3": "Four minutes, then press." } }
+{ "direction": { "thesis": "Cold brew is specialty coffee too", "dominantMode": "type", "pattern": "grid" },
+  "slides": [
+    { "role": "hook",  "claim": "Cold is not lazy.", "labels": ["Summer menu", "No. 3"] },
+    { "role": "how",   "claim": "How we brew it",
+      "proof": { "kind": "steps", "items": ["Coarse grind.", "Cold water, 18 hours.", "Filtered twice."] } },
+    { "role": "proof", "claim": "hours in every glass", "proof": { "kind": "number", "value": "18" } },
+    { "role": "close", "claim": "Try it this week.", "cta": "Order a cold brew at the bar" } ] }
 ```
 
-Every slot has a character budget, checked before rendering: when a text does not fit, the answer is another layout, never smaller type. There are 17 tested layouts — type and photo covers, posters, a chat conversation, steps, comparisons, data, product windows — and raw HTML stays available for the idea no layout covers.
+```text
+01 type_poster     on-secondary  drawn for a hook slide; the copy fills the layout as drawn
+02 steps           on-bg         drawn for a how slide; turns light after a dark slide
+03 type_number     on-primary    drawn for a proof slide; a peak that contrasts with what comes before
+04 type_closer     on-secondary  drawn for a close slide
+```
+
+A recipe is eligible only when it shows exactly what the slide sent and every text fits its character budget; among the eligible ones the compositor scores copy fit, the slide's job, the direction, rhythm (no layout twice in a row, no three slides of one tone in a row), one hero gesture per piece, a readable accent color, and what you liked or rejected before. A photo is used only when its crop is known to be safe. No model runs in that step and nothing is invented: when a text fits nowhere, nothing is created and the answer says what to change — never smaller type.
+
+- **Another version.** `piece_variant` recomposes the same words in another structure and keeps the previous one a restore away.
+- **It learns your taste.** "I love this one" and "not like this" are recorded in your words (`piece_feedback`), along with the references you hand over (`inspiration_add`). The next pieces of that brand are composed with them.
+- **23 recipes over 20 tested layouts** — type and photo covers, posters, a chat conversation, a dictionary entry, a prompt box, an event poster, steps, comparisons, data, product windows — plus five house backdrops. Explicit layouts (`piece_compose`) and raw HTML stay available for the idea no recipe covers.
 
 <p align="center">
-  <img src=".github/assets/layouts.webp" alt="The slide layouts: type cover, photo cover, statement, big number, steps, comparison, photo card, data bars, testimonial, closer, news cards, app window, logo grid, co-brand, poster, chat and duotone photo" width="100%">
+  <img src=".github/assets/layouts.webp" alt="The slide layouts: type cover, photo cover, statement, big number, steps, comparison, photo card, data bars, testimonial, closer, news cards, app window, logo grid, co-brand, poster, chat, duotone photo, definition, prompt and event" width="100%">
 </p>
 
 Formats 4:5, 1:1, 9:16 and 16:9. Captions per network, alt text, PDF for LinkedIn and MP4 video.
@@ -190,7 +203,7 @@ It walks you through creating a free app in your Unsplash account, asks for the 
   </picture>
 </p>
 
-Every piece is rendered with Chrome and checked pixel by pixel. Fixes that cannot change meaning or design — a headline's line breaks, the logo variant for the surface, mixed textures — are applied automatically; everything else is reported with what to do. Nothing is delivered with errors, and passing checks is not aesthetic approval — so a subagent that did not see the process reviews the contact sheet cold and returns up to 5 findings.
+Every piece is laid out by a real browser engine — the same text shaping, kerning and color math a designer sees — rasterized at twice the size and reduced with Lanczos for clean type edges, then checked pixel by pixel. Beyond contrast, crops and overflow, the checks look for what makes a piece read as generated: no element leading the slide, empty boxes, three slides of one layout in a row, one background from end to end, a carousel made only of sentences. Fixes that cannot change meaning or design — a headline's line breaks, the logo variant for the surface, mixed textures — are applied automatically; everything else is reported with what to do. Nothing is delivered with errors, and passing checks is not aesthetic approval — so a subagent that did not see the process reviews the contact sheet cold and returns up to 5 findings.
 
 ### 6. You decide
 
@@ -249,7 +262,7 @@ A workspace is a folder of plain files. Nothing is locked in a database.
 ```
 my-agency/
 ├── AGENTS.md · references/          the agent's instructions
-├── templates/                       base.css and the 17 layouts
+├── templates/                       base.css and the 20 layouts
 └── brands/
     └── acme/
         ├── brand.json               form of address, logos, pillars, verified facts
@@ -274,7 +287,9 @@ my-agency/
 | Brief | `brief_questions` · `brief_interview` |
 | Campaigns | `campaign_create` · `campaign_brief` · `campaign_plan` · `campaign_status` · `campaign_list` |
 | Images | `stock_status` · `stock_search` · `stock_import` · `asset_add` · `asset_analyze` · `asset_view` · `asset_list` · `asset_veto` |
-| Compose | `layouts_list` · `piece_compose` · `piece_edit` · `piece_repair` · `piece_read` · `piece_list` |
+| Design | `recipes_list` · `piece_design` · `piece_variant` · `piece_edit` · `piece_repair` · `piece_read` · `piece_list` |
+| Taste | `piece_feedback` · `inspiration_add` · `taste_get` |
+| Explicit layouts | `layouts_list` · `piece_compose` |
 | Review and delivery | `piece_preview` · `piece_handoff` · `piece_view` · `piece_render` |
 | Reuse | `piece_duplicate` · `template` · `piece_version` · `piece_motion` |
 | Raw HTML | `piece_create` · `piece_write` |
@@ -282,7 +297,7 @@ my-agency/
 
 Also: the skill's instructions as resources (`opency://guide/…`) and three prompts (`new-campaign`, `load-brand`, `weekly-plan`).
 
-- **One call from copy to contact sheet.** `piece_compose` takes the slides as data, builds them, renders and returns the report and the image.
+- **One call from intent to contact sheet.** `piece_design` takes what each slide has to say, chooses the layouts, builds them, renders and returns the recipes with their reasons, the report and the image.
 - **Tools return images, not just text.** The agent sees the contact sheet and the stock previews before it decides.
 - **No setup step.** The first call creates the workspace and says where; `doctor` can download the render browser.
 - **One implementation.** Every tool runs the same script as the CLI, so MCP and terminal never drift apart.
@@ -300,7 +315,10 @@ Also: the skill's instructions as resources (`opency://guide/…`) and three pro
 | `npx @opency/cli campaign new / brief / plan / status / list` | Campaigns |
 | `npx @opency/cli brand list / use / new / import <url> / check` | Brands |
 | `npx @opency/cli fonts search / add / list` | Install the brand's typefaces by name |
-| `npx @opency/cli compose layouts / new / edit / slots` | Build and edit pieces from data |
+| `npx @opency/cli compose design <slug> --spec intent.json` | Design a piece from intent: the compositor picks the layouts (`--dry` shows the plan) |
+| `npx @opency/cli compose variant <piece>` | Another version: same words, another structure |
+| `npx @opency/cli compose recipes / layouts / new / edit / slots` | Recipes; pieces from explicit layouts |
+| `npx @opency/cli taste feedback / inspire / show / forget` | Reviews and references the compositor learns from |
 | `npx @opency/cli repair <piece>` | Apply the safe fixes from the last render |
 | `npx @opency/cli handoff review / status / package <piece>` | Review page, approval, delivery folder |
 | `npx @opency/cli template save / list` | Brand templates |

@@ -13,7 +13,7 @@ const ENGINE = {
   brand: "brand.mjs", new: "new-piece.mjs", render: "render.mjs", dev: "dev.mjs", version: "version.mjs",
   motion: "motion.mjs", assets: "assets.mjs", feed: "feed.mjs", results: "results.mjs", campaign: "campaign.mjs",
   init: "init.mjs", doctor: "doctor.mjs", stock: "stock.mjs", compose: "compose.mjs", handoff: "handoff.mjs",
-  template: "template.mjs", demo: "demo.mjs", repair: "repair.mjs", fonts: "fonts.mjs",
+  template: "template.mjs", demo: "demo.mjs", repair: "repair.mjs", fonts: "fonts.mjs", taste: "taste.mjs",
 };
 
 const run = (file, argv) => process.exit(spawnSync(process.execPath, [file, ...argv], { stdio: "inherit" }).status ?? 1);
@@ -49,7 +49,10 @@ if (cmd === "mcp") {
   Brands and pieces
     opency brand list|use|new|import <url>|check
     opency fonts search|add|list     install the brand's typefaces by name
-    opency compose layouts|new|edit|slots   build and edit pieces from data, no HTML
+    opency compose design <slug> --spec intent.json   say what each slide has to say; the compositor picks the layouts
+    opency compose variant <piece>   another version: same words, another structure
+    opency compose recipes|layouts|new|edit|slots     recipes, and pieces from explicit layouts
+    opency taste inspire|feedback|show|forget         references and reviews the compositor learns from
     opency repair <piece>            apply the safe fixes from the last render
     opency handoff review|status|package    client review page, approval, files ready to upload
     opency template save|list

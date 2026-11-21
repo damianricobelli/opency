@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" data-format="4:5" data-layout="definition">
+<head>
+<meta charset="utf-8">
+<title>Layout 18 · definition</title>
+<link rel="stylesheet" href="../../brands/_demo/tokens.css">
+<link rel="stylesheet" href="../base/base.css">
+<style>
+  .content { justify-content: center; gap: 64px; }
+  #term { max-width: 100%; }
+  .entry { display: grid; gap: 22px; max-width: 800px; }
+  #phonetic { font-size: calc(var(--size-cue) * var(--k) * 1px); letter-spacing: 0.08em; }
+  #origin { font-size: calc(var(--size-intro) * 0.9 * var(--k) * 1px); opacity: 0.74; }
+  #meaning { font-weight: var(--weight-strong); }
+</style>
+</head>
+<body>
+<main class="canvas on-secondary" data-texture="fine" style="--grain:.45">
+  <div class="safe">
+    <div class="content">
+      <div>
+        <p id="kicker" class="label" style="margin-bottom:30px">Word of the week</p>
+        <h1 id="term" class="t-hero" data-max="12">Kaizen</h1>
+        <p id="phonetic" class="label" style="margin-top:48px">/ˈkaɪ.zen/</p>
+      </div>
+      <div class="entry">
+        <span class="rule"></span>
+        <p id="origin" data-max="60">from Japanese kai (change) + zen (good)</p>
+        <p id="meaning" class="t-subtitle" data-max="100">(n.) The habit of getting one percent better every day.</p>
+      </div>
+    </div>
+    <footer class="chrome-bar" data-chrome><span id="brand">Brand</span><span id="pager">18/20</span></footer>
+  </div>
+</main>
+</body>
+</html>

@@ -14,7 +14,8 @@
 //   pixel-level contrast, even over photos and gradients · headline orphans · safe area and critical strip
 //   block overlap · clipped text · illegible size on a phone · accent mass
 //   upscaled (pixelated) photos · faces/subjects cut by the crop · text over the subject · vetoed assets
-//   fonts that failed to load · literal colors outside tokens · unfilled placeholders · copy (lib/copy-lint)
+//   empty boxes and orphan rules · no dominant element · three slides of one layout in a row · one background throughout
+//   photos cropped without an analysis · fonts that failed to load · literal colors outside tokens · unfilled placeholders · copy (lib/copy-lint)
 
 import { readdir, writeFile, mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
@@ -109,7 +110,7 @@ function inspect({ spec, assets }) {
 
   for (const el of blocks) {
     const text = el.innerText.replace(/\s+/g, " ").trim();
-    texts.push({ id: el.id || label(el), role: roleOf(el), text, chrome: isChrome(el) });
+    texts.push({ id: el.id || label(el), role: roleOf(el), text, chrome: isChrome(el), fs: Math.round(parseFloat(getComputedStyle(el).fontSize)) });
   }
 
   // ---- Headline orphans: last line with a single word ----
@@ -200,6 +201,11 @@ function inspect({ spec, assets }) {
     if (meta?.vetoed) add("vetoed_asset", img, `asset vetoed by the user: ${id}`, "error");
     if (isLogo && !img.closest("[data-bleed]") && !img.matches("[data-bleed]")) logos.push({ where: label(img), src: img.src, rect: { l: q.left, t: q.top, w: q.width, h: q.height } });
     if (!isLogo) imgs.push({ id, rect: { l: q.left, t: q.top, r: q.right, b: q.bottom } });
+    // A photo cropped without a finished analysis: nobody checked what the crop cuts.
+    if (meta && !isLogo && !meta.analysis?.complete && (fit === "cover" || fit === "") && q.width * q.height > 200000) {
+      const shown = Math.min(1, (q.width / q.height) / (nw / nh), (nw / nh) / (q.width / q.height));
+      if (shown < 0.9) add("crop_unverified", img, `${Math.round((1 - shown) * 100)} % of ${id} is cropped away and the photo has no finished analysis: look at it and record its focal point and faces (assets analyze ${id} --focal x,y --protect … --done)`);
+    }
     // protected regions (normalized 0–1 coordinates on the original image)
     if (meta?.analysis?.protectedRegions?.length && (fit === "cover" || fit === "")) {
       const pos = getComputedStyle(img).objectPosition.split(" ").map((v) => parseFloat(v) / 100);
@@ -238,6 +244,16 @@ function inspect({ spec, assets }) {
   const canvasEl = document.querySelector(".canvas") ?? document.body;
   const accent = toRGBA(getComputedStyle(canvasEl).getPropertyValue("--accent").trim() || "transparent");
 
+  // ---- Objects without a job ----
+  const hasText = (el) => el && el.innerText && el.innerText.trim().length > 0;
+  for (const el of document.querySelectorAll(".card, .glass, .nc, .tile")) {
+    if (!hasText(el) && !el.querySelector("img, svg")) add("decorative_container", el, "an empty box: every visible object needs a job. Remove it or give it content");
+  }
+  for (const el of document.querySelectorAll(".rule")) {
+    const sib = [el.previousElementSibling, el.nextElementSibling, ...(el.parentElement?.children.length === 1 ? [el.parentElement.previousElementSibling, el.parentElement.nextElementSibling] : [])];
+    if (!sib.some(hasText)) add("orphan_divider", el, "a rule with nothing next to it to separate or announce: remove it");
+  }
+
   // ---- Character budget declared by the layout (data-max) ----
   for (const el of document.querySelectorAll("[data-max]")) {
     const max = Number(el.dataset.max), len = el.innerText.replace(/\s+/g, " ").trim().length;
@@ -248,8 +264,9 @@ function inspect({ spec, assets }) {
   const chrome = {};
   for (const el of document.querySelectorAll("[data-chrome] [id], [data-chrome][id]")) { const q = el.getBoundingClientRect(); chrome[el.id] = { l: Math.round(q.left), r: Math.round(q.right), b: Math.round(q.bottom), size: getComputedStyle(el).fontSize }; }
   const material = { texture: canvasEl.dataset?.texture ?? "", grade: document.querySelector(".photo")?.dataset.grade ?? "" };
+  const tone = mode === "photo" && canvasEl.classList.contains("photo-slide") ? "photo" : getComputedStyle(canvasEl).backgroundColor;
 
-  return { issues, texts, contrastTargets, mode, accent, images: imgs, logos, chrome, material };
+  return { issues, texts, contrastTargets, mode, accent, images: imgs, logos, chrome, material, tone };
 }
 
 // ---------- Pixel measurements ----------
@@ -345,6 +362,20 @@ for (const file of files) {
 
   const dom = await page.evaluate(inspect, { spec, assets });
   const png = await page.screenshot({ clip: { x: 0, y: 0, width: spec.w, height: spec.h }, type: "png" });
+  // The deliverable is supersampled: rasterized at twice the size and reduced with Lanczos, which gives
+  // cleaner type edges and gradients than rasterizing at the final size. Checks keep using `png`.
+  let master = png;
+  if (scale === 1 && !args["no-supersample"]) {
+    try {
+      const cdp = await context.newCDPSession(page);
+      const metrics = { width: spec.w, height: spec.h, mobile: false };
+      await cdp.send("Emulation.setDeviceMetricsOverride", { ...metrics, deviceScaleFactor: 2 });
+      const big = await page.screenshot({ clip: { x: 0, y: 0, width: spec.w, height: spec.h }, type: "png", scale: "device" });
+      await cdp.send("Emulation.setDeviceMetricsOverride", { ...metrics, deviceScaleFactor: 1 });
+      await cdp.detach();
+      if ((await sharp(big).metadata()).width === spec.w * 2) master = await sharp(big).resize(spec.w, spec.h, { kernel: "lanczos3" }).png().toBuffer();
+    } catch { /* a browser without this protocol: the direct render is used */ }
+  }
 
   // Background without text, to measure real contrast
   await page.addStyleTag({ content: "*{color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important;text-decoration-color:transparent!important}" });
@@ -369,15 +400,22 @@ for (const file of files) {
   const mass = await accentMass(flatPng, dom.accent);
   if (mass > 0.1) issues.push({ code: "accent_mass", where: "", msg: `the accent covers ${(mass * 100).toFixed(0)} % of the slide (max. ~10 %)`, severity: "warn" });
 
+  // One element has to own the slide: if the largest text is barely larger than the rest, nothing leads.
+  const body = dom.texts.filter((t) => !t.chrome && t.role !== "label" && t.fs);
+  if (body.length >= 2) {
+    const sizes = [...new Set(body.map((t) => t.fs))].sort((a, b) => b - a);
+    const weak = sizes.length === 1 ? body.length >= 3 : sizes[0] < sizes[1] * 1.25;
+    if (weak) issues.push({ code: "weak_dominant", where: "", msg: `no element leads the slide: the largest text (${sizes[0]} px) is close to the next (${sizes[1] ?? sizes[0]} px). Make one thing clearly bigger or cut the others`, severity: "warn" });
+  }
   const lits = literalColors(await readFile(path.join(pieceDir, file), "utf8"));
   if (lits.length) issues.push({ code: "brand_literal_color", where: "", msg: `colors outside tokens: ${lits.slice(0, 5).join(", ")}`, severity: "warn" });
 
   const base = file.replace(/\.html$/, "");
-  await sharp(png).withIccProfile("srgb").png({ compressionLevel: 9 }).toFile(path.join(outDir, `${base}.png`));
-  await sharp(png).flatten({ background: "#ffffff" }).withIccProfile("srgb").jpeg({ quality: 95, chromaSubsampling: "4:4:4", mozjpeg: true }).toFile(path.join(outDir, `${base}.jpg`));
+  await sharp(master).withIccProfile("srgb").png({ compressionLevel: 9 }).toFile(path.join(outDir, `${base}.png`));
+  await sharp(master).flatten({ background: "#ffffff" }).withIccProfile("srgb").jpeg({ quality: 95, chromaSubsampling: "4:4:4", mozjpeg: true }).toFile(path.join(outDir, `${base}.jpg`));
   pngs.push({ n, png });
 
-  report.slides.push({ n, file, mode: dom.mode, accentMass: Number(mass.toFixed(3)), texts: dom.texts, images: dom.images.map((i) => i.id).filter(Boolean), chrome: dom.chrome, material: dom.material, issues });
+  report.slides.push({ n, file, mode: dom.mode, accentMass: Number(mass.toFixed(3)), texts: dom.texts, images: dom.images.map((i) => i.id).filter(Boolean), chrome: dom.chrome, material: dom.material, tone: dom.tone, issues });
 }
 await browser.close();
 
@@ -398,6 +436,16 @@ if (!args.only && report.slides.length > 1 && piece.status !== "reference") {
   if (grades.size > 1) first.issues.push({ code: "material_drift", where: "", msg: `mixed photo treatments: ${[...grades].join(", ")}. One per piece`, severity: "warn" });
   const layouts = (piece.slides ?? []).map((x) => x.layout).filter(Boolean);
   if (layouts.length >= 4 && new Set(layouts).size === 1) first.issues.push({ code: "template_rhythm", where: "", msg: `all ${layouts.length} slides use the same layout (${layouts[0]}): vary the structure`, severity: "warn" });
+  else {
+    const run = layouts.findIndex((l, i) => i >= 2 && l === layouts[i - 1] && l === layouts[i - 2] && !/^(base|copia|template:)/.test(l));
+    if (run >= 0) first.issues.push({ code: "template_rhythm", where: "", msg: `slides ${run - 1}–${run + 1} repeat the same layout (${layouts[run]}): three in a row reads as a template`, severity: "warn" });
+  }
+  // Five or more slides on one background read as one long slide.
+  const tones = report.slides.map((s) => s.tone);
+  if (tones.length >= 5 && new Set(tones).size === 1) first.issues.push({ code: "flat_rhythm", where: "", msg: `all ${tones.length} slides sit on the same background (${tones[0]}): give the peak slide another surface`, severity: "warn" });
+  // Words only: a carousel that never shows anything.
+  const TYPE_ONLY = new Set(["cover-type", "statement", "poster", "closer"]);
+  if (layouts.length >= 5 && layouts.every((l) => TYPE_ONLY.has(l))) first.issues.push({ code: "missing_content_visual", where: "", msg: "every slide is a sentence: show one thing (a number, the steps, a comparison, the product, a photo) instead of describing it", severity: "warn" });
 }
 
 // ---------- Copy (all slides + captions) ----------
