@@ -6,8 +6,8 @@ import { LocaleSwitch } from "./locale-switch";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
-  { href: "#brief", label: m.nav_brief },
-  { href: "#flow", label: m.nav_flow },
+  { href: "#setup", label: m.nav_setup },
+  { href: "#compose", label: m.nav_compose },
   { href: "#quality", label: m.nav_quality },
   { href: "#mcp", label: m.nav_mcp },
   { href: "#install", label: m.nav_install },

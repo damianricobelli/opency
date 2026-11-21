@@ -17,6 +17,8 @@ scripts/                     the engine (each file is a command)
   lib/recipes.mjs            the compositor: from a slide's intent to a layout, with the reason
   lib/piece.mjs              how a layout becomes a slide of a brand (surface, pattern, logo, pager)
   lib/taste.mjs              what the user liked and rejected; read by the compositor
+  lib/identity.mjs           presets, palette proposal from a website and the contrast repair
+  onboard.mjs                the first-run setup: status, identity, brand board, first-piece ideas
   lib/repair.mjs             the safe automatic fixes
   lib/fonts.mjs              typefaces by name (Fontsource)
   lib/copy-lint.mjs          copy linter (English and Spanish lists)

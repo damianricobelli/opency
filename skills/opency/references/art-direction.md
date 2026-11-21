@@ -80,7 +80,7 @@ Read this before composing or when a piece looks generic.
 
 ## Layouts
 
-20 archetypes in `templates/layouts/` (`npx @opency/cli layouts` shows them): typographic and photo covers, statement, number, steps, comparison, photo with card, data bars, testimonial, closer, news cards, product window, logo grid, co-brand, poster, chat, duotone photo, dictionary definition, prompt box and event poster. You rarely pick them by hand: `piece_design` chooses among them through recipes (`npx @opency/cli compose recipes`). They are starting points: each brand takes them into its own system (see how `brands/urbs/pieces/` turned out).
+20 archetypes in `templates/layouts/` (`npx @opency/cli layouts` shows them): typographic and photo covers, statement, number, steps, comparison, photo with card, data bars, testimonial, closer, news cards, product window, logo grid, co-brand, poster, chat, duotone photo, dictionary definition, prompt box and event poster. You rarely pick them by hand: `piece_design` chooses among them through recipes (`npx @opency/cli compose recipes`). They are starting points: each brand takes them into its own system.
 
 ## Direction: the vocabulary
 

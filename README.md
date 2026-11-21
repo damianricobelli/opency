@@ -140,7 +140,18 @@ The one question it never skips: **what do you want to get across?** The answer 
 
 ### 2. It learns your brand
 
-`npx @opency/cli brand import mysite.com` reads colors by surface, ink colors, typefaces, logo and copy from a website. The agent proposes 7 color roles, 3 font families, a voice made of hard rules and a list of verified facts, and writes them only when you say yes. Several brands can live in one workspace.
+A new brand is set up in four short chapters, in the chat, and it can stop and resume anywhere:
+
+1. **The brand.** Its name, and its website if it has one.
+2. **Identity.** From the website, from one of eight house presets, or from the colors and typefaces you give. The agent proposes seven color roles and three type families, repairs any combination that fails contrast, installs open-licensed typefaces by name, saves the logo — and shows you a **brand board** (palette, contrast, typefaces, three sample slides) to say yes or no to.
+3. **The goal.** What your content should achieve and who it is for, as choices with suggestions, not an essay.
+4. **Your first piece.** Three ideas that fit that goal; you pick one and it is designed.
+
+```text
+> Set up my brand: Kumo Café, kumocafe.com
+```
+
+That one line is enough to get to the board. Several brands can live in one workspace, and the long brief (voice rules, pillars, verified facts) is there for when you want more depth.
 
 ### 3. It plans, then builds
 
@@ -283,6 +294,7 @@ my-agency/
 | Group | Tools |
 |---|---|
 | Start | `workspace_status` · `demo` · `doctor` · `skill_guide` · `workspace_init` |
+| First-run setup | `onboarding_status` · `onboarding_start` · `brand_identity` · `brand_presets` · `brand_board` · `piece_ideas` |
 | Brand | `brand_get` · `brand_create` · `brand_use` · `brand_import_site` · `brand_fonts` · `brand_check` · `brand_write` |
 | Brief | `brief_questions` · `brief_interview` |
 | Campaigns | `campaign_create` · `campaign_brief` · `campaign_plan` · `campaign_status` · `campaign_list` |
@@ -307,6 +319,8 @@ Also: the skill's instructions as resources (`opency://guide/…`) and three pro
 
 | Command | What it does |
 |---|---|
+| `npx @opency/cli start` | Where your brand's setup stands and what comes next |
+| `npx @opency/cli onboard begin / set / presets / identity / board / ideas` | The setup steps: create the brand, build its identity, render the brand board, propose a first piece |
 | `npx @opency/cli demo` | Renders the demo carousel |
 | `npx @opency/cli init [folder]` | Creates a workspace in a specific folder (the default is `~/opency`) |
 | `npx @opency/cli setup` · `doctor` | Installs the render browser · checks the environment |

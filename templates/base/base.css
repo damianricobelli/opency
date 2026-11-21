@@ -76,6 +76,8 @@ img { display: block; max-width: none; }
 .muted      { color: var(--ink-muted); }
 .accent-text, .hl { color: var(--accent); }   /* a label or ONE word of the headline in the accent color */
 .on-primary .muted, .on-secondary .muted, .photo-slide .muted { color: var(--ink-inverse-muted); }
+/* --ink-muted is mixed against --bg: on the darker alternate background it needs more ink to stay readable. */
+.on-alt .muted { color: color-mix(in oklab, var(--ink) 74%, var(--bg-alt)); }
 
 /* ---------- House textures (procedural SVG, no files) ---------- */
 .canvas[data-texture]::after {

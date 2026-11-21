@@ -415,3 +415,177 @@
         filter: none;
     }
 }
+
+/* Setup steps and "another version": states that trade places in one cell.
+   Transitions, so a quick second tap retargets instead of restarting; the
+   outgoing state leaves faster than the incoming one arrives. A 2px blur
+   makes the two read as one thing changing, not two overlapping. */
+.swap-panel {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(3px);
+    pointer-events: none;
+    transition:
+        opacity 160ms var(--ease-out),
+        transform 160ms var(--ease-out),
+        filter 160ms var(--ease-out);
+}
+
+.swap-panel[data-active] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    pointer-events: auto;
+    transition-duration: 280ms;
+    transition-delay: 60ms;
+}
+
+/* Inside a setup step, the pieces arrive one after another: this is the
+   story being told (a request, what the agent found, the result), so the
+   order is the content. Leaving, they all go at once with the panel. */
+.stage-item {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+        opacity 120ms var(--ease-out),
+        transform 120ms var(--ease-out);
+}
+
+.stage-image {
+    transform: translateY(10px) scale(0.97);
+}
+
+.swap-panel[data-active] .stage-item {
+    opacity: 1;
+    transform: none;
+    transition-duration: 420ms;
+    transition-delay: calc(180ms + var(--i, 0) * 130ms);
+}
+
+/* A choice being made: the chip fills after its group has arrived. */
+.stage-chip {
+    transition:
+        background-color 220ms var(--ease-out),
+        border-color 220ms var(--ease-out),
+        color 220ms var(--ease-out);
+}
+
+.swap-panel[data-active] .stage-chip[data-picked] {
+    border-color: var(--foreground);
+    background-color: var(--foreground);
+    color: var(--background);
+    transition-delay: calc(420ms + var(--i, 0) * 130ms);
+}
+
+/* The active step's clock: a hairline that fills at constant speed. It only
+   runs while the demo is on screen, and stops under the pointer or keyboard
+   focus so nobody is moved on while reading. */
+.step-progress {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 2px;
+    background: var(--brand);
+    transform-origin: left;
+    transform: scaleX(0);
+    animation: step-progress var(--step-time, 5s) linear forwards;
+    animation-play-state: paused;
+}
+
+.setup-demo[data-playing] .step-progress {
+    animation-play-state: running;
+}
+
+.setup-demo:focus-within .step-progress {
+    animation-play-state: paused;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .setup-demo:hover .step-progress {
+        animation-play-state: paused;
+    }
+}
+
+@keyframes step-progress {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+.swap-text,
+.swap-slide {
+    opacity: 0;
+    filter: blur(2px);
+    transition:
+        opacity 180ms var(--ease-out),
+        filter 180ms var(--ease-out),
+        scale 180ms var(--ease-out);
+}
+
+.swap-slide {
+    scale: 0.97;
+}
+
+.swap-text[data-active],
+.swap-slide[data-active] {
+    opacity: 1;
+    filter: none;
+    scale: 1;
+    transition-duration: 300ms;
+    transition-delay: var(--swap-delay, 0ms);
+}
+
+/* A setup step: the selected one is marked by its border and number, never by
+   size, so the list does not move when the selection does. */
+.step-tab {
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    transition:
+        border-color 200ms var(--ease-out),
+        background-color 200ms var(--ease-out),
+        scale 140ms var(--ease-out);
+}
+
+.step-tab[aria-selected="true"] {
+    border-color: color-mix(in oklch, var(--foreground) 55%, transparent);
+}
+
+.step-tab:active,
+.press:active {
+    scale: 0.97;
+}
+
+.press {
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: scale 140ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .step-tab:not([aria-selected="true"]):hover {
+        background-color: color-mix(in oklch, var(--muted) 60%, var(--card));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* No clock: the steps change only when the reader picks one. */
+    .step-progress {
+        display: none;
+    }
+    .stage-item,
+    .stage-image,
+    .swap-panel[data-active] .stage-item {
+        transform: none;
+        transition-delay: 0ms;
+    }
+    .swap-panel,
+    .swap-panel[data-active],
+    .swap-slide,
+    .swap-text {
+        transform: none;
+        filter: none;
+        scale: 1;
+        transition-delay: 0ms;
+    }
+}

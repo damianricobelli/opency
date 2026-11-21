@@ -62,6 +62,15 @@ export function landingStructuredData(locale: AppLocale) {
     applicationSubCategory: "Marketing automation",
     operatingSystem: "Cross-platform",
     softwareRequirements: "Node.js, Google Chrome",
+    // What the page itself shows, in the page's language.
+    featureList: [
+      m.setup_title(),
+      m.compose_title(),
+      m.compose_fact_2(),
+      m.compose_fact_3(),
+      m.quality_title(),
+      m.mcp_title(),
+    ],
     license: LICENSE_URL,
     isAccessibleForFree: true,
     downloadUrl: GITHUB_URL,

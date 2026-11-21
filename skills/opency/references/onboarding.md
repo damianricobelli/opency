@@ -1,5 +1,28 @@
 # Setting up a brand
 
+## The first-run setup: four chapters, one at a time
+
+Use this with a new user or a brand that is not finished. `onboarding_status` (`npx @opency/cli start`) says which chapter is open, what is missing and the exact next step. Every answer is saved as it arrives, so the setup can stop anywhere and resume.
+
+| # | Chapter | What you ask | Tool |
+|---|---|---|---|
+| 1 | **The brand** | Its name. Optional: what it does, its website, how often they want to post. | `onboarding_start` creates it |
+| 2 | **Identity** | Where it comes from: the website, a preset, or colors and typefaces they give you. | `brand_identity` builds it and returns the **brand board** |
+| 3 | **The goal** | Main objective (a choice), who they want to reach (with the suggestions for that objective), and optionally what to tell or sell first. | `onboarding_start` saves it |
+| 4 | **The first piece** | Which of three ideas they want. Then only the facts that idea needs. | `piece_ideas`, then `piece_design` |
+
+How to run it well:
+
+- **Two or three questions per turn, never the whole brief.** Offer the choices as choices (use your question tool if you have one; clients with forms get them from `onboarding_start`). Anything the user already said is not asked again: pass it in.
+- **Show something within the first minute.** If there is a website, call `brand_identity` with `source="website"` right after the name: the user sees their palette, typefaces and three sample slides before answering anything else. With no website, describe the two or three presets (`brand_presets`) that fit what the brand does and let them choose.
+- **The board is the confirmation.** Show it and ask one question: does this look like the brand? To change one thing, call `brand_identity` again with `source="manual"` and only that color or typeface. `brand_board` re-renders it at any time.
+- **Read the notes that come with the identity.** They say where each color came from, what the contrast repair changed and which typefaces could not be installed (commercial families arrive as `.woff2` files). Tell the user in one line what you assumed.
+- **Goal before piece.** The objective decides which three ideas `piece_ideas` returns. Offer them in one line each. For the one the user picks, ask only for what its `needs` lists, and never invent those facts.
+- **Close with a rendered piece.** The setup is complete when the first piece renders. Then offer the next step: another version (`piece_variant`), the next piece, or a weekly plan.
+- **Depth comes later.** Voice rules, pillars, verified facts and references belong to the long brand brief (`brief_interview` with `kind="brand"`). Run it when the first piece exists and the user wants pieces that sound more like them, not before.
+
+The rest of this guide is the reference for what a complete brand has on file.
+
 Read this when `brand.json` does not exist or contains `{{…}}` placeholders, or when the user asks to change the brand.
 
 Ask for the minimum and deduce the rest: website, Instagram, brand manual, logo, previous posts, Figma.

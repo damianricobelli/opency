@@ -9,7 +9,9 @@
   .content { gap: 48px; justify-content: space-between; }
   .cards { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 18px; }
   .nc { background: var(--bg); border: 2px solid var(--line); border-radius: var(--radius); padding: 26px 28px 30px; display: grid; gap: 14px; align-content: start; }
-  .nc .label { color: var(--ink-muted); }
+  .nc .label { color: color-mix(in oklab, var(--ink) 78%, var(--bg)); }
+  /* Three items: the featured card takes the full row instead of leaving a hole. */
+  .nc:first-child:nth-last-child(3) { grid-column: span 2; }
   .nc:first-child { background: var(--primary); color: var(--ink-inverse); border-color: transparent; }
   .nc:first-child .label { color: var(--ink-inverse-muted); }
   .nc p:last-child { font-size: calc(var(--size-body) * var(--k) * 1px); line-height: 1.22; font-weight: var(--weight-strong); }

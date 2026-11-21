@@ -3,11 +3,13 @@ import { buildPublicSeoHead } from "@/lib/seo";
 import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
 import { BriefSection } from "../components/brief-section";
+import { ComposeSection } from "../components/compose-section";
 import { FlowSection } from "../components/flow-section";
 import { Hero } from "../components/hero";
 import { InstallSection } from "../components/install-section";
 import { McpSection } from "../components/mcp-section";
 import { QualitySection } from "../components/quality-section";
+import { SetupSection } from "../components/setup-section";
 import { ClosingSection, SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { WhySection } from "../components/why-section";
@@ -46,6 +48,8 @@ function LandingPage() {
       <SiteHeader />
       <main id="main">
         <Hero />
+        <SetupSection />
+        <ComposeSection />
         <BriefSection />
         <FlowSection />
         <QualitySection />

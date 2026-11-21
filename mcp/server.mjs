@@ -20,7 +20,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import sharp from "sharp";
 import { PKG, ROOT, BRANDS, hasWorkspace, ensureWorkspace, listBrands, loadBrand, brandDir, readJSON, readText, today } from "../scripts/lib/project.mjs";
-import { BRIEFS, briefKinds, briefIn, briefLanguage, briefLabels, briefLanguages, nextQuestions, missingAnswers, elicitationSchema } from "../scripts/lib/brief.mjs";
+import { BRIEFS, briefKinds, briefIn, briefLanguage, briefLabels, briefLanguages, nextQuestions, missingAnswers, elicitationSchema, optionIndex, suggestionsFor } from "../scripts/lib/brief.mjs";
 import { fetchBuffer, availableProviders, missingKeys } from "../scripts/lib/stock.mjs";
 
 const VERSION = JSON.parse(await readFile(path.join(PKG, "package.json"), "utf8")).version;
@@ -116,7 +116,7 @@ const server = new McpServer({ name: "opency", version: VERSION }, {
 The path, in order:
 1. workspace_status. Never used opency here? Run demo to show the user what it produces.
 2. skill_guide("core") before the first piece (and the topic guides when they come up).
-3. Brand not loaded: brief_interview kind="brand", brand_import_site, brand_fonts, then propose and brand_write.
+3. No brand yet, or the user is new: onboarding_status tells you which of the four setup chapters is open (brand, identity, goal, first piece) and exactly what to do next. onboarding_start saves the brand and its goal (with forms when the client has them); brand_identity builds the identity from a website, a preset or given colors and returns a brand board to show; piece_ideas proposes the first piece. One chapter at a time, two or three questions each, never the whole brief at once. brief_interview kind="brand" is the long version, for later.
 4. A campaign or an ambiguous request: brief_interview first. Nothing gets designed without knowing what it should get across.
 5. piece_design: say what each slide has to SAY (role, claim, support, proof) and one design direction; the compositor picks the layout of every slide and tells you why. recipes_list shows what it can draw. For an open brief, think through three directions that differ in structure, dominant and material, and send the one you chose.
 6. Read the report and LOOK at the contact sheet. piece_variant gives another version with the same words; piece_repair applies the safe fixes; piece_edit changes texts or photos. piece_compose (explicit layouts) and piece_write (raw HTML) are the escape hatches for when no recipe fits.
@@ -235,6 +235,114 @@ tool("brand_write", "Write a brand file", "Writes one of the brand's files. Alwa
   await writeFile(target, content.endsWith("\n") ? content : content + "\n");
   return ok(`✓ brands/${slug}/${file}${core ? ` (previous version in history/${today()}/)` : ""}. ${file === "tokens.css" ? "Run brand_check." : ""}`);
 }, { destructiveHint: true });
+
+// ============================================================ First-run setup
+const boardBlocks = async (rel) => { try { return [await image(path.join(ROOT, rel), 1800)]; } catch { return []; } };
+const statusOf = async (brand, lang) => parse(await engine("onboard.mjs", ["status", "--json", "--lang", lang, ...withBrand(brand)]));
+
+tool("onboarding_status", "Where the setup stands", "The four chapters of a new brand's setup (brand, identity, goal, first piece): which are done, what is missing and the exact next step, with the questions and the suggested answers to offer. Call it at the start of a session with a new user or a brand that is not finished, and after each step. It never changes anything.", { brand: Brand, language: Language }, async ({ brand, language }) =>
+  result(await engine("onboard.mjs", ["status", "--json", "--lang", await userLanguage(language), ...withBrand(brand)])), RO);
+
+tool("onboarding_start", "Set up a brand, one chapter at a time", `Creates the brand on its first call and saves what the user tells you about it and about what their content should achieve. Pass whatever you already know: nothing known is asked again. When the client supports forms it asks the open chapter in a short form (the name and website first; later the objective, then the audience with suggestions that fit that objective); otherwise it returns the next two or three questions, with their options, for you to ask in the chat.
+It answers with the setup's status and the next step. With a website it tells you to call brand_identity next: do it right away, the user should see their brand board within the first minute.`, {
+  name: z.string().min(1).max(60).optional().describe("The brand's name. Required to create it."),
+  what: z.string().max(200).optional().describe("What it does, in one line."),
+  url: z.string().max(300).optional().describe("Its website, if it has one."),
+  frequency: z.string().max(40).optional().describe("How often they want to post."),
+  objective: z.string().max(80).optional().describe("The main objective of the content (one of the options, or the user's own words)."),
+  audience: z.string().max(200).optional().describe("Who they want to reach."),
+  offer: z.string().max(200).optional().describe("What they want to tell or sell first."),
+  handle: z.string().max(60).optional(), country: z.string().max(40).optional(),
+  brand: Brand, language: Language,
+  ask: z.boolean().default(true).describe("false: only save what was passed, show no form."),
+}, async ({ name, what, url, frequency, objective, audience, offer, handle, country, brand, language, ask }) => {
+  const lang = await userLanguage(language);
+  const copy = briefIn("start", lang);
+  const q = (id) => copy.questions.find((x) => x.id === id);
+  const canAsk = ask && !!server.server.getClientCapabilities()?.elicitation;
+  const form = async (message, ids, extra = {}) => {
+    const properties = {}, required = [];
+    for (const id of ids) {
+      const x = q(id), base = { title: x.ask.slice(0, 120), ...(x.why ? { description: x.why } : {}) };
+      properties[id] = extra[id] ? { ...base, ...extra[id] } : x.type === "choice" ? { ...base, type: "string", enum: x.options } : { ...base, type: "string" };
+      if (x.required && !extra[id]?.optional) required.push(id);
+      delete properties[id].optional;
+    }
+    const res = await server.server.elicitInput({ message, requestedSchema: { type: "object", properties, required } }).catch(() => null);
+    return res?.action === "accept" ? Object.fromEntries(Object.entries(res.content ?? {}).filter(([, v]) => v !== "" && v !== null && v !== undefined).map(([k, v]) => [k, String(v)])) : null;
+  };
+  let asked = false;
+  let st = await statusOf(brand, lang);
+  // Chapter 1: the brand.
+  // A name that is not the current brand's is a new brand, not an edit of the active one.
+  const isNew = !st?.brand || (!!name && !brand && String(st.name ?? "").toLowerCase() !== name.toLowerCase());
+  if (isNew) {
+    if (!name && canAsk) { const a = await form(`${copy.chapters.brand}. ${copy.intro}`, ["name", "what", "url", "frequency"]); if (a) { asked = true; name = a.name; what ??= a.what; url ??= a.url; frequency ??= a.frequency; } }
+    if (!name) return ok({ ...st, mode: "chat", ask: ["name", "what", "url", "frequency"].map((id) => ({ id, question: q(id).ask, options: q(id).options, required: !!q(id).required })) });
+    const r = await engine("onboard.mjs", ["begin", clean(name), "--json", "--lang", lang, "--language", lang, ...(what ? ["--what", clean(what)] : []), ...(url ? ["--url", clean(url)] : []), ...(frequency ? ["--frequency", clean(frequency)] : [])]);
+    if (!r.ok) return result(r);
+    st = parse(r); what = url = frequency = undefined;
+  }
+  const slug = st.brand;
+  const save = async (fields) => {
+    const argv = Object.entries(fields).filter(([, v]) => v).flatMap(([k, v]) => [`--${k}`, clean(v)]);
+    if (!argv.length) return;
+    const r = await engine("onboard.mjs", ["set", "--json", "--lang", lang, "--brand", slug, ...argv]);
+    if (r.ok) st = parse(r);
+  };
+  await save({ what, url, frequency, objective, audience, offer, handle, country });
+  // Chapter 3: the goal. Only once the identity is in place, so the user sees their brand before more questions.
+  const goal = st.chapters.find((c) => c.id === "goal"), identityDone = st.chapters.find((c) => c.id === "identity").done;
+  if (canAsk && identityDone && !goal.done) {
+    if (!goal.have.objective) { const a = await form(copy.chapters.goal, ["objective"]); if (a?.objective) { asked = true; await save({ objective: a.objective }); } }
+    const cur = st.chapters.find((c) => c.id === "goal").have;
+    if (cur.objective && !cur.audience) {
+      const oi = optionIndex("start", "objective", cur.objective);
+      const hint = (id) => { const sug = suggestionsFor("start", id, oi, lang); return { type: "string", description: sug.length ? sug.join(" · ") : undefined }; };
+      const a = await form(copy.chapters.goal, ["audience", "offer"], { audience: hint("audience"), offer: hint("offer") });
+      if (a) { asked = true; await save({ audience: a.audience, offer: a.offer }); }
+    }
+  }
+  return ok({ ...st, mode: asked ? "form" : "chat" });
+});
+
+tool("brand_presets", "House identities to start from", "Eight identities (palette, typefaces, texture, corner radius) for a brand with no website and no brandbook: editorial, studio, product, natural, bold, quiet luxury, friendly and monochrome. Describe the two or three that fit what the brand does and let the user choose; apply one with brand_identity.", {}, async () => result(await engine("onboard.mjs", ["presets", "--json"])), RO);
+
+tool("brand_identity", "Build the brand's identity and show it", `Sets the brand's seven color roles, typefaces, corner radius and logo in one call, from one of three sources, and returns the BRAND BOARD: an image with the palette, the contrast of every text combination, the typefaces and three sample slides. Show it and ask whether it looks like the brand.
+- source="website": reads the site (the one saved in the setup, or url), proposes the roles from what it actually uses, installs its typefaces when they are open-licensed and saves its logo.
+- source="preset": one of brand_presets.
+- source="manual": the colors and typefaces the user gave (any subset of the roles; the rest stay).
+Every palette goes through a contrast repair, and the answer says what it changed and why. The previous tokens are kept in history/. On a brand that already has pieces, confirmedByUser=true is required: get the user's yes first. To adjust one thing afterwards, call again with source="manual" and only that color or typeface.`, {
+  source: z.enum(["website", "preset", "manual"]),
+  url: z.string().max(300).optional().describe("For source=website, when the brand has no site saved."),
+  preset: z.string().max(30).optional(),
+  colors: z.object(Object.fromEntries(["primary", "secondary", "accent", "bg", "bg-alt", "ink", "ink-inverse"].map((r) => [r, z.string().regex(/^#[0-9a-fA-F]{3,8}$/).optional()]))).optional().describe("Any subset of the seven roles, as hex."),
+  fonts: z.object({ display: z.string().max(60).optional(), body: z.string().max(60).optional(), mono: z.string().max(60).optional() }).optional().describe("Open-licensed families by name (Fontsource)."),
+  confirmedByUser: z.boolean().default(false), brand: Brand,
+}, async ({ source, url, preset, colors, fonts, confirmedByUser, brand }) => {
+  const slug = await activeBrand(brand);
+  if (slug.startsWith("_")) return bad("Demo brands cannot be edited: create one with onboarding_start.");
+  if ((await established(slug)) && !confirmedByUser) return bad(`${slug} already has pieces made with its identity. Show the change to the user and call again with confirmedByUser=true once they say yes.`);
+  const argv = ["identity", "--json", "--brand", slug, "--confirmed"];
+  if (source === "website") argv.push("--from-site", ...(url ? [clean(url)] : []));
+  else if (source === "preset") { if (!preset) return bad("source=preset needs a preset id (brand_presets)."); argv.push("--preset", clean(preset)); }
+  else { if (!colors && !fonts) return bad("source=manual needs colors and/or fonts."); argv.push("--colors", JSON.stringify(colors ?? {})); }
+  const f = Object.entries(fonts ?? {}).filter(([, v]) => v).map(([k, v]) => `${k}=${String(v).replace(/[,=]/g, " ")}`).join(",");
+  if (f) argv.push("--fonts", f);
+  const r = await engine("onboard.mjs", argv, { timeout: 300000 });
+  const data = parse(r);
+  if (!r.ok || !data) return result(r);
+  return ok(data, ...(await boardBlocks(data.board)));
+}, { destructiveHint: true, openWorldHint: true });
+
+tool("brand_board", "Show the brand board", "Renders the brand's current identity as one image: palette with roles, contrast of each text combination, typefaces, logo and three sample slides. Use it whenever the user asks how their brand looks, and after any change to its identity.", { brand: Brand }, async ({ brand }) => {
+  const r = await engine("onboard.mjs", ["board", "--json", ...withBrand(brand)], { timeout: 120000 });
+  const data = parse(r);
+  if (!r.ok || !data) return result(r);
+  return ok(data, ...(await boardBlocks(data.file)));
+}, RO);
+
+tool("piece_ideas", "Three first pieces for this brand", "Three ideas for a first piece that fit the objective the user chose, each with why it works, its format, the role of every slide (and the proof it shows) and the facts it needs. Offer them in one line each; for the one the user picks, ask only for the facts it needs, write the copy in the brand's voice and call piece_design. Never invent the facts.", { brand: Brand }, async ({ brand }) => result(await engine("onboard.mjs", ["ideas", "--json", ...withBrand(brand)])), RO);
 
 // ============================================================ Brief
 tool("brief_questions", "Brief questions", "The questions that must be answered before designing, by kind: brand (loading a brand), campaign, or piece (a single piece). Each one says whether it is required and where it can be inferred from so you do not have to ask. Pass the user's language to get them in it.", { kind: z.enum(briefKinds).default("campaign"), language: Language }, async ({ kind, language }) => { const lang = await userLanguage(language); return ok({ kind, language: lang, ...briefIn(kind, lang) }); }, RO);
@@ -669,6 +777,7 @@ for (const [topic, file] of Object.entries(TOPICS)) {
 }
 
 const prompt = (name, title, description, argsSchema, build) => server.registerPrompt(name, { title, description, argsSchema }, (a) => ({ messages: [{ role: "user", content: { type: "text", text: build(a) } }] }));
+prompt("start", "Set up my brand", "The first-run setup: brand, identity, goal and a first piece, in a few minutes.", { brand: z.string().optional().describe("The brand's name."), website: z.string().optional().describe("Its website, if it has one.") }, ({ brand, website }) => `Set up ${brand ? `my brand "${brand}"` : "my brand"} with opency${website ? ` (website: ${website})` : ""}. Call onboarding_status and take me through the open chapters one at a time: create the brand with onboarding_start, build its identity with brand_identity and show me the brand board, ask what my content should achieve, then offer the three piece_ideas and design the one I choose with piece_design. Two or three questions at a time, in my language, never the whole brief at once.`);
 prompt("new-campaign", "New campaign", "Interactive brief, plan and pieces for a campaign.", { topic: z.string().describe("What the campaign is about, in your own words."), brand: z.string().optional() }, ({ topic, brand }) => `I want a campaign${brand ? ` for ${brand}` : ""}: ${topic}\n\nUse opency. Start with workspace_status, skill_guide("core") and skill_guide("brief"). Before designing, run the brief with me using brief_interview (pass in "known" what I already said here): I need you to understand what I want to get across. Then propose the piece plan in text and wait for my yes.`);
 prompt("load-brand", "Load a brand", "Onboard a brand from its website.", { website: z.string().describe("URL of the website or profile.") }, ({ website }) => `Load a new brand from ${website} with opency. Read skill_guide("onboarding"), create it, import the website with brand_import_site, and propose in text the palette with its roles, the typefaces, the voice and the verified facts. Ask me only what you cannot infer (brief_interview kind="brand"). Do not write the brand until I say yes.`);
 prompt("weekly-plan", "Weekly plan", "3 to 5 ideas for the week, cross-checked with the calendar and the results.", { brand: z.string().optional() }, ({ brand }) => `Propose this week's content plan${brand ? ` for ${brand}` : ""} with opency. Read skill_guide("planning"), the brand with brand_get, feed_check and results_summary. 3 to 5 ideas: intent, one-sentence angle, format, suggested date and open questions. Do not design anything until I choose.`);

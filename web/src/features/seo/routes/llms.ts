@@ -13,6 +13,7 @@ function llmsText(): string {
 ## What it does
 
 - Interactive brief: asks what to convey, goal, audience, offer, tone, channels and dates before designing.
+- First-run setup in four short, resumable chapters (brand, identity, goal, first piece): from a name and a website the agent proposes the palette, repairs contrast, installs the typefaces, saves the logo and returns a brand board image to approve; with no website it starts from one of eight presets; then it offers three first pieces that fit the stated objective.
 - Brand: imports colors, logo and voice from a website and installs open-licensed typefaces by name; seven color roles, three type families, verified facts with a source.
 - Design from intent: the agent sends what each slide has to say (its role, claim and proof) plus one design direction; a deterministic compositor picks the layout of every slide from 23 recipes over 20 tested layouts and returns the reason for each choice, then builds the HTML, renders and returns the contact sheet in one call. No model runs in that step and nothing is invented: copy that fits no recipe is reported, never shrunk. No workspace to set up: brands live in ~/opency, created on first use.
 - Another version on request: the same words recomposed in another structure, with the previous one a restore away.

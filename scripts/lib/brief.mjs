@@ -53,6 +53,26 @@ export const BRIEFS = {
       { id: "approver", ask: "Who approves, and when do you need to see the first version?", type: "text" },
     ],
   },
+  // The first-run wizard: four short chapters, chips instead of essays. `chapter` groups the questions into
+  // screens; `suggest` gives the chips for a question depending on an earlier answer (by option index, so it
+  // survives translation). The long brand brief above stays for when the agent needs depth.
+  start: {
+    title: "Set up your brand",
+    intro: "Three short steps and your first piece. Everything can be changed later.",
+    chapters: { brand: "Let's start with your brand", identity: "Load your identity", goal: "What should your content achieve?" },
+    questions: [
+      { id: "name", chapter: "brand", ask: "What is the brand called?", type: "text", required: true },
+      { id: "what", chapter: "brand", ask: "What does it do? (optional)", type: "text", why: "One line, the way you would tell a friend." },
+      { id: "url", chapter: "brand", ask: "Website, if it has one (optional)", type: "text", why: "I read colors, typefaces, logo and copy from it, so you do not have to type them." },
+      { id: "frequency", chapter: "brand", ask: "How often do you want to post? (optional)", type: "choice", options: ["Daily", "3 per week", "2 per week", "1 per week", "Every two weeks", "Not sure yet"] },
+      { id: "identity", chapter: "identity", ask: "Where does the identity come from?", type: "choice", options: ["Read it from my website", "Start from a preset", "I will give you colors and typefaces"], required: true, infer: "a website in the previous step" },
+      { id: "objective", chapter: "goal", ask: "Main objective", type: "choice", options: ["Generate more sales", "Show what I know", "Present something new", "Build community", "Other"], required: true, why: "It decides which piece to make first." },
+      { id: "audience", chapter: "goal", ask: "Who do you want to reach?", type: "text", required: true,
+        suggest: [["Small-business owners", "B2B founders", "Whoever decides the purchase"], ["People in my field", "Potential customers", "Press and peers"], ["Current customers", "The waiting list", "A new audience"], ["People who already follow me", "People in the field", "Students and customers"], ["Potential customers", "People who already follow me"]] },
+      { id: "offer", chapter: "goal", ask: "What do you want to tell or sell first? (optional)", type: "text",
+        suggest: [["A call", "A service", "A product"], ["A method", "A lesson learned", "A point of view"], ["A launch", "A new feature", "An event"], ["A story", "A behind the scenes", "A question"], ["A product", "A story"]] },
+    ],
+  },
   piece: {
     title: "Piece brief",
     intro: "A single piece needs very little. If the request already says it, I do not ask.",
@@ -115,6 +135,23 @@ const TRANSLATIONS = {
         approver: { ask: "¿Quién aprueba y cuándo necesitás ver la primera versión?" },
       },
     },
+    start: {
+      title: "Armemos tu marca",
+      intro: "Tres pasos cortos y tu primera pieza. Todo se puede cambiar después.",
+      chapters: { brand: "Empecemos por tu marca", identity: "Cargá tu identidad", goal: "¿Qué tendría que lograr tu contenido?" },
+      questions: {
+        name: { ask: "¿Cómo se llama la marca?" },
+        what: { ask: "¿A qué se dedica? (opcional)", why: "Una línea, como se lo contarías a un amigo." },
+        url: { ask: "Sitio web, si tiene (opcional)", why: "De ahí leo colores, tipografías, logo y textos, así no los tenés que cargar." },
+        frequency: { ask: "¿Cada cuánto querés postear? (opcional)", options: ["Diario", "3 por semana", "2 por semana", "1 por semana", "Quincenal", "Todavía no sé"] },
+        identity: { ask: "¿De dónde sale la identidad?", options: ["Leela de mi sitio web", "Arrancar con un preset", "Te paso colores y tipografías"], infer: "un sitio web en el paso anterior" },
+        objective: { ask: "Objetivo principal", options: ["Generar más ventas", "Mostrar lo que sé", "Presentar algo nuevo", "Crear comunidad", "Otro"], why: "Define qué pieza conviene hacer primero." },
+        audience: { ask: "¿A quién querés llegar?",
+          suggest: [["Dueños de pymes", "Founders B2B", "Quien decide la compra"], ["Gente de mi rubro", "Clientes potenciales", "Medios y colegas"], ["Clientes actuales", "Lista de espera", "Público nuevo"], ["Quienes ya me siguen", "Personas del rubro", "Alumnos y clientes"], ["Clientes potenciales", "Quienes ya me siguen"]] },
+        offer: { ask: "¿Qué querés contar o vender primero? (opcional)",
+          suggest: [["Una llamada", "Un servicio", "Un producto"], ["Un método", "Un aprendizaje", "Una opinión"], ["Un lanzamiento", "Una función nueva", "Un evento"], ["Una historia", "Un detrás de escena", "Una pregunta"], ["Un producto", "Una historia"]] },
+      },
+    },
     piece: {
       title: "Brief de una pieza",
       intro: "Para una pieza suelta alcanza con poco. Si el pedido ya lo dice, no lo pregunto.",
@@ -140,7 +177,7 @@ export const briefLabels = (lang) => ({ ...LABELS, ...(TRANSLATIONS[briefLanguag
 export function briefIn(kind, lang) {
   const base = BRIEFS[kind], tr = TRANSLATIONS[briefLanguage(lang)]?.[kind];
   if (!tr) return base;
-  return { title: tr.title ?? base.title, intro: tr.intro ?? base.intro, questions: base.questions.map((q) => ({ ...q, ...(tr.questions?.[q.id] ?? {}) })) };
+  return { title: tr.title ?? base.title, intro: tr.intro ?? base.intro, ...(base.chapters ? { chapters: { ...base.chapters, ...(tr.chapters ?? {}) } } : {}), questions: base.questions.map((q) => ({ ...q, ...(tr.questions?.[q.id] ?? {}) })) };
 }
 
 export const briefKinds = Object.keys(BRIEFS);
@@ -180,4 +217,20 @@ export function renderMarkdown(kind, answers = {}, lang) {
     lines.push(`**${q.ask}**`, isEmpty(a) ? (q.required ? labels.missing : labels.empty) : Array.isArray(a) ? a.join(", ") : String(a), "");
   }
   return lines.join("\n");
+}
+
+/** The index of a choice answer in its question's options, in whatever language it was given (−1: free text). */
+export function optionIndex(kind, id, answer) {
+  if (isEmpty(answer)) return -1;
+  const norm = (x) => String(x).trim().toLowerCase();
+  for (const lang of briefLanguages) {
+    const i = (briefIn(kind, lang).questions.find((q) => q.id === id)?.options ?? []).findIndex((o) => norm(o) === norm(answer));
+    if (i >= 0) return i;
+  }
+  return -1;
+}
+/** The chips for a question whose suggestions depend on an earlier choice (the objective, in the wizard). */
+export function suggestionsFor(kind, id, dependsOnIndex, lang) {
+  const q = briefIn(kind, lang).questions.find((x) => x.id === id);
+  return q?.suggest?.[dependsOnIndex >= 0 ? dependsOnIndex : q.suggest.length - 1] ?? [];
 }

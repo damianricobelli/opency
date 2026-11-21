@@ -58,6 +58,7 @@ The active brand is in `brands/.active`. Every command accepts `--brand <slug>`.
 | What for | MCP tool | Command |
 |---|---|---|
 | Where things stand; first-run demo | `workspace_status`, `demo`, `doctor` | `npx @opency/cli demo` · `doctor` · `setup` |
+| **First-run setup** (brand, identity, goal, first piece) | `onboarding_status`, `onboarding_start`, `brand_identity`, `brand_presets`, `brand_board`, `piece_ideas` | `npx @opency/cli start` · `onboard begin / set / presets / identity / board / ideas` |
 | The brief | `brief_questions`, `brief_interview` | `npx @opency/cli brief questions [brand\|campaign\|piece]` |
 | Campaigns: brief, plan, progress | `campaign_create`, `campaign_brief`, `campaign_plan`, `campaign_status` | `npx @opency/cli campaign new / brief / plan / status / list` |
 | Brands: create, read a website, typefaces, verify | `brand_get`, `brand_create`, `brand_import_site`, `brand_fonts`, `brand_check`, `brand_write` | `npx @opency/cli brand list / use / new / import <url> / check` · `fonts search / add / list` |
@@ -120,7 +121,7 @@ A layout has **slots**: the texts it takes, each with a character budget (`layou
 
 1. `npx @opency/cli brand list` (or `workspace_status`). If the user did not say which brand and there is more than one, ask.
 2. Read from that brand: `brand.json`, `brand-kit.md`, `tokens.css`, `decisions.md` and `calendar.md` (`brand_get` returns all of it, plus the brand's taste: what the user liked, rejected and saved as reference).
-3. If `brand.json` does not exist or contains `{{…}}`: the brand is not loaded. Follow `references/onboarding.md` before designing.
+3. If there is no brand, or `onboarding_status` (`npx @opency/cli start`) shows an open chapter: run the first-run setup in `references/onboarding.md` before designing. It takes the user from nothing to a first piece in four short chapters.
 
 ## Campaign flow
 

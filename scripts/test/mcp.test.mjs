@@ -29,7 +29,9 @@ before(async () => {
   client.setRequestHandler(ElicitRequestSchema, async (req) => {
     forms.push(req.params);
     const answers = { message: "Cold coffee can be specialty coffee too", objective: "Sales of something specific", audience: "downtown office workers", channels: "Instagram feed", dates: "December", cta: "Order in the app", visuals: "Stock photos" };
-    return { action: "accept", content: Object.fromEntries(Object.keys(req.params.requestedSchema.properties).filter((k) => answers[k]).map((k) => [k, answers[k]])) };
+    // A choice is answered with one of its options: the canned answer when it is one, the first option otherwise.
+    const pick = (k) => { const e = req.params.requestedSchema.properties[k].enum; return e && !e.includes(answers[k]) ? e[0] : answers[k]; };
+    return { action: "accept", content: Object.fromEntries(Object.keys(req.params.requestedSchema.properties).filter((k) => pick(k)).map((k) => [k, pick(k)])) };
   });
   await client.connect(new StdioClientTransport({ command: process.execPath, args: [path.join(PKG, "mcp/server.mjs")], cwd: ws, env: { ...process.env, OPENCY_HOME: ws } }));
 });
@@ -41,7 +43,7 @@ test("exposes tools, resources and prompts", async () => {
   for (const n of ["workspace_status", "skill_guide", "brief_interview", "campaign_create", "stock_search", "stock_import", "asset_analyze", "piece_create", "piece_write", "piece_render", "feed_check"]) assert.ok(names.includes(n), `missing ${n}`);
   assert.ok(tools.every((t) => t.description && t.inputSchema), "every tool has a description and a schema");
   assert.ok((await client.listResources()).resources.some((r) => r.uri === "opency://guide/core"));
-  assert.deepEqual((await client.listPrompts()).prompts.map((p) => p.name).sort(), ["load-brand", "new-campaign", "weekly-plan"]);
+  assert.deepEqual((await client.listPrompts()).prompts.map((p) => p.name).sort(), ["load-brand", "new-campaign", "start", "weekly-plan"]);
 });
 
 test("workspace_status and skill_guide", async () => {
@@ -191,6 +193,70 @@ test("design from intent → another version → the user's review moves the nex
   assert.equal(taste.recipes.steps_cards, -1);
   assert.match((await call("brand_get", { brand: "estudio" })).text, /feel like a template/);
   assert.ok((await call("inspiration_add", { source: "http://127.0.0.1/ref.png", note: "the grain", brand: "estudio" })).isError, "internal addresses are refused");
+});
+
+test("first-run setup: brand → identity with a board → goal → ideas, resumable at every step", async () => {
+  // Chapter 1 in the chat (ask=false: no form): the name creates the brand.
+  const fresh = JSON.parse((await call("onboarding_start", { ask: false, language: "es" })).text);
+  assert.equal(fresh.mode, "chat");
+  // With no brand in the workspace it asks for the name; with one, it reports that brand's setup.
+  if (!fresh.brand) { assert.deepEqual(fresh.ask.map((x) => x.id), ["name", "what", "url", "frequency"]); assert.match(fresh.ask[0].question, /¿Cómo se llama la marca\?/); }
+  else assert.ok(fresh.chapters.length === 4);
+  const begun = JSON.parse((await call("onboarding_start", { ask: false, name: "Kumo Café", what: "Specialty coffee and cold brew", frequency: "3 por semana", language: "es" })).text);
+  assert.equal(begun.brand, "kumo-cafe");
+  assert.equal(begun.progress, "1 of 4");
+  assert.equal(begun.next.chapter, "identity");
+  assert.equal(begun.next.tool, "brand_identity");
+
+  // Chapter 2: a preset, repaired for contrast, with the board as an image.
+  const presets = JSON.parse((await call("brand_presets")).text);
+  assert.ok(presets.presets.length >= 8);
+  const id = await call("brand_identity", { source: "manual", colors: { primary: "#1F3A2D", accent: "#C8693A", bg: "#F3EEE3", ink: "#8A8F8C" }, brand: "kumo-cafe" });
+  assert.ok(!id.isError, id.text);
+  assert.equal(id.images.length, 1, "returns the brand board");
+  const identity = JSON.parse(id.text.slice(0, id.text.lastIndexOf("}") + 1));
+  assert.equal(identity.colors.primary, "#1F3A2D");
+  assert.notEqual(identity.colors.ink, "#8A8F8C", "a grey that fails on the background is repaired");
+  assert.ok(identity.notes.some((n) => /contrast repair/.test(n)));
+  assert.match((await call("brand_get", { brand: "kumo-cafe", include: ["tokens.css"] })).text, /--primary:\s+#1F3A2D;/);
+
+  // Chapter 3: the goal, with suggestions that depend on the objective.
+  const mid = JSON.parse((await call("onboarding_status", { brand: "kumo-cafe", language: "es" })).text);
+  assert.equal(mid.next.chapter, "goal");
+  assert.ok(mid.next.ask.objective.options.includes("Generar más ventas"));
+  const goal = JSON.parse((await call("onboarding_start", { ask: false, brand: "kumo-cafe", objective: "Mostrar lo que sé", language: "es" })).text);
+  assert.deepEqual(goal.next.ask.audience.suggestions, ["Gente de mi rubro", "Clientes potenciales", "Medios y colegas"]);
+  const ready = JSON.parse((await call("onboarding_start", { ask: false, brand: "kumo-cafe", audience: "Gente de mi rubro", language: "es" })).text);
+  assert.equal(ready.progress, "3 of 4");
+  assert.equal(ready.next.tool, "piece_ideas");
+
+  // Chapter 4: ideas that fit the objective, then a designed piece closes the setup.
+  const ideas = JSON.parse((await call("piece_ideas", { brand: "kumo-cafe" })).text);
+  assert.deepEqual(ideas.ideas.map((x) => x.id), ["method", "opinion", "definition"]);
+  const made = await call("piece_design", { slug: "first", brand: "kumo-cafe", date: "2026-12-06", slides: [{ role: "hook", proof: { kind: "definition", term: "Cold brew", meaning: "(n.) Coffee that takes its time." }, alt: "Definition." }] });
+  assert.ok(!made.isError, made.text);
+  const done = JSON.parse((await call("onboarding_status", { brand: "kumo-cafe" })).text);
+  assert.equal(done.complete, true);
+
+  // The identity of a brand with pieces needs the user's yes.
+  assert.ok((await call("brand_identity", { source: "preset", preset: "studio", brand: "kumo-cafe" })).isError);
+});
+
+test("first-run setup with forms: the goal is asked in two short forms once the identity is in place", async () => {
+  const begun = JSON.parse((await call("onboarding_start", { name: "Forma Studio" })).text);
+  assert.equal(begun.brand, "forma-studio");
+  assert.equal(begun.next.chapter, "identity", "no goal questions before the user has seen their brand");
+  const id = await call("brand_identity", { source: "preset", preset: "studio", brand: "forma-studio" });
+  assert.ok(!id.isError, id.text);
+  assert.equal(id.images.length, 1);
+  forms = [];
+  const goal = JSON.parse((await call("onboarding_start", { brand: "forma-studio" })).text);
+  assert.equal(goal.mode, "form");
+  assert.equal(forms.length, 2);
+  assert.deepEqual(Object.keys(forms[0].requestedSchema.properties), ["objective"]);
+  assert.ok(forms[0].requestedSchema.properties.objective.enum.length >= 4, "the objective is a choice");
+  assert.deepEqual(Object.keys(forms[1].requestedSchema.properties), ["audience", "offer"]);
+  assert.equal(goal.progress, "3 of 4");
 });
 
 test("the brief comes in the user's language, and it is remembered", async () => {

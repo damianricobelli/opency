@@ -13,7 +13,7 @@ const ENGINE = {
   brand: "brand.mjs", new: "new-piece.mjs", render: "render.mjs", dev: "dev.mjs", version: "version.mjs",
   motion: "motion.mjs", assets: "assets.mjs", feed: "feed.mjs", results: "results.mjs", campaign: "campaign.mjs",
   init: "init.mjs", doctor: "doctor.mjs", stock: "stock.mjs", compose: "compose.mjs", handoff: "handoff.mjs",
-  template: "template.mjs", demo: "demo.mjs", repair: "repair.mjs", fonts: "fonts.mjs", taste: "taste.mjs",
+  template: "template.mjs", demo: "demo.mjs", repair: "repair.mjs", fonts: "fonts.mjs", taste: "taste.mjs", onboard: "onboard.mjs",
 };
 
 const run = (file, argv) => process.exit(spawnSync(process.execPath, [file, ...argv], { stdio: "inherit" }).status ?? 1);
@@ -22,6 +22,8 @@ if (cmd === "mcp") {
   await import(path.join(PKG, "mcp/server.mjs"));
 } else if (cmd === "brief") {
   run(script("campaign.mjs"), ["questions", ...rest.filter((x) => x !== "questions")]);
+} else if (cmd === "start") {
+  run(script("onboard.mjs"), ["status", ...rest]);
 } else if (cmd === "layouts") {
   run(script("render.mjs"), ["templates/layouts", ...rest]);
 } else if (cmd === "setup") {
@@ -36,6 +38,8 @@ if (cmd === "mcp") {
   console.log(`opency · your agent as a content team
 
   Get started
+    opency start                     set up your brand in four short steps; shows where you are and what comes next
+    opency onboard begin|set|presets|identity|board|ideas   the steps themselves (your agent runs them for you)
     opency demo                      render the demo carousel: see the output in a minute
     opency init [folder]             create a workspace here (otherwise ~/opency is used, created on first use)
     opency setup                     install the render browser and check the environment

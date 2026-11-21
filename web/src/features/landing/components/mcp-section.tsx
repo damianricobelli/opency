@@ -5,7 +5,7 @@ import { Section } from "./section";
 const GROUPS = [
   {
     label: m.mcp_group_brand,
-    tools: ["brand_get", "brand_import_site", "brand_fonts", "brand_check"],
+    tools: ["onboarding_start", "brand_identity", "brand_board", "brand_fonts"],
   },
   {
     label: m.mcp_group_brief,
