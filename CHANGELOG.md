@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.0](https://github.com/damianricobelli/opency/compare/opency-v0.5.0...opency-v0.6.0) (2026-11-21)
+
+
+### Features
+
+* first-run setup in four chapters, brand board and landing sections for setup and the compositor ([4bf93dd](https://github.com/damianricobelli/opency/commit/4bf93ddc2fbe00b53b118ac692fb91508b53c1af))
+* semantic compositor — design from intent with recipes, variants, taste memory and anti-slop checks ([1494486](https://github.com/damianricobelli/opency/commit/1494486c97b7640beb14161f13fb5b03805284d5))
+* **stock:** rank photos by design criteria and place type where the subject is not ([542fc4b](https://github.com/damianricobelli/opency/commit/542fc4b5ad04f1f655a14c0b36c57d7e280fa672))
+
 ## [0.5.0](https://github.com/damianricobelli/opency/compare/opency-v0.4.0...opency-v0.5.0) (2026-11-20)
 
 
