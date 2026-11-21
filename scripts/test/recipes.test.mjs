@@ -8,6 +8,7 @@ import { resolvePiece, RECIPES, PROOF_KINDS, PROOF_SHAPES, photoBlocker } from "
 import { describeSlide, fillSlide } from "../lib/compose.mjs";
 import { accentLegibility, prepareSlide } from "../lib/piece.mjs";
 import { profile } from "../lib/taste.mjs";
+import { rankStock, textRoom } from "../lib/photo.mjs";
 
 const PKG = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const lib = JSON.parse(await readFile(path.join(PKG, "templates/layouts/piece.json"), "utf8"));
@@ -81,6 +82,36 @@ test("a photo is used only when its crop is known to be safe", () => {
   assert.match(unknown.slides[0].notes[0], /no finished analysis/);
   assert.match(photoBlocker(photo({ vetoed: true }), "p1", "4:5", true), /vetoed/);
   assert.match(photoBlocker(photo({ quality: { coverage: { "4:5": "62%" } } }), "p1", "4:5", true), /too small/);
+});
+
+test("type goes where the subject is not", () => {
+  const slide = { role: "hook", claim: "Out before the sun is up", image: { asset: "p1" } };
+  const at = (y) => resolvePiece({ direction: { dominantMode: "photo" }, slides: [slide] }, ctx({ assets: [photo({ analysis: { complete: true, focalPoint: { x: 0.5, y }, protectedRegions: [] } })] })).slides[0].recipe;
+  assert.equal(at(0.75), "photo_cover", "subject low: text on top");
+  assert.notEqual(at(0.2), "photo_cover", "subject high: text at the bottom");
+});
+
+test("stock ranking: covers the format, right shape, no clichés, room for type", () => {
+  const base = { provider: "openverse", alt: "a mountain road at dawn" };
+  const ranked = rankStock([
+    { ref: "small", w: 600, h: 750, ...base },
+    { ref: "wide", w: 4000, h: 1800, ...base },
+    { ref: "cliche", w: 2400, h: 3000, provider: "openverse", alt: "business people handshake in office" },
+    { ref: "good", w: 2400, h: 3000, ...base, room: { zone: "top", calm: 0.8, zones: {} } },
+    { ref: "busy", w: 2400, h: 3000, ...base, room: { zone: null, calm: 0.1, zones: {} } },
+  ], { format: "4:5" });
+  assert.deepEqual(ranked.map((r) => r.ref), ["good", "busy", "cliche", "wide", "small"]);
+  assert.ok(ranked.at(-1).unusable);
+  assert.match(ranked[2].fit.join(" "), /generic stock/);
+});
+
+test("text room: a flat half is calm, noise is not", async () => {
+  const sharp = (await import("sharp")).default;
+  const w = 200, h = 250, px = Buffer.alloc(w * h * 3);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const v = y < h / 2 ? 40 : ((Math.floor(x / 10) * 7 + Math.floor(y / 10) * 13) % 3) * 127; px.fill(v, (y * w + x) * 3, (y * w + x) * 3 + 3); }
+  const room = await textRoom(await sharp(px, { raw: { width: w, height: h, channels: 3 } }).png().toBuffer());
+  assert.equal(room.zone, "top");
+  assert.ok(room.zones.top > 0.9 && room.zones.bottom < 0.3, JSON.stringify(room.zones));
 });
 
 test("proof kinds reach their recipes: bars scale and highlight, chat must alternate", () => {

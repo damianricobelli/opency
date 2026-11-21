@@ -2,7 +2,9 @@
 // Asset library with quality control.
 //
 //   npx @opency/cli assets add <file|url> --kind photo|logo|texture|stock --desc "…" [--id x] [--credit "…"] [--license "…"]
-//   npx @opency/cli assets stock "<search query in English>" [--provider auto|unsplash|openverse] [--orientation portrait|landscape|square] [--n 12] [--page 2] [--json]
+//   npx @opency/cli assets stock "<search query in English>" [--provider auto|unsplash|openverse] [--orientation portrait|landscape|square] [--format 4:5] [--n 12] [--page 2] [--fast] [--json]
+//       results come ranked for the format: covers it without upscaling, shape that matches, not a stock cliché,
+//       and a calm area for the headline (measured on the preview; --fast skips that measurement)
 //   npx @opency/cli assets stock-import <unsplash|openverse>:<id> --desc "…"
 //   npx @opency/cli assets analyze <id> [--focal 0.5,0.35] [--protect "face:0.42,0.18,0.16,0.2"]… [--crop-safe 0,0.1,1,0.8] [--done]
 //   npx @opency/cli assets veto <id> [--reason "…"]   ·   npx @opency/cli assets unveto <id>
@@ -19,6 +21,7 @@ import { mkdir, writeFile, readFile, copyFile, access } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 import { fetchBuffer, searchStock, fetchStock, missingKeys } from "./lib/stock.mjs";
+import { textRoom, rankStock } from "./lib/photo.mjs";
 import { ROOT, parseArgs, loadAssets as _load, saveAssets as _save, FORMATS, resolveBrand, brandDir } from "./lib/project.mjs";
 
 const args = parseArgs(process.argv.slice(2));
@@ -60,6 +63,7 @@ async function analyzeImage(buf) {
   return {
     width, height, format: meta.format, hasAlpha: !!meta.hasAlpha, space: meta.space,
     sharpness: Number((stats.sharpness ?? 0).toFixed(2)),
+    textRoom: await textRoom(buf).catch(() => null),
     brightness: Number(brightness.toFixed(2)), tone: brightness < 0.35 ? "oscura" : brightness > 0.7 ? "clara" : "media",
     palette, coverage: coverage(width, height),
   };
@@ -105,6 +109,7 @@ async function register({ buf, kind, desc, id, credit, license, source }) {
   assets.push(entry);
   await saveAssets(assets);
   console.log(`✓ ${entry.id} → brands/${BRAND}/assets/${entry.file}`);
+  if (quality.textRoom) console.log(`  text room: ${quality.textRoom.zone ? `calm area at the ${quality.textRoom.zone} (${quality.textRoom.calm})` : "busy everywhere: text over it needs a heavy veil or a card"}`);
   if (quality.width) console.log(`  ${quality.width}×${quality.height} · ${quality.tone} · palette ${quality.palette.join(" ")} · 4:5 full-bleed: ${quality.coverage["4:5"]}`);
   for (const w of warnQuality(entry)) console.log(`  ⚠ ${w}`);
   if (kind === "photo" || kind === "stock") console.log(`  → Look at the image and complete the analysis: npx @opency/cli assets analyze ${entry.id} --focal x,y --protect "face:x,y,w,h" --done`);
@@ -133,13 +138,21 @@ try {
     await register({ buf, kind, desc: args.desc, id: args.id, credit: args.credit, license: args.license, source: /^https?:/.test(target) ? target : undefined });
   } else if (cmd === "stock") {
     if (!target) throw new Error('Missing search query: npx @opency/cli assets stock "runner track morning"');
-    const { results, providers, errors } = await searchStock(target, { provider: args.provider ?? "auto", orientation: args.orientation, n: Number(args.n ?? 12), page: Number(args.page ?? 1) });
-    const res = results.map((r) => ({ ...r, coverage: coverage(r.w, r.h) }));
-    if (args.json) { console.log(JSON.stringify({ query: target, providers, errors, missingKeys: missingKeys(), results: res }, null, 2)); }
+    const n = Number(args.n ?? 12), format = FORMATS[args.format] ? args.format : "4:5";
+    // No orientation given: ask for the one the format needs, so the libraries do the first cut.
+    const orientation = args.orientation ?? (format === "16:9" ? "landscape" : format === "1:1" ? "square" : "portrait");
+    // Ask for more than will be shown: ranking needs something to choose from.
+    const { results, providers, errors } = await searchStock(target, { provider: args.provider ?? "auto", orientation, n: Math.min(30, n * 2), page: Number(args.page ?? 1) });
+    if (!args.fast) await Promise.allSettled(results.map(async (r) => { r.room = await textRoom((await fetchBuffer(r.preview)).buf); }));
+    const ranked = rankStock(results, { format });
+    const hidden = ranked.filter((r) => r.unusable).length;
+    const res = ranked.filter((r) => !r.unusable).slice(0, n).map((r) => ({ ...r, coverage: coverage(r.w, r.h) }));
+    if (args.json) { console.log(JSON.stringify({ query: target, format, orientation, providers, errors, missingKeys: missingKeys(), hiddenTooSmall: hidden, results: res }, null, 2)); }
     else {
       console.log(`Libraries queried: ${providers.join(", ")}`);
       for (const e of errors) console.log(`  ⚠ ${e.provider}: ${e.error}`);
-      for (const r of res) console.log(`${r.ref.padEnd(46)} ${String(r.w).padStart(5)}×${String(r.h).padEnd(5)} ${r.coverage["4:5"].padEnd(5)} ${r.license} · ${r.by} — ${r.alt ?? ""}\n${"".padEnd(4)}${r.preview}`);
+      for (const r of res) console.log(`${r.ref.padEnd(46)} ${String(r.w).padStart(5)}×${String(r.h).padEnd(5)} ${r.coverage["4:5"].padEnd(5)} ${r.license} · ${r.by} — ${r.alt ?? ""}\n${"".padEnd(4)}${r.fit.join(" · ")}\n${"".padEnd(4)}${r.preview}`);
+      if (hidden) console.log(`(${hidden} result(s) hidden: too small for ${format})`);
       if (!res.length) console.log("(no results: try another search, in English and more specific)");
       for (const k of missingKeys()) console.log(`  · To add ${k.provider}: set ${k.env} (free at ${k.signup})`);
       console.log("\nLook at the previews, pick one and import it: npx @opency/cli assets stock-import <ref> --desc \"…\"");

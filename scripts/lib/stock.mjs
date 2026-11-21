@@ -123,7 +123,9 @@ export async function searchStock(query, { provider = "auto", orientation, n = 1
     names = [provider];
   }
   const per = names.length > 1 ? Math.ceil(n / names.length) + 2 : n;
-  const settled = await Promise.allSettled(names.map((k) => PROVIDERS[k].search(query, { orientation, n: per, page })));
+  // A library that answers 5xx is usually back a moment later: one retry before reporting it.
+  const once = (k) => PROVIDERS[k].search(query, { orientation, n: per, page });
+  const settled = await Promise.allSettled(names.map((k) => once(k).catch((e) => (/^5\d\d\b/.test(e.message) ? new Promise((r) => setTimeout(r, 1200)).then(() => once(k)) : Promise.reject(e)))));
   const lists = [], errors = [];
   settled.forEach((s, i) => (s.status === "fulfilled" ? lists.push(s.value) : errors.push({ provider: names[i], error: s.reason.message })));
   // Interleave: one from each library per round

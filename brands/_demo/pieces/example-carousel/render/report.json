@@ -2,7 +2,7 @@
   "piece": "_example-carousel",
   "format": "4:5",
   "scale": 1,
-  "renderedAt": "2026-11-20T19:44:52.478Z",
+  "renderedAt": "2026-11-21T19:47:26.864Z",
   "slides": [
     {
       "n": 1,
@@ -14,37 +14,43 @@
           "id": "meta-left",
           "role": "label",
           "text": "HOW WE WORK",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "meta-right",
           "role": "label",
           "text": "WEEKLY",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "headline",
           "role": "headline",
           "text": "Your brand, every piece.",
-          "chrome": false
+          "chrome": false,
+          "fs": 184
         },
         {
           "id": "support",
           "role": "support",
           "text": "How we build the week's content with an agent that knows the brand.",
-          "chrome": false
+          "chrome": false,
+          "fs": 34
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "@BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
           "text": "01/05",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -66,6 +72,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(47, 59, 53)",
       "issues": []
     },
     {
@@ -78,49 +85,57 @@
           "id": "headline",
           "role": "headline",
           "text": "It starts with a question",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "in-1",
           "role": "body",
           "text": "A carousel about our new hours, for Friday.",
-          "chrome": false
+          "chrome": false,
+          "fs": 37
         },
         {
           "id": "out-1",
           "role": "body",
           "text": "Got it. What should people remember?",
-          "chrome": false
+          "chrome": false,
+          "fs": 37
         },
         {
           "id": "in-2",
           "role": "body",
           "text": "That we open earlier now.",
-          "chrome": false
+          "chrome": false,
+          "fs": 37
         },
         {
           "id": "out-2",
           "role": "body",
           "text": "Here are five slides, checked and ready to review.",
-          "chrome": false
+          "chrome": false,
+          "fs": 37
         },
         {
           "id": "status",
           "role": "label",
           "text": "0 ERRORS",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "@BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
           "text": "02/05",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -142,6 +157,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(18, 18, 18)",
       "issues": []
     },
     {
@@ -154,67 +170,78 @@
           "id": "headline",
           "role": "headline",
           "text": "One request, four steps",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "span.n",
           "role": "label",
           "text": "01",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "step-1",
           "role": "body",
           "text": "You ask for the piece by chat.",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "span.n",
           "role": "label",
           "text": "02",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "step-2",
           "role": "body",
           "text": "It writes the copy in the brand's voice.",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "span.n",
           "role": "label",
           "text": "03",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "step-3",
           "role": "body",
           "text": "It designs and checks at phone size.",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "span.n",
           "role": "label",
           "text": "04",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "step-4",
           "role": "body",
           "text": "It hands you the files to approve.",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "@BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
           "text": "03/05",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -236,6 +263,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(243, 239, 230)",
       "issues": []
     },
     {
@@ -248,67 +276,78 @@
           "id": "headline",
           "role": "headline",
           "text": "What changed this week",
-          "chrome": false
+          "chrome": false,
+          "fs": 78
         },
         {
           "id": "before-label",
           "role": "label",
           "text": "BEFORE",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "before-1",
           "role": "body",
           "text": "One brief per post",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "before-2",
           "role": "body",
           "text": "Three rounds of changes",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "before-3",
           "role": "body",
           "text": "Design from scratch",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "now-label",
           "role": "label",
           "text": "NOW",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "now-1",
           "role": "body",
           "text": "One request by chat",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "now-2",
           "role": "body",
           "text": "One specific fix",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "now-3",
           "role": "body",
           "text": "Approved templates",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "@BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
           "text": "04/05",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -330,6 +369,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(243, 239, 230)",
       "issues": []
     },
     {
@@ -342,37 +382,43 @@
           "id": "kicker",
           "role": "label",
           "text": "TO WRAP UP",
-          "chrome": false
+          "chrome": false,
+          "fs": 28
         },
         {
           "id": "headline",
           "role": "headline",
           "text": "You decide what gets published.",
-          "chrome": false
+          "chrome": false,
+          "fs": 90
         },
         {
           "id": "cta-text",
           "role": "body",
           "text": "DM us AGENT and we'll show you the workflow",
-          "chrome": false
+          "chrome": false,
+          "fs": 40
         },
         {
           "id": "arrow",
           "role": "body",
           "text": "→",
-          "chrome": false
+          "chrome": false,
+          "fs": 52
         },
         {
           "id": "brand",
           "role": "chrome",
           "text": "@BRAND",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         },
         {
           "id": "pager",
           "role": "chrome",
           "text": "05/05",
-          "chrome": true
+          "chrome": true,
+          "fs": 28
         }
       ],
       "images": [],
@@ -394,6 +440,7 @@
         "texture": "paper",
         "grade": ""
       },
+      "tone": "rgb(18, 18, 18)",
       "issues": []
     }
   ],

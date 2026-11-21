@@ -15,7 +15,7 @@
 //   fit        the copy fills its slot the way the layout was drawn for (not lost in it, not squeezed)
 //   job        the recipe was designed for this slide's role
 //   dominant   it follows the piece's dominant mode (type, photo, data, artifact)
-//   image      a usable photo is used; a photo that cannot be cropped safely is not
+//   image      a usable photo is used; a photo that cannot be cropped safely is not; type goes where the subject is not
 //   rhythm     no layout twice in a row, no three slides of the same family or the same tone in a row
 //   peak       hero recipes (poster, big number, definition) happen once per piece
 //   density    airy, balanced or dense, as the direction asks
@@ -33,6 +33,8 @@ export const DIRECTION = {
 };
 const ALL = ["on-bg", "on-alt", "on-primary", "on-secondary"];
 const LIGHT = ["on-bg", "on-alt"];
+/** Where each photo recipe sets its text. */
+const TEXT_ZONE = { photo_cover: "top", photo_event: "top", photo_prompt: "top", photo_duotone: "bottom", photo_card: "bottom" };
 const FULL_BLEED = new Set(["photo_cover", "photo_duotone", "photo_prompt", "photo_event", "photo_cobrand"]);
 
 class Unfit extends Error {}
@@ -230,7 +232,17 @@ function score(recipe, surface, slide, ev, ctx, prev) {
   }
   const mode = direction.dominantMode;
   if (mode && mode !== "mixed" && !slide.proof) add(MODE_FAMILY[mode]?.includes(recipe.family) ? 14 : -4, MODE_FAMILY[mode]?.includes(recipe.family) ? `follows the ${mode}-led direction` : `off the ${mode}-led direction`);
-  if (recipe.needsImage) add(12, "uses the photo, which has a safe crop");
+  if (recipe.needsImage) {
+    add(12, "uses the photo, which has a safe crop");
+    // Type goes where the subject is not: a layout that sets its text on the half the focal point is in loses.
+    const asset = ctx.assets.find((a) => a.id === slide.image?.asset), fy = asset?.analysis?.focalPoint?.y, zone = TEXT_ZONE[recipe.id];
+    if (zone && typeof fy === "number") {
+      const clash = zone === "top" ? fy < 0.42 : fy > 0.58, clear = zone === "top" ? fy > 0.55 : fy < 0.45;
+      add(clash ? -16 : clear ? 8 : 0, clash ? `its text would sit on the subject (${zone})` : `the subject leaves the ${zone} free for the text`);
+    }
+    const room = asset?.quality?.textRoom;
+    if (zone && room?.zones) add(room.zones[zone] >= 0.45 ? 5 : room.zones[zone] < 0.2 ? -6 : 0, room.zones[zone] >= 0.45 ? `the photo is calm at the ${zone}` : `the photo is busy at the ${zone}`);
+  }
   else if (slide.image?.asset) add(ctx.photoUsable[slide.image.asset] ? -14 : 0, "leaves a usable photo out");
   if (direction.density) add(recipe.density === direction.density ? 6 : 0, `${recipe.density} like the direction asks`);
   const tone = recipe.tone ?? toneOf(surface);
